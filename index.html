@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In to Coinbase</title>
+    <title>Sign In to Base</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --coinbase-blue: #1652f0;
-            --coinbase-dark-blue: #0d47a1;
-            --coinbase-light-blue: #e8f1ff;
-            --coinbase-gray: #5b636e;
-            --coinbase-light-gray: #f8f9fa;
-            --coinbase-border: #e5e7eb;
+            --base-blue: #1652f0;
+            --base-dark-blue: #0d47a1;
+            --base-light-blue: #e8f1ff;
+            --base-gray: #5b636e;
+            --base-light-gray: #f8f9fa;
+            --base-border: #e5e7eb;
         }
 
         body {
@@ -34,12 +34,12 @@
         .navbar-brand {
             font-size: 1.5rem;
             font-weight: bold;
-            color: var(--coinbase-blue) !important;
+            color: var(--base-blue) !important;
             text-decoration: none;
         }
 
         .navbar-brand:hover {
-            color: var(--coinbase-dark-blue) !important;
+            color: var(--base-dark-blue) !important;
         }
 
         .main-container {
@@ -75,7 +75,7 @@
         }
 
         .login-header p {
-            color: var(--coinbase-gray);
+            color: var(--base-gray);
             font-size: 1rem;
             margin-bottom: 0;
         }
@@ -91,7 +91,7 @@
         }
 
         .form-control {
-            border: 2px solid var(--coinbase-border);
+            border: 2px solid var(--base-border);
             border-radius: 8px;
             padding: 0.75rem 1rem;
             font-size: 1rem;
@@ -100,7 +100,7 @@
         }
 
         .form-control:focus {
-            border-color: var(--coinbase-blue);
+            border-color: var(--base-blue);
             box-shadow: 0 0 0 3px rgba(22, 82, 240, 0.1);
         }
 
@@ -115,18 +115,18 @@
             transform: translateY(-50%);
             background: none;
             border: none;
-            color: var(--coinbase-gray);
+            color: var(--base-gray);
             cursor: pointer;
             padding: 0;
             font-size: 1.1rem;
         }
 
         .password-toggle-btn:hover {
-            color: var(--coinbase-blue);
+            color: var(--base-blue);
         }
 
         .btn-primary {
-            background: var(--coinbase-blue);
+            background: var(--base-blue);
             border: none;
             border-radius: 8px;
             padding: 0.875rem 1.5rem;
@@ -137,7 +137,7 @@
         }
 
         .btn-primary:hover {
-            background: var(--coinbase-dark-blue);
+            background: var(--base-dark-blue);
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(22, 82, 240, 0.3);
         }
@@ -150,7 +150,7 @@
             display: flex;
             align-items: center;
             margin: 2rem 0;
-            color: var(--coinbase-gray);
+            color: var(--base-gray);
         }
 
         .divider::before,
@@ -158,7 +158,7 @@
             content: '';
             flex: 1;
             height: 1px;
-            background: var(--coinbase-border);
+            background: var(--base-border);
         }
 
         .divider span {
@@ -168,7 +168,7 @@
 
         .btn-google {
             background: white;
-            border: 2px solid var(--coinbase-border);
+            border: 2px solid var(--base-border);
             color: #1a1a1a;
             border-radius: 8px;
             padding: 0.875rem 1.5rem;
@@ -181,8 +181,8 @@
 
         .btn-google:hover {
             background: #f8f9fa;
-            border-color: var(--coinbase-blue);
-            color: var(--coinbase-blue);
+            border-color: var(--base-blue);
+            color: var(--base-blue);
             transform: translateY(-1px);
         }
 
@@ -198,7 +198,7 @@
         }
 
         .forgot-password a {
-            color: var(--coinbase-blue);
+            color: var(--base-blue);
             text-decoration: none;
             font-weight: 500;
         }
@@ -211,11 +211,11 @@
             text-align: center;
             margin-top: 2rem;
             padding-top: 1.5rem;
-            border-top: 1px solid var(--coinbase-border);
+            border-top: 1px solid var(--base-border);
         }
 
         .signup-link a {
-            color: var(--coinbase-blue);
+            color: var(--base-blue);
             text-decoration: none;
             font-weight: 600;
         }
@@ -225,13 +225,13 @@
         }
 
         .security-notice {
-            background: var(--coinbase-light-blue);
+            background: var(--base-light-blue);
             border: 1px solid rgba(22, 82, 240, 0.2);
             border-radius: 8px;
             padding: 1rem;
             margin-bottom: 2rem;
             font-size: 0.9rem;
-            color: var(--coinbase-blue);
+            color: var(--base-blue);
         }
 
         .security-notice i {
@@ -243,12 +243,12 @@
         }
 
         .form-check-input:checked {
-            background-color: var(--coinbase-blue);
-            border-color: var(--coinbase-blue);
+            background-color: var(--base-blue);
+            border-color: var(--base-blue);
         }
 
         .form-check-input:focus {
-            border-color: var(--coinbase-blue);
+            border-color: var(--base-blue);
             box-shadow: 0 0 0 3px rgba(22, 82, 240, 0.1);
         }
 
@@ -293,10 +293,10 @@
     <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <i class="fas fa-coins"></i> Coinbase
+                <i class="fas fa-coins"></i> Base
             </a>
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="#" style="color: var(--coinbase-gray);">Help</a>
+                <a class="nav-link" href="#" style="color: var(--base-gray);">Help</a>
             </div>
         </div>
     </nav>
@@ -306,7 +306,7 @@
         <div class="login-card">
             <!-- Header -->
             <div class="login-header">
-                <h1>Sign in to Coinbase</h1>
+                <h1>Sign in to Base</h1>
                 <p>Welcome back! Please enter your details.</p>
             </div>
 
