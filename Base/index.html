@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In to Coinbase</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --coinbase-blue: #1652f0;
+            --coinbase-dark-blue: #0d47a1;
+            --coinbase-light-blue: #e8f1ff;
+            --coinbase-gray: #5b636e;
+            --coinbase-light-gray: #f8f9fa;
+            --coinbase-border: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--coinbase-blue) !important;
+            text-decoration: none;
+        }
+
+        .navbar-brand:hover {
+            color: var(--coinbase-dark-blue) !important;
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 3rem;
+            max-width: 400px;
+            width: 100%;
+            margin: 0 1rem;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            color: var(--coinbase-gray);
+            font-size: 1rem;
+            margin-bottom: 0;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            color: #1a1a1a;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            border: 2px solid var(--coinbase-border);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-control:focus {
+            border-color: var(--coinbase-blue);
+            box-shadow: 0 0 0 3px rgba(22, 82, 240, 0.1);
+        }
+
+        .password-toggle {
+            position: relative;
+        }
+
+        .password-toggle-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--coinbase-gray);
+            cursor: pointer;
+            padding: 0;
+            font-size: 1.1rem;
+        }
+
+        .password-toggle-btn:hover {
+            color: var(--coinbase-blue);
+        }
+
+        .btn-primary {
+            background: var(--coinbase-blue);
+            border: none;
+            border-radius: 8px;
+            padding: 0.875rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--coinbase-dark-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(22, 82, 240, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 2rem 0;
+            color: var(--coinbase-gray);
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--coinbase-border);
+        }
+
+        .divider span {
+            padding: 0 1rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-google {
+            background: white;
+            border: 2px solid var(--coinbase-border);
+            color: #1a1a1a;
+            border-radius: 8px;
+            padding: 0.875rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            width: 100%;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .btn-google:hover {
+            background: #f8f9fa;
+            border-color: var(--coinbase-blue);
+            color: var(--coinbase-blue);
+            transform: translateY(-1px);
+        }
+
+        .google-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 0.5rem;
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .forgot-password a {
+            color: var(--coinbase-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--coinbase-border);
+        }
+
+        .signup-link a {
+            color: var(--coinbase-blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .security-notice {
+            background: var(--coinbase-light-blue);
+            border: 1px solid rgba(22, 82, 240, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            color: var(--coinbase-blue);
+        }
+
+        .security-notice i {
+            margin-right: 0.5rem;
+        }
+
+        .form-check {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--coinbase-blue);
+            border-color: var(--coinbase-blue);
+        }
+
+        .form-check-input:focus {
+            border-color: var(--coinbase-blue);
+            box-shadow: 0 0 0 3px rgba(22, 82, 240, 0.1);
+        }
+
+        .form-check-label {
+            color: #1a1a1a;
+            font-size: 0.9rem;
+        }
+
+        .invalid-feedback {
+            display: block;
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .is-invalid {
+            border-color: #dc3545;
+        }
+
+        .loading {
+            display: none;
+        }
+
+        .loading.active {
+            display: inline-block;
+        }
+
+        @media (max-width: 576px) {
+            .login-card {
+                padding: 2rem 1.5rem;
+                margin: 0 0.5rem;
+            }
+            
+            .login-header h1 {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-coins"></i> Coinbase
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="#" style="color: var(--coinbase-gray);">Help</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="login-card">
+            <!-- Header -->
+            <div class="login-header">
+                <h1>Sign in to Coinbase</h1>
+                <p>Welcome back! Please enter your details.</p>
+            </div>
+
+            <!-- Security Notice -->
+            <div class="security-notice">
+                <i class="fas fa-shield-alt"></i>
+                Your connection is secured with 256-bit SSL encryption
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm">
+                <!-- Email Field -->
+                <div class="form-group">
+                    <label for="email" class="form-label">Email address</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                    <div class="invalid-feedback" id="emailError"></div>
+                </div>
+
+                <!-- Password Field -->
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="password-toggle">
+                        <input type="password" class="form-control" id="password" name="password" required>
+                        <button type="button" class="password-toggle-btn" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="invalid-feedback" id="passwordError"></div>
+                </div>
+
+                <!-- Remember Me -->
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="rememberMe">
+                    <label class="form-check-label" for="rememberMe">
+                        Remember me for 30 days
+                    </label>
+                </div>
+
+                <!-- Sign In Button -->
+                <button type="submit" class="btn btn-primary">
+                    <span class="loading" id="loadingSpinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </span>
+                    <span id="signInText">Sign in</span>
+                </button>
+
+                <!-- Forgot Password -->
+                <div class="forgot-password">
+                    <a href="#" onclick="showForgotPassword()">Forgot your password?</a>
+                </div>
+            </form>
+
+            <!-- Divider -->
+            <div class="divider">
+                <span>or</span>
+            </div>
+
+            <!-- Google Sign In -->
+            <button class="btn btn-google" onclick="signInWithGoogle()">
+                <svg class="google-icon" viewBox="0 0 24 24">
+                    <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Continue with Google
+            </button>
+
+            <!-- Sign Up Link -->
+            <div class="signup-link">
+                <span>Don't have an account? </span>
+                <a href="#" onclick="showSignUp()">Sign up</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Password toggle functionality
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordField = document.getElementById('password');
+            const toggleIcon = this.querySelector('i');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        });
+
+        // Form validation
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function validatePassword(password) {
+            return password.length >= 8;
+        }
+
+        function showError(fieldId, errorId, message) {
+            const field = document.getElementById(fieldId);
+            const error = document.getElementById(errorId);
+            field.classList.add('is-invalid');
+            error.textContent = message;
+        }
+
+        function clearError(fieldId, errorId) {
+            const field = document.getElementById(fieldId);
+            const error = document.getElementById(errorId);
+            field.classList.remove('is-invalid');
+            error.textContent = '';
+        }
+
+        // Form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const signInText = document.getElementById('signInText');
+            const submitBtn = this.querySelector('button[type="submit"]');
+            
+            // Clear previous errors
+            clearError('email', 'emailError');
+            clearError('password', 'passwordError');
+            
+            let isValid = true;
+            
+            // Validate email
+            if (!email) {
+                showError('email', 'emailError', 'Email is required');
+                isValid = false;
+            } else if (!validateEmail(email)) {
+                showError('email', 'emailError', 'Please enter a valid email address');
+                isValid = false;
+            }
+            
+            // Validate password
+            if (!password) {
+                showError('password', 'passwordError', 'Password is required');
+                isValid = false;
+            } else if (!validatePassword(password)) {
+                showError('password', 'passwordError', 'Password must be at least 8 characters long');
+                isValid = false;
+            }
+            
+            if (isValid) {
+                // Show loading state
+                loadingSpinner.classList.add('active');
+                signInText.textContent = 'Signing in...';
+                submitBtn.disabled = true;
+                
+                // Simulate API call
+                setTimeout(() => {
+                    // Reset loading state
+                    loadingSpinner.classList.remove('active');
+                    signInText.textContent = 'Sign in';
+                    submitBtn.disabled = false;
+                    
+                    // Show success message
+                    alert('Login successful! (This is a demo - no actual authentication)');
+                }, 2000);
+            }
+        });
+
+        // Google Sign In
+        function signInWithGoogle() {
+            alert('Google Sign In clicked! (This is a demo - no actual authentication)');
+        }
+
+        // Forgot Password
+        function showForgotPassword() {
+            alert('Forgot password functionality would be implemented here');
+        }
+
+        // Sign Up
+        function showSignUp() {
+            alert('Sign up functionality would be implemented here');
+        }
+
+        // Input focus effects
+        document.querySelectorAll('.form-control').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.classList.remove('focused');
+            });
+        });
+
+        // Remove error states on input
+        document.getElementById('email').addEventListener('input', function() {
+            if (this.value) {
+                clearError('email', 'emailError');
+            }
+        });
+
+        document.getElementById('password').addEventListener('input', function() {
+            if (this.value) {
+                clearError('password', 'passwordError');
+            }
+        });
+    </script>
+</body>
+</html>
