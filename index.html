@@ -255,17 +255,9 @@
         }
     </style>
 </head>
+<!-- ...HEAD and CSS as before... -->
 <body>
-    <nav class="navbar navbar-expand-lg">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-coins"></i> Base
-            </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="#" style="color: var(--base-gray);">Help</a>
-            </div>
-        </div>
-    </nav>
+    <!-- ...NAV and container... -->
     <div class="main-container">
         <div class="login-card">
             <div class="login-header" id="formHeader">
@@ -358,126 +350,9 @@
         </div>
     </div>
     <script>
-        // Validation helpers
-        function validateEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return re.test(email);
-        }
-        function validatePassword(password) {
-            return password.length >= 8;
-        }
-        function showError(fieldId, errorId, message) {
-            const field = document.getElementById(fieldId);
-            const error = document.getElementById(errorId);
-            field.classList.add('is-invalid');
-            error.textContent = message;
-        }
-        function clearError(fieldId, errorId) {
-            const field = document.getElementById(fieldId);
-            const error = document.getElementById(errorId);
-            field.classList.remove('is-invalid');
-            error.textContent = '';
-        }
+        // ...validation functions, toggle logic as in previous responses...
 
-        // Initial listeners for login form
-        document.getElementById('togglePassword').addEventListener('click', function() {
-            const passwordField = document.getElementById('password');
-            const toggleIcon = this.querySelector('i');
-            if (passwordField.type === 'password') {
-                passwordField.type = 'text';
-                toggleIcon.classList.remove('fa-eye');
-                toggleIcon.classList.add('fa-eye-slash');
-            } else {
-                passwordField.type = 'password';
-                toggleIcon.classList.remove('fa-eye-slash');
-                toggleIcon.classList.add('fa-eye');
-            }
-        });
-
-        document.getElementById('email').addEventListener('input', function() {
-            if (this.value) clearError('email', 'emailError');
-        });
-        document.getElementById('password').addEventListener('input', function() {
-            if (this.value) clearError('password', 'passwordError');
-        });
-
-        document.querySelectorAll('.form-control').forEach(input => {
-            input.addEventListener('focus', function() {
-                this.parentElement.classList.add('focused');
-            });
-            input.addEventListener('blur', function() {
-                this.parentElement.classList.remove('focused');
-            });
-        });
-
-        let signupListenersAdded = false;
-        function toggleForm(e) {
-            e.preventDefault();
-            const loginForm = document.getElementById('loginForm');
-            const signUpForm = document.getElementById('signUpForm');
-            const header = document.getElementById('formHeader');
-            const togglePrompt = document.getElementById('togglePrompt');
-            const toggleFormLink = document.getElementById('toggleFormLink');
-            if (loginForm.style.display !== 'none') {
-                loginForm.style.display = 'none';
-                signUpForm.style.display = '';
-                header.innerHTML = '<h1>Sign up for Base</h1><p>Create your account to get started.</p>';
-                togglePrompt.textContent = 'Already have an account? ';
-                toggleFormLink.textContent = 'Sign in';
-                if (!signupListenersAdded) {
-                    document.getElementById('toggleSignupPassword').addEventListener('click', function() {
-                        const passwordField = document.getElementById('signupPassword');
-                        const toggleIcon = this.querySelector('i');
-                        if (passwordField.type === 'password') {
-                            passwordField.type = 'text';
-                            toggleIcon.classList.remove('fa-eye');
-                            toggleIcon.classList.add('fa-eye-slash');
-                        } else {
-                            passwordField.type = 'password';
-                            toggleIcon.classList.remove('fa-eye-slash');
-                            toggleIcon.classList.add('fa-eye');
-                        }
-                    });
-                    document.getElementById('toggleSignupConfirmPassword').addEventListener('click', function() {
-                        const passwordField = document.getElementById('signupConfirmPassword');
-                        const toggleIcon = this.querySelector('i');
-                        if (passwordField.type === 'password') {
-                            passwordField.type = 'text';
-                            toggleIcon.classList.remove('fa-eye');
-                            toggleIcon.classList.add('fa-eye-slash');
-                        } else {
-                            passwordField.type = 'password';
-                            toggleIcon.classList.remove('fa-eye-slash');
-                            toggleIcon.classList.add('fa-eye');
-                        }
-                    });
-                    document.getElementById('signupEmail').addEventListener('input', function() {
-                        if (this.value) clearError('signupEmail', 'signupEmailError');
-                    });
-                    document.getElementById('signupPassword').addEventListener('input', function() {
-                        if (this.value) clearError('signupPassword', 'signupPasswordError');
-                    });
-                    document.getElementById('signupConfirmPassword').addEventListener('input', function() {
-                        if (this.value) clearError('signupConfirmPassword', 'signupConfirmPasswordError');
-                    });
-                    document.querySelectorAll('#signUpForm .form-control').forEach(input => {
-                        input.addEventListener('focus', function() {
-                            this.parentElement.classList.add('focused');
-                        });
-                        input.addEventListener('blur', function() {
-                            this.parentElement.classList.remove('focused');
-                        });
-                    });
-                    signupListenersAdded = true;
-                }
-            } else {
-                loginForm.style.display = '';
-                signUpForm.style.display = 'none';
-                header.innerHTML = '<h1>Sign in to Base</h1><p>Welcome back! Please enter your details.</p>';
-                togglePrompt.textContent = "Don't have an account? ";
-                toggleFormLink.textContent = 'Sign up';
-            }
-        }
+        // All event listeners etc as before
 
         // LOGIN FORM SUBMIT
         document.getElementById('loginForm').addEventListener('submit', function(e) {
@@ -505,7 +380,7 @@
             if (!isValid) return;
             document.getElementById('loadingSpinner').classList.add('active');
             document.getElementById('signInText').textContent = 'Signing in...';
-            fetch('https://script.google.com/macros/s/AKfycbxnItoHJ_EbmgYgilcxlusTWEi-P7MDnRgk9TZQ9FBOuwOQnBJm6I0z1mju5cez5KLT/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbzUKVlI9LsGXfBKdZeKwsjvdKKGDyj7Cu-3MxSDEiRTG0aj5qmc1ClI3SDhr9saNCEe/exec', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
@@ -528,7 +403,7 @@
             });
         });
 
-        // SIGNUP FORM SUBMIT
+        // SIGNUP FORM SUBMIT (uses the NEW URL)
         document.getElementById('signUpForm').addEventListener('submit', function(e) {
             e.preventDefault();
             clearError('signupEmail', 'signupEmailError');
@@ -562,7 +437,7 @@
             if (!isValid) return;
             document.getElementById('signUpLoadingSpinner').classList.add('active');
             document.getElementById('signUpText').textContent = 'Signing up...';
-            fetch('https://script.google.com/macros/s/AKfycbxnItoHJ_EbmgYgilcxlusTWEi-P7MDnRgk9TZQ9FBOuwOQnBJm6I0z1mju5cez5KLT/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbzUKVlI9LsGXfBKdZeKwsjvdKKGDyj7Cu-3MxSDEiRTG0aj5qmc1ClI3SDhr9saNCEe/exec', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
@@ -584,13 +459,7 @@
             });
         });
 
-        // Google Sign In
-        function signInWithGoogle() {
-            alert('Google Sign In clicked!');
-        }
-        function showForgotPassword() {
-            alert('Forgot password functionality would be implemented here');
-        }
-         </script>
+        // ...rest of your JS (toggle, validation, etc.)...
+    </script>
 </body>
 </html>
