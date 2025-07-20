@@ -310,7 +310,6 @@
                 toggleIcon.classList.add('fa-eye');
             }
         });
-
         function validateEmail(email) {
             const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return re.test(email);
@@ -388,8 +387,8 @@
             loadingSpinner.classList.add('active');
             signUpText.textContent = 'Signing up...';
             signUpBtn.disabled = true;
-            // Use your Google Apps Script Web App URL:
-            const scriptURL = "https://script.google.com/macros/s/AKfycbzLDBC8e4mM7okdDP8o2pI4FYinkVOL5R9pIIbxtkbXn0E50D3jgE-AEsOKpahORMYTtA/exec";
+            // Use your latest Google Apps Script Web App URL:
+            const scriptURL = "https://script.google.com/macros/s/AKfycbzfHQxXguAkzzWKy79apzLqP26-04TUV-Z5oXHjWq-AQF7QIMI38_D7QyZhz5A2cekojg/exec";
             const data = { type: 'signup', name, email, password };
             fetch(scriptURL, {
                 method: 'POST',
@@ -404,6 +403,8 @@
                 if(result.result === "success") {
                     alert('Signup successful!');
                     window.location.href = 'index.html';
+                } else if(result.message) {
+                    alert(result.message);
                 } else {
                     alert('Signup failed.');
                 }
