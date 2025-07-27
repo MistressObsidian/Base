@@ -414,7 +414,8 @@
             margin-bottom: 0.2rem;
         }
         .modal input[type="email"],
-        .modal input[type="password"] {
+        .modal input[type="password"],
+        .modal input[type="text"] {
             width: 100%;
             padding: 0.7rem 1rem;
             border-radius: 8px;
@@ -473,12 +474,12 @@
                 <li><a href="#learn">Learn</a></li>
                 <li class="mobile-auth-buttons">
                     <a href="#" id="openSignInModalMobile" class="btn btn-secondary">Sign in</a>
-                    <a href="#" class="btn btn-primary">Get started</a>
+                    <a href="#" class="btn btn-primary" id="openSignUpModalMobile">Get started</a>
                 </li>
             </ul>
             <div class="auth-buttons">
                 <a href="#" id="openSignInModal" class="btn btn-secondary">Sign in</a>
-                <a href="#" class="btn btn-primary">Get started</a>
+                <a href="#" class="btn btn-primary" id="openSignUpModalDesktop">Get started</a>
             </div>
             <div class="mobile-menu-toggle">
                 <span></span>
@@ -493,7 +494,7 @@
             <h1>Buy & sell crypto on the<br>world's leading platform</h1>
             <p>Join 100+ million people who trust Base to buy, sell, and manage all crypto securely.</p>
             <div class="hero-buttons">
-                <a href="#" class="btn btn-white btn-large">Get started</a>
+                <a href="#" class="btn btn-white btn-large" id="openSignUpModalHero">Get started</a>
                 <a href="#learn" class="btn btn-primary btn-large">Learn more</a>
             </div>
         </div>
@@ -549,7 +550,7 @@
         <div class="cta-container">
             <h2>Start your crypto journey today</h2>
             <p>Create your account and get verified in minutes. You can buy crypto with a credit card or bank transfer.</p>
-            <a href="#" class="btn btn-primary btn-large">Get started now</a>
+            <a href="#" class="btn btn-primary btn-large" id="openSignUpModalCta">Get started now</a>
         </div>
     </section>
     <!-- Footer -->
@@ -616,34 +617,64 @@
                 <div id="signInSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
                 <div id="signInFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
                 <a href="#" class="forgot-link" onclick="alert('Forgot password coming soon!')">Forgot your password?</a>
-                <a href="#" class="signup-link">Don't have an account? Sign up</a>
+                <a href="#" class="signup-link" id="openSignUpModalFromSignIn">Don't have an account? Sign up</a>
+            </form>
+        </div>
+    </div>
+
+    <!-- SIGN UP MODAL -->
+    <div class="modal-overlay" id="signUpModal">
+        <div class="modal">
+            <button class="go-back-home" id="goBackHomeSignUp" title="Go back to Homepage">&larr; Home</button>
+            <button class="modal-close" id="closeSignUpModal" title="Close">&times;</button>
+            <h2>Create your account</h2>
+            <form id="signUpForm" autocomplete="off">
+                <div>
+                    <label for="signup-fullname">Full name</label>
+                    <input type="text" id="signup-fullname" name="fullname" required placeholder="Enter your full name" />
+                    <div id="fullnameError" class="error-message"></div>
+                </div>
+                <div>
+                    <label for="signup-email">Email address</label>
+                    <input type="email" id="signup-email" name="email" required placeholder="your@email.com" />
+                    <div id="signupEmailError" class="error-message"></div>
+                </div>
+                <div>
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" name="password" required minlength="8" placeholder="Create a password (8+ characters)" />
+                    <div id="signupPasswordError" class="error-message"></div>
+                </div>
+                <div>
+                    <label for="signup-confirm-password">Confirm password</label>
+                    <input type="password" id="signup-confirm-password" name="confirmPassword" required minlength="8" placeholder="Confirm your password" />
+                    <div id="confirmPasswordError" class="error-message"></div>
+                </div>
+                <button type="submit" class="btn btn-primary" id="signUpBtn">Create account</button>
+                <div id="signUpSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
+                <div id="signUpFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
+                <a href="#" class="signup-link" id="openSignInModalFromSignUp">Already have an account? Sign in</a>
             </form>
         </div>
     </div>
 
 <script>
-    // Mobile menu toggle
+    // --- HEADER & NAV JS ---
     const mobileToggle = document.querySelector('.mobile-menu-toggle');
     const navLinks = document.querySelector('.nav-links');
     mobileToggle.addEventListener('click', (e) => {
         e.stopPropagation();
         navLinks.classList.toggle('active');
     });
-    
-    // Close mobile menu when clicking outside
     document.addEventListener('click', (e) => {
         if (!navLinks.contains(e.target) && !mobileToggle.contains(e.target)) {
             navLinks.classList.remove('active');
         }
     });
-    
-    // Close mobile menu when clicking on a link
     navLinks.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => {
             navLinks.classList.remove('active');
         });
     });
-    // Smooth scroll
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             const target = document.querySelector(this.getAttribute('href'));
@@ -653,7 +684,6 @@
             }
         });
     });
-    // Header scroll effect
     window.addEventListener('scroll', () => {
         const header = document.querySelector('.header');
         if (window.scrollY > 100) {
@@ -664,7 +694,7 @@
             header.style.boxShadow = 'none';
         }
     });
-    // Animate stats
+    // Stats animation
     const animateStats = () => {
         const stats = document.querySelectorAll('.stat-number');
         const observer = new IntersectionObserver((entries) => {
@@ -691,7 +721,6 @@
         stats.forEach(stat => observer.observe(stat));
     };
     document.addEventListener('DOMContentLoaded', animateStats);
-    // Button hover effect
     document.querySelectorAll('.btn').forEach(button => {
         button.addEventListener('mouseenter', function() {
             this.style.transform = 'translateY(-2px)';
@@ -701,117 +730,155 @@
         });
     });
 
-    // --- SIGN IN MODAL FUNCTIONALITY ---
+    // --- MODALS: OPEN & CLOSE ---
     const openModalBtn = document.getElementById('openSignInModal');
     const openModalBtnMobile = document.getElementById('openSignInModalMobile');
     const closeModalBtn = document.getElementById('closeSignInModal');
     const modalOverlay = document.getElementById('signInModal');
-    const signInForm = document.getElementById('signInForm');
-    const emailInput = document.getElementById('signin-email');
-    const passwordInput = document.getElementById('signin-password');
-    const emailError = document.getElementById('emailError');
-    const passwordError = document.getElementById('passwordError');
     const goBackHomeBtn = document.getElementById('goBackHome');
-    const signInBtn = document.getElementById('signInBtn');
-    const signInSuccess = document.getElementById('signInSuccess');
-    const signInFail = document.getElementById('signInFail');
+    const signInForm = document.getElementById('signInForm');
 
-    // Show modal (desktop)
-    openModalBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        modalOverlay.classList.add('active');
-        emailInput.focus();
-    });
-    
-    // Show modal (mobile)
-    openModalBtnMobile.addEventListener('click', (e) => {
-        e.preventDefault();
-        navLinks.classList.remove('active'); // Close mobile menu
-        modalOverlay.classList.add('active');
-        emailInput.focus();
-    });
-    // Hide modal (X button)
-    closeModalBtn.addEventListener('click', () => {
-        modalOverlay.classList.remove('active');
-        signInForm.reset();
-        emailError.textContent = "";
-        passwordError.textContent = "";
-        signInSuccess.style.display = "none";
-        signInFail.style.display = "none";
-    });
-    // Hide modal (Go Back Home button)
-    goBackHomeBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        modalOverlay.classList.remove('active');
-        signInForm.reset();
-        emailError.textContent = "";
-        passwordError.textContent = "";
-        signInSuccess.style.display = "none";
-        signInFail.style.display = "none";
-    });
-    // Click outside modal closes
-    modalOverlay.addEventListener('click', function(e) {
-        if (e.target === modalOverlay) {
-            modalOverlay.classList.remove('active');
-            signInForm.reset();
-            emailError.textContent = "";
-            passwordError.textContent = "";
-            signInSuccess.style.display = "none";
-            signInFail.style.display = "none";
-        }
-    });
-    // ESC key closes modal
+    const openSignUpModalDesktop = document.getElementById('openSignUpModalDesktop');
+    const openSignUpModalMobile = document.getElementById('openSignUpModalMobile');
+    const openSignUpModalHero = document.getElementById('openSignUpModalHero');
+    const openSignUpModalCta = document.getElementById('openSignUpModalCta');
+    const openSignUpModalFromSignIn = document.getElementById('openSignUpModalFromSignIn');
+    const signUpModal = document.getElementById('signUpModal');
+    const closeSignUpModalBtn = document.getElementById('closeSignUpModal');
+    const goBackHomeSignUpBtn = document.getElementById('goBackHomeSignUp');
+    const signUpForm = document.getElementById('signUpForm');
+    const openSignInModalFromSignUp = document.getElementById('openSignInModalFromSignUp');
+
+    // Open Sign In
+    openModalBtn.addEventListener('click', (e) => { e.preventDefault(); modalOverlay.classList.add('active'); });
+    openModalBtnMobile.addEventListener('click', (e) => { e.preventDefault(); navLinks.classList.remove('active'); modalOverlay.classList.add('active'); });
+    // Open Sign Up
+    openSignUpModalDesktop.addEventListener('click', (e) => { e.preventDefault(); signUpModal.classList.add('active'); });
+    openSignUpModalMobile.addEventListener('click', (e) => { e.preventDefault(); navLinks.classList.remove('active'); signUpModal.classList.add('active'); });
+    openSignUpModalHero.addEventListener('click', (e) => { e.preventDefault(); signUpModal.classList.add('active'); });
+    openSignUpModalCta.addEventListener('click', (e) => { e.preventDefault(); signUpModal.classList.add('active'); });
+    // Sign up from Sign In modal
+    openSignUpModalFromSignIn.addEventListener('click', (e) => { e.preventDefault(); modalOverlay.classList.remove('active'); signUpModal.classList.add('active'); });
+    // Sign in from Sign Up modal
+    openSignInModalFromSignUp.addEventListener('click', (e) => { e.preventDefault(); signUpModal.classList.remove('active'); modalOverlay.classList.add('active'); });
+
+    // Close modals
+    closeModalBtn.addEventListener('click', () => { modalOverlay.classList.remove('active'); signInForm.reset(); clearSignInErrors(); });
+    goBackHomeBtn.addEventListener('click', function(e) { e.preventDefault(); modalOverlay.classList.remove('active'); signInForm.reset(); clearSignInErrors(); });
+    modalOverlay.addEventListener('click', function(e) { if (e.target === modalOverlay) { modalOverlay.classList.remove('active'); signInForm.reset(); clearSignInErrors(); } });
+
+    closeSignUpModalBtn.addEventListener('click', () => { signUpModal.classList.remove('active'); signUpForm.reset(); clearSignUpErrors(); });
+    goBackHomeSignUpBtn.addEventListener('click', function(e) { e.preventDefault(); signUpModal.classList.remove('active'); signUpForm.reset(); clearSignUpErrors(); });
+    signUpModal.addEventListener('click', function(e) { if (e.target === signUpModal) { signUpModal.classList.remove('active'); signUpForm.reset(); clearSignUpErrors(); } });
+
+    // ESC key closes modals
     window.addEventListener('keydown', function(e) {
         if (e.key === "Escape") {
-            modalOverlay.classList.remove('active');
-            signInForm.reset();
-            emailError.textContent = "";
-            passwordError.textContent = "";
-            signInSuccess.style.display = "none";
-            signInFail.style.display = "none";
+            if (modalOverlay.classList.contains('active')) { modalOverlay.classList.remove('active'); signInForm.reset(); clearSignInErrors(); }
+            if (signUpModal.classList.contains('active')) { signUpModal.classList.remove('active'); signUpForm.reset(); clearSignUpErrors(); }
         }
     });
 
-    // --- DEMO SIGN IN (Modified for preview) ---
-    signInForm.addEventListener('submit', function(e) {
+    // --- SIGN UP VALIDATION + SUBMIT TO SHEETDB ---
+    function clearSignUpErrors() {
+        document.getElementById('fullnameError').textContent = "";
+        document.getElementById('signupEmailError').textContent = "";
+        document.getElementById('signupPasswordError').textContent = "";
+        document.getElementById('confirmPasswordError').textContent = "";
+        document.getElementById('signUpSuccess').style.display = "none";
+        document.getElementById('signUpFail').style.display = "none";
+    }
+    signUpForm.addEventListener('submit', function(e) {
         e.preventDefault();
+        clearSignUpErrors();
         let hasError = false;
-        emailError.textContent = "";
-        passwordError.textContent = "";
-        signInSuccess.style.display = "none";
-        signInFail.style.display = "none";
-
-        // Email validation
-        if (!emailInput.value) {
-            emailError.textContent = "Email is required";
-            hasError = true;
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value)) {
-            emailError.textContent = "Enter a valid email address";
-            hasError = true;
-        }
-        // Password validation
-        if (!passwordInput.value) {
-            passwordError.textContent = "Password is required";
-            hasError = true;
-        } else if (passwordInput.value.length < 8) {
-            passwordError.textContent = "Password must be at least 8 characters";
-            hasError = true;
-        }
+        const fullnameInput = document.getElementById('signup-fullname');
+        const signupEmailInput = document.getElementById('signup-email');
+        const signupPasswordInput = document.getElementById('signup-password');
+        const confirmPasswordInput = document.getElementById('signup-confirm-password');
+        if (!fullnameInput.value.trim()) { document.getElementById('fullnameError').textContent = "Full name is required"; hasError = true; }
+        if (!signupEmailInput.value) { document.getElementById('signupEmailError').textContent = "Email is required"; hasError = true; }
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(signupEmailInput.value)) { document.getElementById('signupEmailError').textContent = "Enter a valid email address"; hasError = true; }
+        if (!signupPasswordInput.value) { document.getElementById('signupPasswordError').textContent = "Password is required"; hasError = true; }
+        else if (signupPasswordInput.value.length < 8) { document.getElementById('signupPasswordError').textContent = "Password must be at least 8 characters"; hasError = true; }
+        if (!confirmPasswordInput.value) { document.getElementById('confirmPasswordError').textContent = "Please confirm your password"; hasError = true; }
+        else if (signupPasswordInput.value !== confirmPasswordInput.value) { document.getElementById('confirmPasswordError').textContent = "Passwords do not match"; hasError = true; }
 
         if (!hasError) {
-            signInBtn.textContent = "Checking...";
-            signInBtn.disabled = true;
+            const signUpBtn = document.getElementById('signUpBtn');
+            signUpBtn.textContent = "Creating account...";
+            signUpBtn.disabled = true;
+            // Send to SheetDB
+            fetch("https://sheetdb.io/api/v1/sbath1xpp3h1u", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    data: [{
+                        fullname: fullnameInput.value.trim(),
+                        email: signupEmailInput.value.trim(),
+                        password: signupPasswordInput.value
+                    }]
+                })
+            })
+            .then(res => res.ok ? res.json() : Promise.reject(res))
+            .then(() => {
+                signUpBtn.textContent = "Create account";
+                signUpBtn.disabled = false;
+                document.getElementById('signUpSuccess').textContent = "Account created! You can now sign in.";
+                document.getElementById('signUpSuccess').style.display = "block";
+                setTimeout(() => { signUpModal.classList.remove('active'); signUpForm.reset(); clearSignUpErrors(); modalOverlay.classList.add('active'); }, 2000);
+            })
+            .catch(() => {
+                signUpBtn.textContent = "Create account";
+                signUpBtn.disabled = false;
+                document.getElementById('signUpFail').textContent = "Sign up failed. Try again.";
+                document.getElementById('signUpFail').style.display = "block";
+            });
+        }
+    });
 
-            // Demo login - simulate authentication
-            setTimeout(() => {
-                signInBtn.textContent = "Sign in";
-                signInBtn.disabled = false;
-                
-                // For demo purposes, show success message
-                signInSuccess.textContent = "Demo login successful! (This is a preview)";
-                signInSuccess.style.display = "block";
-                signInFail.style.display = "none";
-            }, 1500);
+    // --- SIGN IN VALIDATION + SHEETDB LOGIN + REDIRECT ---
+    function clearSignInErrors() {
+        document.getElementById('emailError').textContent = "";
+        document.getElementById('passwordError').textContent = "";
+        document.getElementById('signInSuccess').style.display = "none";
+        document.getElementById('signInFail').style.display = "none";
+    }
+    signInForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        clearSignInErrors();
+        let hasError = false;
+        const emailInput = document.getElementById('signin-email');
+        const passwordInput = document.getElementById('signin-password');
+        if (!emailInput.value) { document.getElementById('emailError').textContent = "Email is required"; hasError = true; }
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value)) { document.getElementById('emailError').textContent = "Enter a valid email address"; hasError = true; }
+        if (!passwordInput.value) { document.getElementById('passwordError').textContent = "Password is required"; hasError = true; }
+        else if (passwordInput.value.length < 8) { document.getElementById('passwordError').textContent = "Password must be at least 8 characters"; hasError = true; }
+        if (!hasError) {
+            const signInBtn = document.getElementById('signInBtn');
+            signInBtn.textContent = "Signing in...";
+            signInBtn.disabled = true;
+            // SheetDB search for user
+            fetch(`https://sheetdb.io/api/v1/sbath1xpp3h1u/search?email=${encodeURIComponent(emailInput.value.trim())}&password=${encodeURIComponent(passwordInput.value)}`)
+                .then(res => res.json())
+                .then(data => {
+                    signInBtn.textContent = "Sign in";
+                    signInBtn.disabled = false;
+                    if (Array.isArray(data) && data.length > 0) {
+                        document.getElementById('signInSuccess').textContent = "Sign in successful! Redirecting...";
+                        document.getElementById('signInSuccess').style.display = "block";
+                        setTimeout(() => { window.location.href = "download.html"; }, 1200);
+                    } else {
+                        document.getElementById('signInFail').textContent = "Incorrect email or password.";
+                        document.getElementById('signInFail').style.display = "block";
+                    }
+                })
+                .catch(() => {
+                    signInBtn.textContent = "Sign in";
+                    signInBtn.disabled = false;
+                    document.getElementById('signInFail').textContent = "Sign in failed. Try again.";
+                    document.getElementById('signInFail').style.display = "block";
+                });
         }
     });
 </script>
