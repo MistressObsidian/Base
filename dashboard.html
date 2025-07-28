@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Dashboard | Base</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.min.css" />
+  <style>
+    /* Dashboard styles, nav, etc. See previous reply for all dashboard CSS! */
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8f9fa; }
+    .dashboard-wrap { max-width:980px; margin:60px auto; padding:32px 12px; background:#fff; border-radius:14px; }
+    .dashboard-header { display:flex; align-items:center; justify-content:space-between; padding-bottom:1rem; border-bottom:1px solid #eee;}
+    .dashboard-nav { margin:20px 0 32px; }
+    .dashboard-nav button { margin-right:16px; padding:8px 18px; border-radius:6px; border:none; cursor:pointer; font-weight:600;}
+    .dashboard-nav .active { background: #0052ff; color:#fff;}
+    .dash-section { display:none; }
+    .dash-section.active { display:block; }
+    .live-price-card { margin:20px 0 30px; background:#f0f7ff; border-radius:8px; padding:14px; display:flex; align-items:center; gap:22px;}
+    .live-price-card canvas { background:#fff; border-radius:8px;}
+    .notif, .support-msg { padding:14px; border-radius:6px; background:#f9f6f3; margin:10px 0; }
+    .notif.unread { background:#eef; color:#1652f0; }
+    .settings-form input[type="text"], .settings-form input[type="email"], .settings-form input[type="password"] {
+      padding:6px 12px; border-radius:5px; border:1px solid #aaa; width:100%; margin-bottom:8px;
+    }
+    .support-form textarea { width:100%; height:80px; border-radius:6px; border:1px solid #bbb; padding:6px; }
+    .btn { padding:8px 16px; border-radius:6px; border:none; background:#1652f0; color:#fff; font-weight:600; cursor:pointer; }
+    .btn:disabled { opacity:.6;}
+  </style>
+</head>
+<body>
+  <div class="dashboard-wrap">
+    <div class="dashboard-header">
+      <div>
+        <span style="font-size:1.2rem;">Welcome, <span id="dashUserName"></span></span><br>
+        <small id="dashUserEmail" style="color:#888"></small>
+      </div>
+      <button id="logoutBtn" class="btn" style="background:#fff;color:#1652f0;border:2px solid #1652f0;">Log out</button>
+    </div>
+    <nav class="dashboard-nav">
+      <button data-section="overview" class="active">Overview</button>
+      <button data-section="settings">Settings</button>
+      <button data-section="notifications">Notifications</button>
+      <button data-section="support">Support</button>
+    </nav>
+
+    <!-- OVERVIEW -->
+    <section class="dash-section active" id="section-overview">
+      <div style="font-size:1.05rem;color:#555;margin-bottom:10px;">Account balance:</div>
+      <div style="font-size:2.1rem;font-weight:700;margin-bottom:12px;">
+        $<span id="portfolioBalance">0.00</span>
+      </div>
+      <div class="live-price-card">
+        <div>
+          <div>BTC: <span id="btcPrice">-</span></div>
+          <div>ETH: <span id="ethPrice">-</span></div>
+          <div>SOL: <span id="solPrice">-</span></div>
+        </div>
+        <canvas id="pricesChart" width="260" height="100"></canvas>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="dash-section" id="section-settings">
+      <form id="settingsForm" class="settings-form">
+        <label>Full Name</label>
+        <input type="text" id="settingsName" required>
+        <label>Email</label>
+        <input type="email" id="settingsEmail" required>
+        <button type="submit" class="btn" id="saveSettingsBtn">Save Changes</button>
+        <div id="settingsMsg" style="margin-top:8px;"></div>
+      </form>
+    </section>
+
+    <!-- NOTIFICATIONS -->
+    <section class="dash-section" id="section-notifications">
+      <div id="notifList"></div>
+    </section>
+
+    <!-- SUPPORT -->
+    <section class="dash-section" id="section-support">
+      <form id="supportForm" class="support-form">
+        <label>Need help? Open a support ticket:</label>
+        <textarea id="supportMsg" required></textarea>
+        <button type="submit" class="btn" id="sendSupportBtn">Send</button>
+        <div id="supportStatus" style="margin-top:8px;"></div>
+      </form>
+      <div id="supportTickets" style="margin-top:22px;"></div>
+    </section>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const SHEETDB_API = "https://sheetdb.io/api/v1/sbath1xpp3h1u";
+    // Load session
+    let email = localStorage.getItem('user_email');
+    let name = localStorage.getItem('user_name');
+    if(!email) { window.location = "index.html"; }
+    document.getElementById('dashUserEmail').textContent = email;
+    document.getElementById('dashUserName').textContent = name;
+
+    // Load balance/profile
+    fetch(`${SHEETDB_API}/search?email=${encodeURIComponent(email)}`)
+      .then(res=>res.json())
+      .then(data=>{
+        if(data[0]) {
+          document.getElementById('portfolioBalance').textContent = Number(data[0].balance||0).toLocaleString();
+          document.getElementById('settingsName').value = data[0].fullname || '';
+          document.getElementById('settingsEmail').value = data[0].email || '';
+        }
+      });
+
+    // Tabs
+    document.querySelectorAll('.dashboard-nav button').forEach(btn=>{
+      btn.onclick = function() {
+        document.querySelectorAll('.dashboard-nav button').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.dash-section').forEach(s=>s.classList.remove('active'));
+        document.getElementById('section-'+btn.dataset.section).classList.add('active');
+      };
+    });
+
+    // Live Prices
+    let priceChart, btcHistory = [], ethHistory = [], solHistory = [];
+    function updatePrices() {
+      fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd")
+        .then(r=>r.json())
+        .then(data=>{
+          let btc = data.bitcoin.usd, eth = data.ethereum.usd, sol = data.solana.usd;
+          document.getElementById('btcPrice').textContent = '$'+btc;
+          document.getElementById('ethPrice').textContent = '$'+eth;
+          document.getElementById('solPrice').textContent = '$'+sol;
+          btcHistory.push(btc); ethHistory.push(eth); solHistory.push(sol);
+          if(btcHistory.length>30) { btcHistory.shift(); ethHistory.shift(); solHistory.shift(); }
+          let ctx = document.getElementById('pricesChart').getContext('2d');
+          if(!priceChart){
+            priceChart = new Chart(ctx, {
+              type: 'line',
+              data: { labels: Array(btcHistory.length).fill(''), datasets:[
+                {label:'BTC',data:btcHistory, borderColor:'#f7931a', fill:false},
+                {label:'ETH',data:ethHistory, borderColor:'#627eea', fill:false},
+                {label:'SOL',data:solHistory, borderColor:'#ff9c0a', fill:false},
+              ]},
+              options:{ plugins:{legend:{display:false}}, scales:{x:{display:false},y:{display:false}} }
+            });
+          } else {
+            priceChart.data.labels = Array(btcHistory.length).fill('');
+            priceChart.data.datasets[0].data = btcHistory;
+            priceChart.data.datasets[1].data = ethHistory;
+            priceChart.data.datasets[2].data = solHistory;
+            priceChart.update();
+          }
+        });
+    }
+    updatePrices(); setInterval(updatePrices, 7000);
+
+    // Notifications (example: static notifications, replace with your backend logic as needed)
+    let notifications = [
+      {id:1, msg:"Welcome to Base!", unread:true},
+      {id:2, msg:"Crypto price widgets now live.", unread:false}
+    ];
+    function renderNotifs() {
+      let html = '';
+      notifications.forEach(n=>{
+        html += `<div class="notif${n.unread?' unread':''}">${n.msg}</div>`;
+      });
+      document.getElementById('notifList').innerHTML = html;
+    }
+    renderNotifs();
+
+    // Settings
+    document.getElementById('settingsForm').onsubmit = function(e) {
+      e.preventDefault();
+      let newName = document.getElementById('settingsName').value.trim();
+      let newEmail = document.getElementById('settingsEmail').value.trim();
+      document.getElementById('saveSettingsBtn').disabled = true;
+      fetch(`${SHEETDB_API}/email/${encodeURIComponent(email)}`, {
+        method:"PATCH",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify({ data:{ fullname:newName, email:newEmail } })
+      }).then(res=>res.json())
+      .then(r=>{
+        document.getElementById('settingsMsg').textContent = "Profile updated!";
+        localStorage.setItem("user_name", newName);
+        localStorage.setItem("user_email", newEmail);
+        document.getElementById('dashUserName').textContent = newName;
+        document.getElementById('dashUserEmail').textContent = newEmail;
+        document.getElementById('saveSettingsBtn').disabled = false;
+      });
+    };
+
+    // Support form (write ticket to SheetDB "support" sheet, or just display fake for now)
+    document.getElementById('supportForm').onsubmit = function(e) {
+      e.preventDefault();
+      let msg = document.getElementById('supportMsg').value.trim();
+      document.getElementById('sendSupportBtn').disabled = true;
+      document.getElementById('supportStatus').textContent = "Sending...";
+      // Store to SheetDB or just demo
+      setTimeout(()=>{
+        document.getElementById('supportStatus').textContent = "Ticket submitted. We'll reply by email!";
+        document.getElementById('supportForm').reset();
+        document.getElementById('sendSupportBtn').disabled = false;
+      },1000);
+    };
+
+    // Log out
+    document.getElementById('logoutBtn').onclick = function() {
+      localStorage.clear();
+      window.location = "index.html";
+    };
+  </script>
+</body>
+</html>

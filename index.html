@@ -1,10 +1,13 @@
+Python 3.13.4 (tags/v3.13.4:8a526ec, Jun  3 2025, 17:46:04) [MSC v.1943 64 bit (AMD64)] on win32
+Enter "help" below or click "Help" above for more information.
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Base - Buy & Sell Bitcoin, Ethereum, and more with trust</title>
-    <style>
+  <meta charset="UTF-8">
+  <title>Base - Buy & Sell Bitcoin, Ethereum, and more with trust</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -346,64 +349,17 @@
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        /* DASHBOARD STYLES */
-        .dashboard-wrap { display: none; background: #f8f9fa; min-height: 100vh; }
-        .dashboard-header {
-            background: linear-gradient(135deg, #0052ff, #1652f0);
-            color: white;
-            padding: 1rem 2rem;
-            position: fixed; top: 0; left: 0; right: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .dashboard-row {
-            max-width: 900px; margin: 100px auto 0; padding: 2rem;
-        }
-        .dash-title { font-size: 2rem; font-weight: bold; margin-bottom: 1rem; }
-        .dash-card {
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-            margin-bottom: 2rem; padding: 1.5rem 2rem;
-        }
-        .dash-flex { display: flex; gap: 2rem; flex-wrap: wrap; }
-        .dash-col { flex: 1 1 200px; min-width: 220px;}
-        .dash-balance {
-            font-size: 2.3rem;
-            font-weight: bold;
-            background: linear-gradient(90deg,#1652f0 10%, #00d4ff 90%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .dash-label { color: #555; font-size: 1.1rem; }
-        .dash-table { width: 100%; border-collapse: collapse; margin-top: 1rem;}
-        .dash-table th, .dash-table td { padding: 8px 4px; text-align: left; border-bottom: 1px solid #eee;}
-        .dash-table th { color: #0052ff; }
-        .logout-dash-btn {
-            background: #fff; color: #1652f0;
-            border: 2px solid #fff;
-            font-weight: bold;
-            padding: 8px 18px;
-            border-radius: 20px;
-            margin-left: 10px;
-            cursor: pointer;
-            transition: all .2s;
-        }
-        .logout-dash-btn:hover { border-color: #1652f0; background: #f0f7ff;}
-        @media(max-width:600px){
-            .dashboard-row {padding:1rem;}
-            .dash-flex {flex-direction:column;}
-        }
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 2000; }
-        .modal-overlay.active { display: flex; }
-        .modal { background: #fff; border-radius: 16px; box-shadow: 0 8px 40px rgba(0,0,0,0.15); max-width: 400px; width: 95%; padding: 2.5rem 2rem; position: relative; animation: fadeInUp 0.4s cubic-bezier(.25,.8,.25,1);}
-        .modal-close { position: absolute; right: 1.2rem; top: 1.2rem; font-size: 1.25rem; color: #999; background: none; border: none; cursor: pointer; z-index: 10; }
-        .go-back-home { position: absolute; left: 1.2rem; top: 1.2rem; background: transparent; border: none; color: #0052ff; font-weight: 600; font-size: 1.04rem; cursor: pointer; padding: 0; z-index: 12;}
-        .modal h2 { text-align: center; font-size: 1.5rem; font-weight: bold; color: #1652f0; margin-bottom: 1rem;}
-        .modal form { display: flex; flex-direction: column; gap: 1.2rem;}
-        .modal .btn-primary { width: 100%; padding: 0.8rem 0; font-size: 1.08rem; margin-top: 0.3rem;}
-        .modal .error-message { color: #e11d48; text-align: left; font-size: 0.96rem; margin-top: -0.6rem;}
-    </style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8f9fa; }
+    .modal-overlay { position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.3);display:none;align-items:center;justify-content:center;z-index:3000;}
+    .modal-overlay.active { display:flex; }
+    .modal { background: #fff; border-radius: 14px; max-width: 400px; width:95%; padding: 2rem 1.5rem; position:relative; }
+    .modal-close { position:absolute;right:1rem;top:1rem;font-size:1.3rem;background:none;border:none;color:#aaa;cursor:pointer;}
+    .error-message {color:#e11d48; font-size:.96rem;}
+    .btn { padding:.6rem 1.2rem; border-radius:6px; border:none; cursor:pointer; font-weight:600;}
+    .btn-primary {background:linear-gradient(135deg,#0052ff,#1652f0);color:#fff;}
+    .btn-secondary {background:#fff; border:2px solid #0052ff; color:#0052ff;}
+    .btn-primary:disabled { opacity:.65; }
+  </style>
 </head>
 <body>
 <div id="mainLanding">
@@ -539,135 +495,96 @@
     </footer>
 </div>
 
-    <!-- SIGN IN MODAL -->
-    <div class="modal-overlay" id="signInModal">
-        <div class="modal">
-            <button class="go-back-home" id="goBackHome" title="Go back to Homepage">&larr; Home</button>
-            <button class="modal-close" id="closeSignInModal" title="Close">&times;</button>
-            <h2>Sign in to Base</h2>
-            <form id="signInForm" autocomplete="off">
-                <div>
-                    <label for="signin-email">Email address</label>
-                    <input type="email" id="signin-email" name="email" required placeholder="your@email.com" />
-                    <div id="emailError" class="error-message"></div>
-                </div>
-                <div>
-                    <label for="signin-password">Password</label>
-                    <input type="password" id="signin-password" name="password" required minlength="8" placeholder="Password" />
-                    <div id="passwordError" class="error-message"></div>
-                </div>
-                <button type="submit" class="btn btn-primary" id="signInBtn">Sign in</button>
-                <div id="signInSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
-                <div id="signInFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
-                <a href="#" class="forgot-link" id="openForgotPasswordModal">Forgot your password?</a>
-                <a href="#" class="signup-link" id="openSignUpModalFromSignIn">Don't have an account? Sign up</a>
-            </form>
-        </div>
-    </div>
-
-    <!-- SIGN UP MODAL -->
-    <div class="modal-overlay" id="signUpModal">
-        <div class="modal">
-            <button class="go-back-home" id="goBackHomeSignUp" title="Go back to Homepage">&larr; Home</button>
-            <button class="modal-close" id="closeSignUpModal" title="Close">&times;</button>
-            <h2>Create your account</h2>
-            <form id="signUpForm" autocomplete="off">
-                <div>
-                    <label for="signup-fullname">Full name</label>
-                    <input type="text" id="signup-fullname" name="fullname" required placeholder="Enter your full name" />
-                    <div id="fullnameError" class="error-message"></div>
-                </div>
-                <div>
-                    <label for="signup-email">Email address</label>
-                    <input type="email" id="signup-email" name="email" required placeholder="your@email.com" />
-                    <div id="signupEmailError" class="error-message"></div>
-                </div>
-                <div>
-                    <label for="signup-password">Password</label>
-                    <input type="password" id="signup-password" name="password" required minlength="8" placeholder="Create a password (8+ characters)" />
-                    <div id="signupPasswordError" class="error-message"></div>
-                </div>
-                <div>
-                    <label for="signup-confirm-password">Confirm password</label>
-                    <input type="password" id="signup-confirm-password" name="confirmPassword" required minlength="8" placeholder="Confirm your password" />
-                    <div id="confirmPasswordError" class="error-message"></div>
-                </div>
-                <button type="submit" class="btn btn-primary" id="signUpBtn">Create account</button>
-                <div id="signUpSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
-                <div id="signUpFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
-                <a href="#" class="signup-link" id="openSignInModalFromSignUp">Already have an account? Sign in</a>
-            </form>
-        </div>
-    </div>
-
-    <!-- FORGOT PASSWORD MODAL -->
-    <div class="modal-overlay" id="forgotPasswordModal">
-        <div class="modal">
-            <button class="go-back-home" id="goBackHomeForgot" title="Go back to Homepage">&larr; Home</button>
-            <button class="modal-close" id="closeForgotPasswordModal" title="Close">&times;</button>
-            <h2>Reset Password</h2>
-            <form id="forgotPasswordForm" autocomplete="off">
-                <div>
-                    <label for="forgot-email">Email address</label>
-                    <input type="email" id="forgot-email" required placeholder="Your email" />
-                    <div id="forgotEmailError" class="error-message"></div>
-                </div>
-                <div>
-                    <label for="forgot-password">New password</label>
-                    <input type="password" id="forgot-password" required minlength="8" placeholder="New password" />
-                    <div id="forgotPasswordError" class="error-message"></div>
-                </div>
-                <div>
-                    <label for="forgot-confirm-password">Confirm new password</label>
-                    <input type="password" id="forgot-confirm-password" required minlength="8" placeholder="Confirm password" />
-                    <div id="forgotConfirmPasswordError" class="error-message"></div>
-                </div>
-                <button type="submit" class="btn btn-primary" id="forgotPasswordBtn">Reset password</button>
-                <div id="forgotPasswordSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
-                <div id="forgotPasswordFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
-            </form>
-        </div>
-    </div>
-
-<!-- DASHBOARD (Hidden until login) -->
-<div class="dashboard-wrap" id="dashboardWrap" style="display:none;">
-    <div class="dashboard-header dash-flex" style="align-items:center;justify-content:space-between;">
+  <!-- SIGN IN MODAL -->
+  <div class="modal-overlay" id="signInModal">
+    <div class="modal">
+      <button class="modal-close" id="closeSignInModal">&times;</button>
+      <h2>Sign in to Base</h2>
+      <form id="signInForm" autocomplete="off">
         <div>
-            <span class="dash-title">Welcome, <span id="dashUserName"></span></span>
-            <div class="dash-label" id="dashUserEmail"></div>
+          <label for="signin-email">Email address</label>
+          <input type="email" id="signin-email" name="email" required placeholder="your@email.com" />
+          <div id="emailError" class="error-message"></div>
         </div>
-        <button class="logout-dash-btn" id="logoutDashBtn">Log out</button>
+        <div>
+          <label for="signin-password">Password</label>
+          <input type="password" id="signin-password" name="password" required minlength="8" placeholder="Password" />
+          <div id="passwordError" class="error-message"></div>
+        </div>
+        <button type="submit" class="btn btn-primary" id="signInBtn">Sign in</button>
+        <div id="signInSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
+        <div id="signInFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
+        <a href="#" class="forgot-link" id="openForgotPasswordModal">Forgot your password?</a>
+        <a href="#" class="signup-link" id="openSignUpModalFromSignIn">Don't have an account? Sign up</a>
+      </form>
     </div>
-    <div class="dashboard-row">
-        <div class="dash-flex">
-            <div class="dash-col dash-card">
-                <div class="dash-label">Portfolio Value</div>
-                <div class="dash-balance" id="dashBalance">$12,485.67</div>
-                <div class="dash-label" style="margin-top:12px;">Account active</div>
-            </div>
-            <div class="dash-col dash-card">
-                <div class="dash-label">Crypto Holdings</div>
-                <table class="dash-table">
-                    <tr><th>Asset</th><th>Amount</th><th>Value</th></tr>
-                    <tr><td>BTC</td><td>0.25</td><td>$8,750</td></tr>
-                    <tr><td>ETH</td><td>1.5</td><td>$3,245.67</td></tr>
-                    <tr><td>SOL</td><td>50</td><td>$490</td></tr>
-                </table>
-            </div>
+  </div>
+
+  <!-- SIGN UP MODAL -->
+  <div class="modal-overlay" id="signUpModal">
+    <div class="modal">
+      <button class="modal-close" id="closeSignUpModal">&times;</button>
+      <h2>Create your account</h2>
+      <form id="signUpForm" autocomplete="off">
+        <div>
+          <label for="signup-fullname">Full name</label>
+          <input type="text" id="signup-fullname" name="fullname" required placeholder="Enter your full name" />
+          <div id="fullnameError" class="error-message"></div>
         </div>
-        <div class="dash-card" style="margin-top:2rem;">
-            <div class="dash-label" style="font-size:1.2rem;margin-bottom:10px;">Recent Transactions</div>
-            <table class="dash-table">
-                <tr><th>Date</th><th>Description</th><th>Amount</th></tr>
-                <tr><td>Jul 23, 2025</td><td>Bought Bitcoin</td><td style="color:#e11d48;">-$2,500.00</td></tr>
-                <tr><td>Jul 21, 2025</td><td>Sold Ethereum</td><td style="color:#10b981;">+$1,850.00</td></tr>
-                <tr><td>Jul 19, 2025</td><td>Bought Solana</td><td style="color:#e11d48;">-$490.00</td></tr>
-            </table>
+        <div>
+          <label for="signup-email">Email address</label>
+          <input type="email" id="signup-email" name="email" required placeholder="your@email.com" />
+          <div id="signupEmailError" class="error-message"></div>
         </div>
+        <div>
+          <label for="signup-password">Password</label>
+          <input type="password" id="signup-password" name="password" required minlength="8" placeholder="Create a password (8+ characters)" />
+          <div id="signupPasswordError" class="error-message"></div>
+        </div>
+        <div>
+          <label for="signup-confirm-password">Confirm password</label>
+          <input type="password" id="signup-confirm-password" name="confirmPassword" required minlength="8" placeholder="Confirm your password" />
+          <div id="confirmPasswordError" class="error-message"></div>
+        </div>
+        <button type="submit" class="btn btn-primary" id="signUpBtn">Create account</button>
+        <div id="signUpSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
+        <div id="signUpFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
+        <a href="#" class="signup-link" id="openSignInModalFromSignUp">Already have an account? Sign in</a>
+      </form>
     </div>
-</div>
+  </div>
+
+  <!-- FORGOT PASSWORD MODAL -->
+  <div class="modal-overlay" id="forgotPasswordModal">
+    <div class="modal">
+      <button class="modal-close" id="closeForgotPasswordModal">&times;</button>
+      <h2>Reset Password</h2>
+      <form id="forgotPasswordForm" autocomplete="off">
+        <div>
+          <label for="forgot-email">Email address</label>
+          <input type="email" id="forgot-email" required placeholder="Your email" />
+          <div id="forgotEmailError" class="error-message"></div>
+        </div>
+        <div>
+          <label for="forgot-password">New password</label>
+          <input type="password" id="forgot-password" required minlength="8" placeholder="New password" />
+          <div id="forgotPasswordError" class="error-message"></div>
+        </div>
+        <div>
+          <label for="forgot-confirm-password">Confirm new password</label>
+          <input type="password" id="forgot-confirm-password" required minlength="8" placeholder="Confirm password" />
+          <div id="forgotConfirmPasswordError" class="error-message"></div>
+        </div>
+        <button type="submit" class="btn btn-primary" id="forgotPasswordBtn">Reset password</button>
+        <div id="forgotPasswordSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
+        <div id="forgotPasswordFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
+      </form>
+    </div>
+  </div>
 
 <script>
+// ----- Replace SHEETDB_API with your actual endpoint
+const SHEETDB_API = "https://sheetdb.io/api/v1/sbath1xpp3h1u";
     // --- NAV JS ---
     const mobileToggle = document.querySelector('.mobile-menu-toggle');
     const navLinks = document.querySelector('.nav-links');
@@ -728,7 +645,7 @@
         button.addEventListener('mouseenter', function() { this.style.transform = 'translateY(-2px)'; });
         button.addEventListener('mouseleave', function() { this.style.transform = 'translateY(0)'; });
     });
-
+                    
     // --- MODALS OPEN/CLOSE ---
     function openModal(modal) { modal.classList.add('active'); }
     function closeModal(modal) { modal.classList.remove('active'); }
@@ -762,116 +679,80 @@
         }
     });
 
-    // --- SIGN UP ---
-    function clearSignUpErrors() {
-        document.getElementById('fullnameError').textContent = "";
-        document.getElementById('signupEmailError').textContent = "";
-        document.getElementById('signupPasswordError').textContent = "";
-        document.getElementById('confirmPasswordError').textContent = "";
-        document.getElementById('signUpSuccess').style.display = "none";
-        document.getElementById('signUpFail').style.display = "none";
+// SIGN UP
+document.getElementById('signUpForm').onsubmit = function(e) {
+  e.preventDefault();
+  let fullname = document.getElementById('signup-fullname').value.trim();
+  let email = document.getElementById('signup-email').value.trim();
+  let password = document.getElementById('signup-password').value;
+  let confirmPassword = document.getElementById('signup-confirm-password').value;
+  let failMsg = document.getElementById('signUpFail');
+  let successMsg = document.getElementById('signUpSuccess');
+  failMsg.style.display = "none"; successMsg.style.display = "none";
+  if(password !== confirmPassword) {
+    document.getElementById('confirmPasswordError').textContent = "Passwords do not match"; return;
+  }
+  document.getElementById('signUpBtn').textContent = "Creating..."; document.getElementById('signUpBtn').disabled = true;
+  fetch(`${SHEETDB_API}/search?email=${encodeURIComponent(email)}`).then(res=>res.json()).then(data=>{
+    if(data.length > 0){
+      failMsg.textContent = "Account already exists."; failMsg.style.display = "block";
+      document.getElementById('signUpBtn').disabled = false;
+      document.getElementById('signUpBtn').textContent = "Create account"; return;
     }
-    const signUpForm = document.getElementById('signUpForm');
-    signUpForm.onsubmit = function(e) {
-        e.preventDefault(); clearSignUpErrors(); let hasError = false;
-        const fullname = document.getElementById('signup-fullname').value.trim();
-        const email = document.getElementById('signup-email').value.trim();
-        const password = document.getElementById('signup-password').value;
-        const confirmPassword = document.getElementById('signup-confirm-password').value;
-        if (!fullname) { document.getElementById('fullnameError').textContent = "Full name is required"; hasError = true; }
-        if (!email) { document.getElementById('signupEmailError').textContent = "Email is required"; hasError = true; }
-        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById('signupEmailError').textContent = "Enter a valid email address"; hasError = true; }
-        if (!password) { document.getElementById('signupPasswordError').textContent = "Password is required"; hasError = true; }
-        else if (password.length < 8) { document.getElementById('signupPasswordError').textContent = "Password must be at least 8 characters"; hasError = true; }
-        if (!confirmPassword) { document.getElementById('confirmPasswordError').textContent = "Please confirm your password"; hasError = true; }
-        else if (password !== confirmPassword) { document.getElementById('confirmPasswordError').textContent = "Passwords do not match"; hasError = true; }
-        if (!hasError) {
-            const btn = document.getElementById('signUpBtn');
-            btn.textContent = "Creating account..."; btn.disabled = true;
-            fetch("https://sheetdb.io/api/v1/sbath1xpp3h1u", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ data: [{ fullname, email, password }] })
-            })
-            .then(res => res.ok ? res.json() : Promise.reject(res))
-            .then(() => {
-                btn.textContent = "Create account";
-                btn.disabled = false;
-                document.getElementById('signUpSuccess').textContent = "Account created! You can now sign in.";
-                document.getElementById('signUpSuccess').style.display = "block";
-                setTimeout(() => { closeModal(document.getElementById('signUpModal')); signUpForm.reset(); clearSignUpErrors(); openModal(document.getElementById('signInModal')); }, 1800);
-            })
-            .catch(() => {
-                btn.textContent = "Create account";
-                btn.disabled = false;
-                document.getElementById('signUpFail').textContent = "Sign up failed. Try again.";
-                document.getElementById('signUpFail').style.display = "block";
-            });
-        }
-    };
-
-    // --- SIGN IN ---
-    function clearSignInErrors() {
-        document.getElementById('emailError').textContent = "";
-        document.getElementById('passwordError').textContent = "";
-        document.getElementById('signInSuccess').style.display = "none";
-        document.getElementById('signInFail').style.display = "none";
-    }
-    const signInForm = document.getElementById('signInForm');
-    signInForm.onsubmit = function(e) {
-        e.preventDefault(); clearSignInErrors(); let hasError = false;
-        const email = document.getElementById('signin-email').value.trim();
-        const password = document.getElementById('signin-password').value;
-        if (!email) { document.getElementById('emailError').textContent = "Email is required"; hasError = true; }
-        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById('emailError').textContent = "Enter a valid email address"; hasError = true; }
-        if (!password) { document.getElementById('passwordError').textContent = "Password is required"; hasError = true; }
-        else if (password.length < 8) { document.getElementById('passwordError').textContent = "Password must be at least 8 characters"; hasError = true; }
-        if (!hasError) {
-            const btn = document.getElementById('signInBtn');
-            btn.textContent = "Signing in..."; btn.disabled = true;
-            fetch(`https://sheetdb.io/api/v1/sbath1xpp3h1u/search?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`)
-                .then(res => res.json())
-                .then(data => {
-                    btn.textContent = "Sign in";
-                    btn.disabled = false;
-                    if (Array.isArray(data) && data.length > 0) {
-                        document.getElementById('signInSuccess').textContent = "Sign in successful! Redirecting...";
-                        document.getElementById('signInSuccess').style.display = "block";
-                        setTimeout(() => { 
-                            showDashboard(data[0]);
-                            closeModal(document.getElementById('signInModal'));
-                            signInForm.reset();
-                            clearSignInErrors();
-                        }, 1000);
-                    } else {
-                        document.getElementById('signInFail').textContent = "Incorrect email or password.";
-                        document.getElementById('signInFail').style.display = "block";
-                    }
-                })
-                .catch(() => {
-                    btn.textContent = "Sign in";
-                    btn.disabled = false;
-                    document.getElementById('signInFail').textContent = "Sign in failed. Try again.";
-                    document.getElementById('signInFail').style.display = "block";
-                });
-        }
-    };
-
-    function showDashboard(user) {
-        // Hide landing, show dashboard
-        document.getElementById('mainLanding').style.display = "none";
-        document.getElementById('dashboardWrap').style.display = "block";
-        // Fill user details
-        document.getElementById('dashUserName').textContent = user.fullname;
-        document.getElementById('dashUserEmail').textContent = user.email;
-    }
-
-    document.getElementById('logoutDashBtn').onclick = function() {
-        document.getElementById('dashboardWrap').style.display = "none";
-        document.getElementById('mainLanding').style.display = "block";
-        window.scrollTo(0,0);
-    };
-
+    fetch(SHEETDB_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        data: [{ fullname, email, password, balance: "0" }]
+      })
+    }).then(res=>res.json()).then(result=>{
+      if(result.created === 1){
+        successMsg.textContent = "Account created! Please sign in.";
+        successMsg.style.display = "block";
+        setTimeout(()=>{
+          document.getElementById('closeSignUpModal').click();
+          document.getElementById('signUpForm').reset();
+        }, 1600);
+      }else{ throw new Error("Signup failed"); }
+      document.getElementById('signUpBtn').disabled = false;
+      document.getElementById('signUpBtn').textContent = "Create account";
+    }).catch(()=>{
+      failMsg.textContent = "Sign up failed. Try again."; failMsg.style.display = "block";
+      document.getElementById('signUpBtn').disabled = false;
+      document.getElementById('signUpBtn').textContent = "Create account";
+    });
+  });
+};
+// SIGN IN
+document.getElementById('signInForm').onsubmit = function(e) {
+  e.preventDefault();
+  let email = document.getElementById('signin-email').value.trim();
+  let password = document.getElementById('signin-password').value;
+  let failMsg = document.getElementById('signInFail');
+  let successMsg = document.getElementById('signInSuccess');
+  failMsg.style.display = "none"; successMsg.style.display = "none";
+  document.getElementById('signInBtn').textContent = "Signing in..."; document.getElementById('signInBtn').disabled = true;
+  fetch(`${SHEETDB_API}/search?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`)
+    .then(res=>res.json())
+    .then(data=>{
+      document.getElementById('signInBtn').disabled = false;
+      document.getElementById('signInBtn').textContent = "Sign in";
+      if(Array.isArray(data) && data.length > 0){
+        localStorage.setItem("user_email", data[0].email);
+        localStorage.setItem("user_name", data[0].fullname);
+        successMsg.textContent = "Sign in successful! Redirecting...";
+        successMsg.style.display = "block";
+        setTimeout(()=>{ window.location.href = "dashboard.html"; }, 1100);
+      } else {
+        failMsg.textContent = "Incorrect email or password."; failMsg.style.display = "block";
+      }
+    })
+    .catch(()=>{
+      document.getElementById('signInBtn').disabled = false;
+      document.getElementById('signInBtn').textContent = "Sign in";
+      failMsg.textContent = "Sign in failed. Try again."; failMsg.style.display = "block";
+    });
+};
     // --- FORGOT PASSWORD (SHEETDB PATCH) ---
     function clearForgotPasswordErrors() {
         document.getElementById('forgotEmailError').textContent = "";
