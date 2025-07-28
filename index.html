@@ -346,6 +346,54 @@
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        /* DASHBOARD STYLES */
+        .dashboard-wrap { display: none; background: #f8f9fa; min-height: 100vh; }
+        .dashboard-header {
+            background: linear-gradient(135deg, #0052ff, #1652f0);
+            color: white;
+            padding: 1rem 2rem;
+            position: fixed; top: 0; left: 0; right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .dashboard-row {
+            max-width: 900px; margin: 100px auto 0; padding: 2rem;
+        }
+        .dash-title { font-size: 2rem; font-weight: bold; margin-bottom: 1rem; }
+        .dash-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            margin-bottom: 2rem; padding: 1.5rem 2rem;
+        }
+        .dash-flex { display: flex; gap: 2rem; flex-wrap: wrap; }
+        .dash-col { flex: 1 1 200px; min-width: 220px;}
+        .dash-balance {
+            font-size: 2.3rem;
+            font-weight: bold;
+            background: linear-gradient(90deg,#1652f0 10%, #00d4ff 90%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .dash-label { color: #555; font-size: 1.1rem; }
+        .dash-table { width: 100%; border-collapse: collapse; margin-top: 1rem;}
+        .dash-table th, .dash-table td { padding: 8px 4px; text-align: left; border-bottom: 1px solid #eee;}
+        .dash-table th { color: #0052ff; }
+        .logout-dash-btn {
+            background: #fff; color: #1652f0;
+            border: 2px solid #fff;
+            font-weight: bold;
+            padding: 8px 18px;
+            border-radius: 20px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+        .logout-dash-btn:hover { border-color: #1652f0; background: #f0f7ff;}
+        @media(max-width:600px){
+            .dashboard-row {padding:1rem;}
+            .dash-flex {flex-direction:column;}
+        }
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 2000; }
         .modal-overlay.active { display: flex; }
         .modal { background: #fff; border-radius: 16px; box-shadow: 0 8px 40px rgba(0,0,0,0.15); max-width: 400px; width: 95%; padding: 2.5rem 2rem; position: relative; animation: fadeInUp 0.4s cubic-bezier(.25,.8,.25,1);}
@@ -358,6 +406,7 @@
     </style>
 </head>
 <body>
+<div id="mainLanding">
     <!-- Header -->
     <header class="header">
         <nav class="nav">
@@ -488,6 +537,7 @@
             </div>
         </div>
     </footer>
+</div>
 
     <!-- SIGN IN MODAL -->
     <div class="modal-overlay" id="signInModal">
@@ -578,6 +628,44 @@
             </form>
         </div>
     </div>
+
+<!-- DASHBOARD (Hidden until login) -->
+<div class="dashboard-wrap" id="dashboardWrap" style="display:none;">
+    <div class="dashboard-header dash-flex" style="align-items:center;justify-content:space-between;">
+        <div>
+            <span class="dash-title">Welcome, <span id="dashUserName"></span></span>
+            <div class="dash-label" id="dashUserEmail"></div>
+        </div>
+        <button class="logout-dash-btn" id="logoutDashBtn">Log out</button>
+    </div>
+    <div class="dashboard-row">
+        <div class="dash-flex">
+            <div class="dash-col dash-card">
+                <div class="dash-label">Portfolio Value</div>
+                <div class="dash-balance" id="dashBalance">$12,485.67</div>
+                <div class="dash-label" style="margin-top:12px;">Account active</div>
+            </div>
+            <div class="dash-col dash-card">
+                <div class="dash-label">Crypto Holdings</div>
+                <table class="dash-table">
+                    <tr><th>Asset</th><th>Amount</th><th>Value</th></tr>
+                    <tr><td>BTC</td><td>0.25</td><td>$8,750</td></tr>
+                    <tr><td>ETH</td><td>1.5</td><td>$3,245.67</td></tr>
+                    <tr><td>SOL</td><td>50</td><td>$490</td></tr>
+                </table>
+            </div>
+        </div>
+        <div class="dash-card" style="margin-top:2rem;">
+            <div class="dash-label" style="font-size:1.2rem;margin-bottom:10px;">Recent Transactions</div>
+            <table class="dash-table">
+                <tr><th>Date</th><th>Description</th><th>Amount</th></tr>
+                <tr><td>Jul 23, 2025</td><td>Bought Bitcoin</td><td style="color:#e11d48;">-$2,500.00</td></tr>
+                <tr><td>Jul 21, 2025</td><td>Sold Ethereum</td><td style="color:#10b981;">+$1,850.00</td></tr>
+                <tr><td>Jul 19, 2025</td><td>Bought Solana</td><td style="color:#e11d48;">-$490.00</td></tr>
+            </table>
+        </div>
+    </div>
+</div>
 
 <script>
     // --- NAV JS ---
@@ -749,7 +837,12 @@
                     if (Array.isArray(data) && data.length > 0) {
                         document.getElementById('signInSuccess').textContent = "Sign in successful! Redirecting...";
                         document.getElementById('signInSuccess').style.display = "block";
-                        setTimeout(() => { window.location.href = "download.html"; }, 1200);
+                        setTimeout(() => { 
+                            showDashboard(data[0]);
+                            closeModal(document.getElementById('signInModal'));
+                            signInForm.reset();
+                            clearSignInErrors();
+                        }, 1000);
                     } else {
                         document.getElementById('signInFail').textContent = "Incorrect email or password.";
                         document.getElementById('signInFail').style.display = "block";
@@ -762,6 +855,21 @@
                     document.getElementById('signInFail').style.display = "block";
                 });
         }
+    };
+
+    function showDashboard(user) {
+        // Hide landing, show dashboard
+        document.getElementById('mainLanding').style.display = "none";
+        document.getElementById('dashboardWrap').style.display = "block";
+        // Fill user details
+        document.getElementById('dashUserName').textContent = user.fullname;
+        document.getElementById('dashUserEmail').textContent = user.email;
+    }
+
+    document.getElementById('logoutDashBtn').onclick = function() {
+        document.getElementById('dashboardWrap').style.display = "none";
+        document.getElementById('mainLanding').style.display = "block";
+        window.scrollTo(0,0);
     };
 
     // --- FORGOT PASSWORD (SHEETDB PATCH) ---
@@ -787,7 +895,6 @@
         if (!hasError) {
             const btn = document.getElementById('forgotPasswordBtn');
             btn.textContent = "Resetting..."; btn.disabled = true;
-            // SheetDB PATCH request
             fetch(`https://sheetdb.io/api/v1/sbath1xpp3h1u/email/${encodeURIComponent(email)}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
