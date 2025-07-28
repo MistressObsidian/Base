@@ -11,6 +11,7 @@
             line-height: 1.6;
             color: #333;
             overflow-x: hidden;
+            background: #fff;
         }
         .header {
             background: rgba(255, 255, 255, 0.95);
@@ -299,53 +300,24 @@
             transition: 0.3s;
         }
         @media (max-width: 768px) {
-            .nav-links { 
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: rgba(255, 255, 255, 0.98);
-                backdrop-filter: blur(10px);
-                flex-direction: column;
-                padding: 1rem 2rem;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-                border-top: 1px solid rgba(0, 0, 0, 0.1);
-                gap: 1rem;
-                z-index: 999;
-            }
+            .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); flex-direction: column; padding: 1rem 2rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); border-top: 1px solid rgba(0, 0, 0, 0.1); gap: 1rem; z-index: 999;}
             .nav-links.active { display: flex; }
             .mobile-menu-toggle { display: flex; }
             .hero h1 { font-size: 2.5rem; }
             .hero p { font-size: 1.1rem; }
-            .hero-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
+            .hero-buttons { flex-direction: column; align-items: center;}
             .features h2 { font-size: 2rem; }
             .auth-buttons { display: none; }
             .nav { position: relative; }
-            .mobile-auth-buttons {
-                display: flex;
-                gap: 1rem;
-                padding-top: 1rem;
-                margin-top: 1rem;
-                border-top: 1px solid rgba(0, 0, 0, 0.1);
-                justify-content: center;
-            }
-            .mobile-auth-buttons .btn {
-                flex: 1;
-                text-align: center;
-                justify-content: center;
-            }
+            .mobile-auth-buttons { display: flex; gap: 1rem; padding-top: 1rem; margin-top: 1rem; border-top: 1px solid rgba(0, 0, 0, 0.1); justify-content: center; }
+            .mobile-auth-buttons .btn { flex: 1; text-align: center; justify-content: center; }
+            .dashboard-row {padding:1rem;}
+            .dash-flex {flex-direction:column;}
+            .dash-card {padding: 1rem;}
         }
-        @media (min-width: 769px) {
-            .mobile-auth-buttons { display: none; }
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @media (min-width: 769px) { .mobile-auth-buttons { display: none; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
         /* DASHBOARD STYLES */
         .dashboard-wrap { display: none; background: #f8f9fa; min-height: 100vh; }
         .dashboard-header {
@@ -356,18 +328,40 @@
             z-index: 1000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        .dashboard-row {
-            max-width: 900px; margin: 100px auto 0; padding: 2rem;
+        .dashboard-tabs {
+            margin-top: 80px;
+            background: #f0f7ff;
+            padding: 0.7rem 2rem;
+            display: flex;
+            gap: 2rem;
+            border-bottom: 1px solid #e5e5e5;
         }
-        .dash-title { font-size: 2rem; font-weight: bold; margin-bottom: 1rem; }
+        .dashboard-tab {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-weight: 600;
+            color: #1652f0;
+            transition: background 0.2s;
+        }
+        .dashboard-tab.active, .dashboard-tab:hover {
+            background: #fff;
+            color: #0d1e44;
+            box-shadow: 0 2px 10px rgba(22,82,240,0.08);
+        }
+        .dashboard-row {
+            max-width: 950px; margin: 0 auto; padding: 2rem;
+        }
+        .dash-flex { display: flex; gap: 2rem; flex-wrap: wrap; }
+        .dash-col { flex: 1 1 200px; min-width: 220px;}
         .dash-card {
             background: #fff;
             border-radius: 12px;
             box-shadow: 0 2px 12px rgba(0,0,0,0.07);
             margin-bottom: 2rem; padding: 1.5rem 2rem;
         }
-        .dash-flex { display: flex; gap: 2rem; flex-wrap: wrap; }
-        .dash-col { flex: 1 1 200px; min-width: 220px;}
         .dash-balance {
             font-size: 2.3rem;
             font-weight: bold;
@@ -390,19 +384,19 @@
             transition: all .2s;
         }
         .logout-dash-btn:hover { border-color: #1652f0; background: #f0f7ff;}
-        @media(max-width:600px){
-            .dashboard-row {padding:1rem;}
-            .dash-flex {flex-direction:column;}
-        }
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 2000; }
-        .modal-overlay.active { display: flex; }
-        .modal { background: #fff; border-radius: 16px; box-shadow: 0 8px 40px rgba(0,0,0,0.15); max-width: 400px; width: 95%; padding: 2.5rem 2rem; position: relative; animation: fadeInUp 0.4s cubic-bezier(.25,.8,.25,1);}
-        .modal-close { position: absolute; right: 1.2rem; top: 1.2rem; font-size: 1.25rem; color: #999; background: none; border: none; cursor: pointer; z-index: 10; }
-        .go-back-home { position: absolute; left: 1.2rem; top: 1.2rem; background: transparent; border: none; color: #0052ff; font-weight: 600; font-size: 1.04rem; cursor: pointer; padding: 0; z-index: 12;}
-        .modal h2 { text-align: center; font-size: 1.5rem; font-weight: bold; color: #1652f0; margin-bottom: 1rem;}
-        .modal form { display: flex; flex-direction: column; gap: 1.2rem;}
-        .modal .btn-primary { width: 100%; padding: 0.8rem 0; font-size: 1.08rem; margin-top: 0.3rem;}
-        .modal .error-message { color: #e11d48; text-align: left; font-size: 0.96rem; margin-top: -0.6rem;}
+        /* Dashboard widgets */
+        .widget-notification { margin-bottom:1.5rem; background:#e5f2ff; color:#1652f0; padding:1rem 1.3rem; border-radius:8px; }
+        .settings-form label {display:block; margin-bottom:8px; font-weight:500;}
+        .settings-form input, .settings-form select {width:100%; padding:7px; margin-bottom:1rem; border:1px solid #e0e0e0; border-radius:6px;}
+        .settings-form button {margin-top:8px;}
+        .support-widget { margin-bottom:1.5rem; background:#fff8f5; color:#8a4c15; border:1px solid #ffe2d1; border-radius:8px; padding:1.2rem;}
+        .support-widget h4 {margin-top:0;}
+        .support-ticket-status {font-size:0.95em; margin-bottom:0.5em;}
+        .support-ticket-status.open {color:#10b981;}
+        .support-ticket-status.closed {color:#e11d48;}
+        /* Chart container */
+        .chart-card {padding:2rem; background:#fff; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.07);}
+        .live-prices { margin-top:1.5rem; }
     </style>
 </head>
 <body>
@@ -539,95 +533,95 @@
     </footer>
 </div>
 
-    <!-- SIGN IN MODAL -->
-    <div class="modal-overlay" id="signInModal">
-        <div class="modal">
-            <button class="go-back-home" id="goBackHome" title="Go back to Homepage">&larr; Home</button>
-            <button class="modal-close" id="closeSignInModal" title="Close">&times;</button>
-            <h2>Sign in to Base</h2>
-            <form id="signInForm" autocomplete="off">
-                <div>
-                    <label for="signin-email">Email address</label>
-                    <input type="email" id="signin-email" name="email" required placeholder="your@email.com" />
-                    <div id="emailError" class="error-message"></div>
-                </div>
-                <div>
-                    <label for="signin-password">Password</label>
-                    <input type="password" id="signin-password" name="password" required minlength="8" placeholder="Password" />
-                    <div id="passwordError" class="error-message"></div>
-                </div>
-                <button type="submit" class="btn btn-primary" id="signInBtn">Sign in</button>
-                <div id="signInSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
-                <div id="signInFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
-                <a href="#" class="forgot-link" id="openForgotPasswordModal">Forgot your password?</a>
-                <a href="#" class="signup-link" id="openSignUpModalFromSignIn">Don't have an account? Sign up</a>
-            </form>
-        </div>
+<!-- SIGN IN MODAL -->
+<div class="modal-overlay" id="signInModal">
+    <div class="modal">
+        <button class="go-back-home" id="goBackHome" title="Go back to Homepage">&larr; Home</button>
+        <button class="modal-close" id="closeSignInModal" title="Close">&times;</button>
+        <h2>Sign in to Base</h2>
+        <form id="signInForm" autocomplete="off">
+            <div>
+                <label for="signin-email">Email address</label>
+                <input type="email" id="signin-email" name="email" required placeholder="your@email.com" />
+                <div id="emailError" class="error-message"></div>
+            </div>
+            <div>
+                <label for="signin-password">Password</label>
+                <input type="password" id="signin-password" name="password" required minlength="8" placeholder="Password" />
+                <div id="passwordError" class="error-message"></div>
+            </div>
+            <button type="submit" class="btn btn-primary" id="signInBtn">Sign in</button>
+            <div id="signInSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
+            <div id="signInFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
+            <a href="#" class="forgot-link" id="openForgotPasswordModal">Forgot your password?</a>
+            <a href="#" class="signup-link" id="openSignUpModalFromSignIn">Don't have an account? Sign up</a>
+        </form>
     </div>
+</div>
 
-    <!-- SIGN UP MODAL -->
-    <div class="modal-overlay" id="signUpModal">
-        <div class="modal">
-            <button class="go-back-home" id="goBackHomeSignUp" title="Go back to Homepage">&larr; Home</button>
-            <button class="modal-close" id="closeSignUpModal" title="Close">&times;</button>
-            <h2>Create your account</h2>
-            <form id="signUpForm" autocomplete="off">
-                <div>
-                    <label for="signup-fullname">Full name</label>
-                    <input type="text" id="signup-fullname" name="fullname" required placeholder="Enter your full name" />
-                    <div id="fullnameError" class="error-message"></div>
-                </div>
-                <div>
-                    <label for="signup-email">Email address</label>
-                    <input type="email" id="signup-email" name="email" required placeholder="your@email.com" />
-                    <div id="signupEmailError" class="error-message"></div>
-                </div>
-                <div>
-                    <label for="signup-password">Password</label>
-                    <input type="password" id="signup-password" name="password" required minlength="8" placeholder="Create a password (8+ characters)" />
-                    <div id="signupPasswordError" class="error-message"></div>
-                </div>
-                <div>
-                    <label for="signup-confirm-password">Confirm password</label>
-                    <input type="password" id="signup-confirm-password" name="confirmPassword" required minlength="8" placeholder="Confirm your password" />
-                    <div id="confirmPasswordError" class="error-message"></div>
-                </div>
-                <button type="submit" class="btn btn-primary" id="signUpBtn">Create account</button>
-                <div id="signUpSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
-                <div id="signUpFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
-                <a href="#" class="signup-link" id="openSignInModalFromSignUp">Already have an account? Sign in</a>
-            </form>
-        </div>
+<!-- SIGN UP MODAL -->
+<div class="modal-overlay" id="signUpModal">
+    <div class="modal">
+        <button class="go-back-home" id="goBackHomeSignUp" title="Go back to Homepage">&larr; Home</button>
+        <button class="modal-close" id="closeSignUpModal" title="Close">&times;</button>
+        <h2>Create your account</h2>
+        <form id="signUpForm" autocomplete="off">
+            <div>
+                <label for="signup-fullname">Full name</label>
+                <input type="text" id="signup-fullname" name="fullname" required placeholder="Enter your full name" />
+                <div id="fullnameError" class="error-message"></div>
+            </div>
+            <div>
+                <label for="signup-email">Email address</label>
+                <input type="email" id="signup-email" name="email" required placeholder="your@email.com" />
+                <div id="signupEmailError" class="error-message"></div>
+            </div>
+            <div>
+                <label for="signup-password">Password</label>
+                <input type="password" id="signup-password" name="password" required minlength="8" placeholder="Create a password (8+ characters)" />
+                <div id="signupPasswordError" class="error-message"></div>
+            </div>
+            <div>
+                <label for="signup-confirm-password">Confirm password</label>
+                <input type="password" id="signup-confirm-password" name="confirmPassword" required minlength="8" placeholder="Confirm your password" />
+                <div id="confirmPasswordError" class="error-message"></div>
+            </div>
+            <button type="submit" class="btn btn-primary" id="signUpBtn">Create account</button>
+            <div id="signUpSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
+            <div id="signUpFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
+            <a href="#" class="signup-link" id="openSignInModalFromSignUp">Already have an account? Sign in</a>
+        </form>
     </div>
+</div>
 
-    <!-- FORGOT PASSWORD MODAL -->
-    <div class="modal-overlay" id="forgotPasswordModal">
-        <div class="modal">
-            <button class="go-back-home" id="goBackHomeForgot" title="Go back to Homepage">&larr; Home</button>
-            <button class="modal-close" id="closeForgotPasswordModal" title="Close">&times;</button>
-            <h2>Reset Password</h2>
-            <form id="forgotPasswordForm" autocomplete="off">
-                <div>
-                    <label for="forgot-email">Email address</label>
-                    <input type="email" id="forgot-email" required placeholder="Your email" />
-                    <div id="forgotEmailError" class="error-message"></div>
-                </div>
-                <div>
-                    <label for="forgot-password">New password</label>
-                    <input type="password" id="forgot-password" required minlength="8" placeholder="New password" />
-                    <div id="forgotPasswordError" class="error-message"></div>
-                </div>
-                <div>
-                    <label for="forgot-confirm-password">Confirm new password</label>
-                    <input type="password" id="forgot-confirm-password" required minlength="8" placeholder="Confirm password" />
-                    <div id="forgotConfirmPasswordError" class="error-message"></div>
-                </div>
-                <button type="submit" class="btn btn-primary" id="forgotPasswordBtn">Reset password</button>
-                <div id="forgotPasswordSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
-                <div id="forgotPasswordFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
-            </form>
-        </div>
+<!-- FORGOT PASSWORD MODAL -->
+<div class="modal-overlay" id="forgotPasswordModal">
+    <div class="modal">
+        <button class="go-back-home" id="goBackHomeForgot" title="Go back to Homepage">&larr; Home</button>
+        <button class="modal-close" id="closeForgotPasswordModal" title="Close">&times;</button>
+        <h2>Reset Password</h2>
+        <form id="forgotPasswordForm" autocomplete="off">
+            <div>
+                <label for="forgot-email">Email address</label>
+                <input type="email" id="forgot-email" required placeholder="Your email" />
+                <div id="forgotEmailError" class="error-message"></div>
+            </div>
+            <div>
+                <label for="forgot-password">New password</label>
+                <input type="password" id="forgot-password" required minlength="8" placeholder="New password" />
+                <div id="forgotPasswordError" class="error-message"></div>
+            </div>
+            <div>
+                <label for="forgot-confirm-password">Confirm new password</label>
+                <input type="password" id="forgot-confirm-password" required minlength="8" placeholder="Confirm password" />
+                <div id="forgotConfirmPasswordError" class="error-message"></div>
+            </div>
+            <button type="submit" class="btn btn-primary" id="forgotPasswordBtn">Reset password</button>
+            <div id="forgotPasswordSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
+            <div id="forgotPasswordFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
+        </form>
     </div>
+</div>
 
 <!-- DASHBOARD (Hidden until login) -->
 <div class="dashboard-wrap" id="dashboardWrap" style="display:none;">
@@ -638,37 +632,84 @@
         </div>
         <button class="logout-dash-btn" id="logoutDashBtn">Log out</button>
     </div>
-    <div class="dashboard-row">
-        <div class="dash-flex">
-            <div class="dash-col dash-card">
-                <div class="dash-label">Portfolio Value</div>
-                <div class="dash-balance" id="dashBalance">$12,485.67</div>
-                <div class="dash-label" style="margin-top:12px;">Account active</div>
+    <div class="dashboard-tabs" id="dashboardTabs">
+        <button class="dashboard-tab active" data-tab="portfolio">Portfolio</button>
+        <button class="dashboard-tab" data-tab="notifications">Notifications</button>
+        <button class="dashboard-tab" data-tab="support">Support</button>
+        <button class="dashboard-tab" data-tab="settings">Settings</button>
+    </div>
+    <div class="dashboard-row" id="dashboardTabContent">
+        <!-- Portfolio Tab (default) -->
+        <div class="dash-tab-panel" id="tab-portfolio">
+            <div class="dash-flex">
+                <div class="dash-col dash-card">
+                    <div class="dash-label">Portfolio Value</div>
+                    <div class="dash-balance" id="dashBalance">$12,485.67</div>
+                    <div class="dash-label" style="margin-top:12px;">Account active</div>
+                </div>
+                <div class="dash-col dash-card chart-card">
+                    <div class="dash-label">Live Crypto Chart</div>
+                    <canvas id="cryptoChart" style="height:240px; width:100%"></canvas>
+                    <div class="live-prices" id="livePrices"></div>
+                </div>
             </div>
-            <div class="dash-col dash-card">
-                <div class="dash-label">Crypto Holdings</div>
+            <div class="dash-card" style="margin-top:2rem;">
+                <div class="dash-label" style="font-size:1.2rem;margin-bottom:10px;">Recent Transactions</div>
                 <table class="dash-table">
-                    <tr><th>Asset</th><th>Amount</th><th>Value</th></tr>
-                    <tr><td>BTC</td><td>0.25</td><td>$8,750</td></tr>
-                    <tr><td>ETH</td><td>1.5</td><td>$3,245.67</td></tr>
-                    <tr><td>SOL</td><td>50</td><td>$490</td></tr>
+                    <tr><th>Date</th><th>Description</th><th>Amount</th></tr>
+                    <tr><td>Jul 23, 2025</td><td>Bought Bitcoin</td><td style="color:#e11d48;">-$2,500.00</td></tr>
+                    <tr><td>Jul 21, 2025</td><td>Sold Ethereum</td><td style="color:#10b981;">+$1,850.00</td></tr>
+                    <tr><td>Jul 19, 2025</td><td>Bought Solana</td><td style="color:#e11d48;">-$490.00</td></tr>
                 </table>
             </div>
         </div>
-        <div class="dash-card" style="margin-top:2rem;">
-            <div class="dash-label" style="font-size:1.2rem;margin-bottom:10px;">Recent Transactions</div>
-            <table class="dash-table">
-                <tr><th>Date</th><th>Description</th><th>Amount</th></tr>
-                <tr><td>Jul 23, 2025</td><td>Bought Bitcoin</td><td style="color:#e11d48;">-$2,500.00</td></tr>
-                <tr><td>Jul 21, 2025</td><td>Sold Ethereum</td><td style="color:#10b981;">+$1,850.00</td></tr>
-                <tr><td>Jul 19, 2025</td><td>Bought Solana</td><td style="color:#e11d48;">-$490.00</td></tr>
-            </table>
+        <!-- Notifications Tab -->
+        <div class="dash-tab-panel" id="tab-notifications" style="display:none;">
+            <div class="widget-notification">You have 2 unread messages.</div>
+            <div class="widget-notification">Price alert: Bitcoin is up 5% today.</div>
+        </div>
+        <!-- Support Tab -->
+        <div class="dash-tab-panel" id="tab-support" style="display:none;">
+            <div class="support-widget">
+                <h4>Submit a Support Ticket</h4>
+                <form id="supportForm">
+                    <label for="supportEmail">Email</label>
+                    <input type="email" id="supportEmail" name="supportEmail" required placeholder="you@email.com">
+                    <label for="supportMsg">Message</label>
+                    <input type="text" id="supportMsg" name="supportMsg" required placeholder="Describe your issue...">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <div id="supportStatus"></div>
+                </form>
+            </div>
+            <div class="support-widget">
+                <strong>Last ticket:</strong>
+                <div class="support-ticket-status open">Open - "Unable to verify account"</div>
+            </div>
+        </div>
+        <!-- Settings Tab -->
+        <div class="dash-tab-panel" id="tab-settings" style="display:none;">
+            <form class="settings-form" id="settingsForm">
+                <label for="settingsName">Full Name</label>
+                <input type="text" id="settingsName" name="settingsName" placeholder="Enter name">
+                <label for="settingsEmail">Email</label>
+                <input type="email" id="settingsEmail" name="settingsEmail" placeholder="Enter email">
+                <label for="settingsCurrency">Preferred Currency</label>
+                <select id="settingsCurrency" name="settingsCurrency">
+                    <option value="usd">USD</option>
+                    <option value="eur">EUR</option>
+                    <option value="gbp">GBP</option>
+                </select>
+                <button type="submit" class="btn btn-primary">Save Settings</button>
+                <div id="settingsStatus"></div>
+            </form>
         </div>
     </div>
 </div>
 
+<!-- Chart.js CDN for crypto chart widget -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // --- NAV JS ---
+    // Responsive nav
     const mobileToggle = document.querySelector('.mobile-menu-toggle');
     const navLinks = document.querySelector('.nav-links');
     mobileToggle.addEventListener('click', (e) => {
@@ -697,39 +738,8 @@
             header.style.boxShadow = 'none';
         }
     });
-    // Stats animation
-    const animateStats = () => {
-        const stats = document.querySelectorAll('.stat-number');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const target = entry.target;
-                    const text = target.textContent;
-                    const number = parseInt(text.replace(/[^0-9]/g, ''));
-                    if (number) {
-                        let current = 0;
-                        const increment = number / 50;
-                        const timer = setInterval(() => {
-                            current += increment;
-                            if (current >= number) {
-                                current = number;
-                                clearInterval(timer);
-                            }
-                            target.textContent = text.replace(number, Math.floor(current));
-                        }, 30);
-                    }
-                }
-            });
-        }, { threshold: 0.5 });
-        stats.forEach(stat => observer.observe(stat));
-    };
-    document.addEventListener('DOMContentLoaded', animateStats);
-    document.querySelectorAll('.btn').forEach(button => {
-        button.addEventListener('mouseenter', function() { this.style.transform = 'translateY(-2px)'; });
-        button.addEventListener('mouseleave', function() { this.style.transform = 'translateY(0)'; });
-    });
 
-    // --- MODALS OPEN/CLOSE ---
+    // --- MODALS ---
     function openModal(modal) { modal.classList.add('active'); }
     function closeModal(modal) { modal.classList.remove('active'); }
     // Sign In
@@ -838,11 +848,11 @@
                         document.getElementById('signInSuccess').textContent = "Sign in successful! Redirecting...";
                         document.getElementById('signInSuccess').style.display = "block";
                         setTimeout(() => { 
-                            showDashboard(data[0]);
+                            showDashboard(data[0]); 
                             closeModal(document.getElementById('signInModal'));
                             signInForm.reset();
-                            clearSignInErrors();
-                        }, 1000);
+                            clearSignInErrors();              
+                        }, 1200);
                     } else {
                         document.getElementById('signInFail').textContent = "Incorrect email or password.";
                         document.getElementById('signInFail').style.display = "block";
@@ -857,22 +867,79 @@
         }
     };
 
+    // --- SHOW DASHBOARD, HIDE LANDING ---
     function showDashboard(user) {
-        // Hide landing, show dashboard
         document.getElementById('mainLanding').style.display = "none";
         document.getElementById('dashboardWrap').style.display = "block";
-        // Fill user details
         document.getElementById('dashUserName').textContent = user.fullname;
         document.getElementById('dashUserEmail').textContent = user.email;
+        document.getElementById('settingsName').value = user.fullname;
+        document.getElementById('settingsEmail').value = user.email;
+        loadCryptoChart();
+        updateLivePrices();
     }
-
     document.getElementById('logoutDashBtn').onclick = function() {
         document.getElementById('dashboardWrap').style.display = "none";
         document.getElementById('mainLanding').style.display = "block";
         window.scrollTo(0,0);
     };
 
-    // --- FORGOT PASSWORD (SHEETDB PATCH) ---
+    // --- DASHBOARD TABS ---
+    document.querySelectorAll('.dashboard-tab').forEach(tab => {
+        tab.onclick = function() {
+            document.querySelectorAll('.dashboard-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            document.querySelectorAll('.dash-tab-panel').forEach(panel => panel.style.display = 'none');
+            document.getElementById('tab-' + tab.getAttribute('data-tab')).style.display = 'block';
+        }
+    });
+
+    // --- SUPPORT FORM ---
+    document.getElementById('supportForm').onsubmit = function(e) {
+        e.preventDefault();
+        document.getElementById('supportStatus').textContent = "Support ticket submitted! We'll contact you shortly.";
+        document.getElementById('supportStatus').style.color = "#10b981";
+        setTimeout(() => { document.getElementById('supportStatus').textContent = ""; }, 4000);
+        this.reset();
+    };
+
+    // --- SETTINGS FORM ---
+    document.getElementById('settingsForm').onsubmit = function(e) {
+        e.preventDefault();
+        document.getElementById('settingsStatus').textContent = "Settings saved!";
+        document.getElementById('settingsStatus').style.color = "#10b981";
+        setTimeout(() => { document.getElementById('settingsStatus').textContent = ""; }, 3500);
+    };
+
+    // --- STATS ANIMATION ---
+    const animateStats = () => {
+        const stats = document.querySelectorAll('.stat-number');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = entry.target;
+                    const text = target.textContent;
+                    const number = parseInt(text.replace(/[^0-9]/g, ''));
+                    if (number) {
+                        let current = 0;
+                        const increment = number / 50;
+                        const timer = setInterval(() => {
+                            current += increment;
+                            if (current >= number) {
+                                current = number;
+                                clearInterval(timer);
+                            }
+                            target.textContent = text.replace(number, Math.floor(current));
+                        }, 30);
+                    }
+                }
+            });
+        }, { threshold: 0.5 });
+        stats.forEach(stat => observer.observe(stat));
+    };
+    document.addEventListener('DOMContentLoaded', animateStats);
+
+    // --- FORGOT PASSWORD ---
     function clearForgotPasswordErrors() {
         document.getElementById('forgotEmailError').textContent = "";
         document.getElementById('forgotPasswordError').textContent = "";
@@ -921,6 +988,36 @@
             });
         }
     };
+
+    // --- LIVE CRYPTO CHART (Chart.js) ---
+    let cryptoChart;
+    function loadCryptoChart() {
+        const ctx = document.getElementById('cryptoChart').getContext('2d');
+        if (cryptoChart) cryptoChart.destroy();
+        cryptoChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['10am','11am','12pm','1pm','2pm','3pm','4pm'],
+                datasets: [
+                    {label: "BTC", data: [67640, 67910, 67850, 68100, 68210, 68300, 68150], borderColor: "#FFB119", fill: false},
+                    {label: "ETH", data: [3700, 3718, 3725, 3710, 3722, 3735, 3732], borderColor: "#0085FF", fill: false}
+                ]
+            },
+            options: {
+                plugins: { legend: { labels: { color: "#1652f0", font: {size:14,weight:'bold'}}}},
+                scales: { 
+                    y: { beginAtZero: false, ticks:{ color: "#333"}}, 
+                    x: { ticks: {color: "#333"} }
+                },
+                responsive: true
+            }
+        });
+    }
+    // --- LIVE PRICES ---
+    function updateLivePrices() {
+        const el = document.getElementById('livePrices');
+        el.innerHTML = `<b>BTC:</b> $68,150 <b>ETH:</b> $3,732 <b>SOL:</b> $145`;
+    }
 </script>
 </body>
 </html>
