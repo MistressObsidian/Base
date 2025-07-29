@@ -581,7 +581,7 @@
 <script>
 const signInForm = document.getElementById('signInForm');
 const signUpForm = document.getElementById('signUpForm');
-// SHEETDB_API
+const forgotPasswordForm = document.getElementById('forgotPasswordForm');
 const SHEETDB_API = "https://sheetdb.io/api/v1/sbath1xpp3h1u";
 
 // -- NAVIGATION --
@@ -716,7 +716,6 @@ document.getElementById('signInForm').onsubmit = function(e) {
     });
 };
 // FORGOT PASSWORD
-const forgotPasswordForm = document.getElementById('forgotPasswordForm');
 forgotPasswordForm.onsubmit = function(e) {
     e.preventDefault();
     document.getElementById('forgotEmailError').textContent = "";
