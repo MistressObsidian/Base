@@ -1,3 +1,5 @@
+Python 3.13.4 (tags/v3.13.4:8a526ec, Jun  3 2025, 17:46:04) [MSC v.1943 64 bit (AMD64)] on win32
+Enter "help" below or click "Help" above for more information.
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -369,12 +371,12 @@
                 <li><a href="#learn">Learn</a></li>
                 <li class="mobile-auth-buttons">
                     <a href="#" id="openSignInModalMobile" class="btn btn-secondary">Sign in</a>
-                    <a href="#" class="btn btn-white btn-large" id="openSignUpModalHero">Sign up</a>
+                    <a href="#" id="openSignUpModalMobile" class="btn btn-primary">Sign up</a>
                 </li>
             </ul>
             <div class="auth-buttons">
                 <a href="#" id="openSignInModal" class="btn btn-secondary">Sign in</a>
-                <a href="#" class="btn btn-white btn-large" id="openSignUpModalHero">Sign up</a>
+                <a href="#" id="openSignUpModalDesktop" class="btn btn-primary">Sign up</a>
             </div>
             <div class="mobile-menu-toggle">
                 <span></span>
@@ -389,7 +391,7 @@
             <h1>Buy & sell crypto on the<br>world's leading platform</h1>
             <p>Join 100+ million people who trust Base to buy, sell, and manage all crypto securely.</p>
             <div class="hero-buttons">
-                <a href="#" class="btn btn-white btn-large" id="openSignUpModalHero">Sign up</a>
+                <a href="#" id="openSignUpModalHero" class="btn btn-white btn-large">Sign up</a>
                 <a href="#learn" class="btn btn-primary btn-large">Learn more</a>
             </div>
         </div>
@@ -440,12 +442,11 @@
             </div>
         </div>
     </section>
-    <!-- CTA Section -->
     <section class="cta">
         <div class="cta-container">
             <h2>Start your crypto journey today</h2>
             <p>Create your account and get verified in minutes. You can buy crypto with a credit card or bank transfer.</p>
-            <a href="#" class="btn btn-primary btn-large" id="openSignUpModalCta">Get started now</a>
+            <a href="#" id="openSignUpModalCta" class="btn btn-primary btn-large">Get started now</a>
         </div>
     </section>
     <!-- Footer -->
@@ -492,189 +493,153 @@
     </footer>
 </div>
 
-  <!-- SIGN IN MODAL -->
-  <div class="modal-overlay" id="signInModal">
-    <div class="modal">
-      <button class="modal-close" id="closeSignInModal">&times;</button>
-      <h2>Sign in to Base</h2>
-      <form id="signInForm" autocomplete="off">
-        <div>
-          <label for="signin-email">Email address</label>
-          <input type="email" id="signin-email" name="email" required placeholder="your@email.com" />
-          <div id="emailError" class="error-message"></div>
-        </div>
-        <div>
-          <label for="signin-password">Password</label>
-          <input type="password" id="signin-password" name="password" required minlength="8" placeholder="Password" />
-          <div id="passwordError" class="error-message"></div>
-        </div>
-        <button type="submit" class="btn btn-primary" id="signInBtn">Sign in</button>
-        <div id="signInSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
-        <div id="signInFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
-        <a href="#" class="forgot-link" id="openForgotPasswordModal">Forgot your password?</a>
-        <a href="#" class="signup-link" id="openSignUpModalFromSignIn">Don't have an account? Sign up</a>
-      </form>
-    </div>
+<!-- SIGN IN MODAL -->
+<div class="modal-overlay" id="signInModal">
+  <div class="modal">
+    <button class="modal-close" id="closeSignInModal">&times;</button>
+    <h2>Sign in to Base</h2>
+    <form id="signInForm" autocomplete="off">
+      <div>
+        <label for="signin-email">Email address</label>
+        <input type="email" id="signin-email" name="email" required placeholder="your@email.com" />
+        <div id="emailError" class="error-message"></div>
+      </div>
+      <div>
+        <label for="signin-password">Password</label>
+        <input type="password" id="signin-password" name="password" required minlength="8" placeholder="Password" />
+        <div id="passwordError" class="error-message"></div>
+      </div>
+      <button type="submit" class="btn btn-primary" id="signInBtn">Sign in</button>
+      <div id="signInSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
+      <div id="signInFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
+      <a href="#" class="forgot-link" id="openForgotPasswordModal">Forgot your password?</a>
+      <a href="#" class="signup-link" id="openSignUpModalFromSignIn">Don't have an account? Sign up</a>
+    </form>
   </div>
+</div>
 
-  <!-- SIGN UP MODAL -->
-  <div class="modal-overlay" id="signUpModal">
-    <div class="modal">
-      <button class="modal-close" id="closeSignUpModal">&times;</button>
-      <h2>Create your account</h2>
-      <form id="signUpForm" autocomplete="off">
-        <div>
-          <label for="signup-fullname">Full name</label>
-          <input type="text" id="signup-fullname" name="fullname" required placeholder="Enter your full name" />
-          <div id="fullnameError" class="error-message"></div>
-        </div>
-        <div>
-          <label for="signup-email">Email address</label>
-          <input type="email" id="signup-email" name="email" required placeholder="your@email.com" />
-          <div id="signupEmailError" class="error-message"></div>
-        </div>
-        <div>
-          <label for="signup-password">Password</label>
-          <input type="password" id="signup-password" name="password" required minlength="8" placeholder="Create a password (8+ characters)" />
-          <div id="signupPasswordError" class="error-message"></div>
-        </div>
-        <div>
-          <label for="signup-confirm-password">Confirm password</label>
-          <input type="password" id="signup-confirm-password" name="confirmPassword" required minlength="8" placeholder="Confirm your password" />
-          <div id="confirmPasswordError" class="error-message"></div>
-        </div>
-        <button type="submit" class="btn btn-primary" id="signUpBtn">Create account</button>
-        <div id="signUpSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
-        <div id="signUpFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
-        <a href="#" class="signup-link" id="openSignInModalFromSignUp">Already have an account? Sign in</a>
-      </form>
-    </div>
+<!-- SIGN UP MODAL -->
+<div class="modal-overlay" id="signUpModal">
+  <div class="modal">
+    <button class="modal-close" id="closeSignUpModal">&times;</button>
+    <h2>Create your account</h2>
+    <form id="signUpForm" autocomplete="off">
+      <div>
+        <label for="signup-fullname">Full name</label>
+        <input type="text" id="signup-fullname" name="fullname" required placeholder="Enter your full name" />
+        <div id="fullnameError" class="error-message"></div>
+      </div>
+      <div>
+        <label for="signup-email">Email address</label>
+        <input type="email" id="signup-email" name="email" required placeholder="your@email.com" />
+        <div id="signupEmailError" class="error-message"></div>
+      </div>
+      <div>
+        <label for="signup-password">Password</label>
+        <input type="password" id="signup-password" name="password" required minlength="8" placeholder="Create a password (8+ characters)" />
+        <div id="signupPasswordError" class="error-message"></div>
+      </div>
+      <div>
+        <label for="signup-confirm-password">Confirm password</label>
+        <input type="password" id="signup-confirm-password" name="confirmPassword" required minlength="8" placeholder="Confirm your password" />
+        <div id="confirmPasswordError" class="error-message"></div>
+      </div>
+      <button type="submit" class="btn btn-primary" id="signUpBtn">Create account</button>
+      <div id="signUpSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
+      <div id="signUpFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
+      <a href="#" class="signup-link" id="openSignInModalFromSignUp">Already have an account? Sign in</a>
+    </form>
   </div>
+</div>
 
-  <!-- FORGOT PASSWORD MODAL -->
-  <div class="modal-overlay" id="forgotPasswordModal">
-    <div class="modal">
-      <button class="modal-close" id="closeForgotPasswordModal">&times;</button>
-      <h2>Reset Password</h2>
-      <form id="forgotPasswordForm" autocomplete="off">
-        <div>
-          <label for="forgot-email">Email address</label>
-          <input type="email" id="forgot-email" required placeholder="Your email" />
-          <div id="forgotEmailError" class="error-message"></div>
-        </div>
-        <div>
-          <label for="forgot-password">New password</label>
-          <input type="password" id="forgot-password" required minlength="8" placeholder="New password" />
-          <div id="forgotPasswordError" class="error-message"></div>
-        </div>
-        <div>
-          <label for="forgot-confirm-password">Confirm new password</label>
-          <input type="password" id="forgot-confirm-password" required minlength="8" placeholder="Confirm password" />
-          <div id="forgotConfirmPasswordError" class="error-message"></div>
-        </div>
-        <button type="submit" class="btn btn-primary" id="forgotPasswordBtn">Reset password</button>
-        <div id="forgotPasswordSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
-        <div id="forgotPasswordFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
-      </form>
-    </div>
+<!-- FORGOT PASSWORD MODAL -->
+<div class="modal-overlay" id="forgotPasswordModal">
+  <div class="modal">
+    <button class="modal-close" id="closeForgotPasswordModal">&times;</button>
+    <h2>Reset Password</h2>
+    <form id="forgotPasswordForm" autocomplete="off">
+      <div>
+        <label for="forgot-email">Email address</label>
+        <input type="email" id="forgot-email" required placeholder="Your email" />
+        <div id="forgotEmailError" class="error-message"></div>
+      </div>
+      <div>
+        <label for="forgot-password">New password</label>
+        <input type="password" id="forgot-password" required minlength="8" placeholder="New password" />
+        <div id="forgotPasswordError" class="error-message"></div>
+      </div>
+      <div>
+        <label for="forgot-confirm-password">Confirm new password</label>
+        <input type="password" id="forgot-confirm-password" required minlength="8" placeholder="Confirm password" />
+        <div id="forgotConfirmPasswordError" class="error-message"></div>
+      </div>
+      <button type="submit" class="btn btn-primary" id="forgotPasswordBtn">Reset password</button>
+      <div id="forgotPasswordSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
+      <div id="forgotPasswordFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
+    </form>
   </div>
+</div>
 
 <script>
-// ----- Replace SHEETDB_API with your actual endpoint
+// SHEETDB_API
 const SHEETDB_API = "https://sheetdb.io/api/v1/sbath1xpp3h1u";
-    // --- NAV JS ---
-    const mobileToggle = document.querySelector('.mobile-menu-toggle');
-    const navLinks = document.querySelector('.nav-links');
-    mobileToggle.addEventListener('click', (e) => {
-        e.stopPropagation();
-        navLinks.classList.toggle('active');
+
+// -- NAVIGATION --
+const mobileToggle = document.querySelector('.mobile-menu-toggle');
+const navLinks = document.querySelector('.nav-links');
+mobileToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    navLinks.classList.toggle('active');
+});
+document.addEventListener('click', (e) => {
+    if (!navLinks.contains(e.target) && !mobileToggle.contains(e.target)) navLinks.classList.remove('active');
+});
+navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => { navLinks.classList.remove('active'); });
+});
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
     });
-    document.addEventListener('click', (e) => {
-        if (!navLinks.contains(e.target) && !mobileToggle.contains(e.target)) navLinks.classList.remove('active');
-    });
-    navLinks.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => { navLinks.classList.remove('active'); });
-    });
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+});
+window.addEventListener('scroll', () => {
+    const header = document.querySelector('.header');
+    if (window.scrollY > 100) {
+        header.style.background = 'rgba(255, 255, 255, 0.98)';
+        header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+    } else {
+        header.style.background = 'rgba(255, 255, 255, 0.95)';
+        header.style.boxShadow = 'none';
+    }
+});
+
+// -- MODALS OPEN/CLOSE --
+function openModal(modal) { modal.classList.add('active'); }
+function closeModal(modal) { modal.classList.remove('active'); }
+document.getElementById('openSignInModal').onclick = e => { e.preventDefault(); openModal(document.getElementById('signInModal')); };
+document.getElementById('openSignInModalMobile').onclick = e => { e.preventDefault(); navLinks.classList.remove('active'); openModal(document.getElementById('signInModal')); };
+document.getElementById('closeSignInModal').onclick = () => { closeModal(document.getElementById('signInModal')); signInForm.reset(); };
+document.getElementById('openSignUpModalDesktop').onclick = e => { e.preventDefault(); openModal(document.getElementById('signUpModal')); };
+document.getElementById('openSignUpModalMobile').onclick = e => { e.preventDefault(); navLinks.classList.remove('active'); openModal(document.getElementById('signUpModal')); };
+document.getElementById('openSignUpModalHero').onclick = e => { e.preventDefault(); openModal(document.getElementById('signUpModal')); };
+document.getElementById('openSignUpModalCta').onclick = e => { e.preventDefault(); openModal(document.getElementById('signUpModal')); };
+document.getElementById('openSignUpModalFromSignIn').onclick = e => { e.preventDefault(); closeModal(document.getElementById('signInModal')); openModal(document.getElementById('signUpModal')); };
+document.getElementById('closeSignUpModal').onclick = () => { closeModal(document.getElementById('signUpModal')); signUpForm.reset(); };
+document.getElementById('openSignInModalFromSignUp').onclick = e => { e.preventDefault(); closeModal(document.getElementById('signUpModal')); openModal(document.getElementById('signInModal')); };
+document.getElementById('openForgotPasswordModal').onclick = e => { e.preventDefault(); closeModal(document.getElementById('signInModal')); openModal(document.getElementById('forgotPasswordModal')); };
+document.getElementById('closeForgotPasswordModal').onclick = () => { closeModal(document.getElementById('forgotPasswordModal')); forgotPasswordForm.reset(); };
+document.getElementById('forgotPasswordModal').onclick = function(e) { if (e.target === this) { closeModal(this); forgotPasswordForm.reset(); } };
+document.getElementById('signInModal').onclick = function(e) { if (e.target === this) { closeModal(this); signInForm.reset(); } };
+document.getElementById('signUpModal').onclick = function(e) { if (e.target === this) { closeModal(this); signUpForm.reset(); } };
+// ESC closes modals
+window.addEventListener('keydown', function(e) {
+    if (e.key === "Escape") {
+        ['signInModal','signUpModal','forgotPasswordModal'].forEach(id=>{
+            const modal=document.getElementById(id); if(modal.classList.contains('active')){closeModal(modal);}
         });
-    });
-    window.addEventListener('scroll', () => {
-        const header = document.querySelector('.header');
-        if (window.scrollY > 100) {
-            header.style.background = 'rgba(255, 255, 255, 0.98)';
-            header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
-        } else {
-            header.style.background = 'rgba(255, 255, 255, 0.95)';
-            header.style.boxShadow = 'none';
-        }
-    });
-    // Stats animation
-    const animateStats = () => {
-        const stats = document.querySelectorAll('.stat-number');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const target = entry.target;
-                    const text = target.textContent;
-                    const number = parseInt(text.replace(/[^0-9]/g, ''));
-                    if (number) {
-                        let current = 0;
-                        const increment = number / 50;
-                        const timer = setInterval(() => {
-                            current += increment;
-                            if (current >= number) {
-                                current = number;
-                                clearInterval(timer);
-                            }
-                            target.textContent = text.replace(number, Math.floor(current));
-                        }, 30);
-                    }
-                }
-            });
-        }, { threshold: 0.5 });
-        stats.forEach(stat => observer.observe(stat));
-    };
-    document.addEventListener('DOMContentLoaded', animateStats);
-    document.querySelectorAll('.btn').forEach(button => {
-        button.addEventListener('mouseenter', function() { this.style.transform = 'translateY(-2px)'; });
-        button.addEventListener('mouseleave', function() { this.style.transform = 'translateY(0)'; });
-    });
-                    
-    // --- MODALS OPEN/CLOSE ---
-    function openModal(modal) { modal.classList.add('active'); }
-    function closeModal(modal) { modal.classList.remove('active'); }
-    // Sign In
-    document.getElementById('openSignInModal').onclick = e => { e.preventDefault(); openModal(document.getElementById('signInModal')); };
-    document.getElementById('openSignInModalMobile').onclick = e => { e.preventDefault(); navLinks.classList.remove('active'); openModal(document.getElementById('signInModal')); };
-    document.getElementById('closeSignInModal').onclick = () => { closeModal(document.getElementById('signInModal')); signInForm.reset(); clearSignInErrors(); };
-    document.getElementById('goBackHome').onclick = e => { e.preventDefault(); closeModal(document.getElementById('signInModal')); signInForm.reset(); clearSignInErrors(); };
-    document.getElementById('signInModal').onclick = function(e) { if (e.target === this) { closeModal(this); signInForm.reset(); clearSignInErrors(); } };
-    // Sign Up
-    document.getElementById('openSignUpModalDesktop').onclick = e => { e.preventDefault(); openModal(document.getElementById('signUpModal')); };
-    document.getElementById('openSignUpModalMobile').onclick = e => { e.preventDefault(); navLinks.classList.remove('active'); openModal(document.getElementById('signUpModal')); };
-    document.getElementById('openSignUpModalHero').onclick = e => { e.preventDefault(); openModal(document.getElementById('signUpModal')); };
-    document.getElementById('openSignUpModalCta').onclick = e => { e.preventDefault(); openModal(document.getElementById('signUpModal')); };
-    document.getElementById('openSignUpModalFromSignIn').onclick = e => { e.preventDefault(); closeModal(document.getElementById('signInModal')); openModal(document.getElementById('signUpModal')); };
-    document.getElementById('closeSignUpModal').onclick = () => { closeModal(document.getElementById('signUpModal')); signUpForm.reset(); clearSignUpErrors(); };
-    document.getElementById('goBackHomeSignUp').onclick = e => { e.preventDefault(); closeModal(document.getElementById('signUpModal')); signUpForm.reset(); clearSignUpErrors(); };
-    document.getElementById('signUpModal').onclick = function(e) { if (e.target === this) { closeModal(this); signUpForm.reset(); clearSignUpErrors(); } };
-    document.getElementById('openSignInModalFromSignUp').onclick = e => { e.preventDefault(); closeModal(document.getElementById('signUpModal')); openModal(document.getElementById('signInModal')); };
-    // Forgot Password
-    document.getElementById('openForgotPasswordModal').onclick = e => { e.preventDefault(); closeModal(document.getElementById('signInModal')); openModal(document.getElementById('forgotPasswordModal')); };
-    document.getElementById('closeForgotPasswordModal').onclick = () => { closeModal(document.getElementById('forgotPasswordModal')); forgotPasswordForm.reset(); clearForgotPasswordErrors(); };
-    document.getElementById('goBackHomeForgot').onclick = e => { e.preventDefault(); closeModal(document.getElementById('forgotPasswordModal')); forgotPasswordForm.reset(); clearForgotPasswordErrors(); };
-    document.getElementById('forgotPasswordModal').onclick = function(e) { if (e.target === this) { closeModal(this); forgotPasswordForm.reset(); clearForgotPasswordErrors(); } };
-    // ESC closes any modal
-    window.addEventListener('keydown', function(e) {
-        if (e.key === "Escape") {
-            ['signInModal','signUpModal','forgotPasswordModal'].forEach(id=>{
-                const modal=document.getElementById(id); if(modal.classList.contains('active')){closeModal(modal);}
-            });
-        }
-    });
+    }
+});
 
 // SIGN UP
 document.getElementById('signUpForm').onsubmit = function(e) {
@@ -707,7 +672,7 @@ document.getElementById('signUpForm').onsubmit = function(e) {
         successMsg.textContent = "Account created! Please sign in.";
         successMsg.style.display = "block";
         setTimeout(()=>{
-          document.getElementById('closeSignUpModal').click();
+          closeModal(document.getElementById('signUpModal'));
           document.getElementById('signUpForm').reset();
         }, 1600);
       }else{ throw new Error("Signup failed"); }
@@ -750,55 +715,49 @@ document.getElementById('signInForm').onsubmit = function(e) {
       failMsg.textContent = "Sign in failed. Try again."; failMsg.style.display = "block";
     });
 };
-    // --- FORGOT PASSWORD (SHEETDB PATCH) ---
-    function clearForgotPasswordErrors() {
-        document.getElementById('forgotEmailError').textContent = "";
-        document.getElementById('forgotPasswordError').textContent = "";
-        document.getElementById('forgotConfirmPasswordError').textContent = "";
-        document.getElementById('forgotPasswordSuccess').style.display = "none";
-        document.getElementById('forgotPasswordFail').style.display = "none";
-    }
-    const forgotPasswordForm = document.getElementById('forgotPasswordForm');
-    forgotPasswordForm.onsubmit = function(e) {
-        e.preventDefault(); clearForgotPasswordErrors(); let hasError = false;
-        const email = document.getElementById('forgot-email').value.trim();
-        const password = document.getElementById('forgot-password').value;
-        const confirmPassword = document.getElementById('forgot-confirm-password').value;
-        if (!email) { document.getElementById('forgotEmailError').textContent = "Email is required"; hasError = true; }
-        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById('forgotEmailError').textContent = "Enter a valid email address"; hasError = true; }
-        if (!password) { document.getElementById('forgotPasswordError').textContent = "New password is required"; hasError = true; }
-        else if (password.length < 8) { document.getElementById('forgotPasswordError').textContent = "Password must be at least 8 characters"; hasError = true; }
-        if (!confirmPassword) { document.getElementById('forgotConfirmPasswordError').textContent = "Confirm your new password"; hasError = true; }
-        else if (password !== confirmPassword) { document.getElementById('forgotConfirmPasswordError').textContent = "Passwords do not match"; hasError = true; }
-        if (!hasError) {
-            const btn = document.getElementById('forgotPasswordBtn');
-            btn.textContent = "Resetting..."; btn.disabled = true;
-            fetch(`https://sheetdb.io/api/v1/sbath1xpp3h1u/email/${encodeURIComponent(email)}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ data: { password } })
-            })
-            .then(res => res.ok ? res.json() : Promise.reject(res))
-            .then((resData) => {
-                btn.textContent = "Reset password";
-                btn.disabled = false;
-                if (resData.updated === 1 || resData.created === 1) {
-                    document.getElementById('forgotPasswordSuccess').textContent = "Password reset! You can now sign in.";
-                    document.getElementById('forgotPasswordSuccess').style.display = "block";
-                    setTimeout(() => { closeModal(document.getElementById('forgotPasswordModal')); forgotPasswordForm.reset(); clearForgotPasswordErrors(); openModal(document.getElementById('signInModal')); }, 1800);
-                } else {
-                    document.getElementById('forgotPasswordFail').textContent = "Email not found. Try again.";
-                    document.getElementById('forgotPasswordFail').style.display = "block";
-                }
-            })
-            .catch(() => {
-                btn.textContent = "Reset password";
-                btn.disabled = false;
-                document.getElementById('forgotPasswordFail').textContent = "Reset failed. Try again.";
-                document.getElementById('forgotPasswordFail').style.display = "block";
-            });
+// FORGOT PASSWORD
+const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+forgotPasswordForm.onsubmit = function(e) {
+    e.preventDefault();
+    document.getElementById('forgotEmailError').textContent = "";
+    document.getElementById('forgotPasswordError').textContent = "";
+    document.getElementById('forgotConfirmPasswordError').textContent = "";
+    document.getElementById('forgotPasswordSuccess').style.display = "none";
+    document.getElementById('forgotPasswordFail').style.display = "none";
+    const email = document.getElementById('forgot-email').value.trim();
+    const password = document.getElementById('forgot-password').value;
+    const confirmPassword = document.getElementById('forgot-confirm-password').value;
+    if (!email) { document.getElementById('forgotEmailError').textContent = "Email is required"; return; }
+    if (!password) { document.getElementById('forgotPasswordError').textContent = "New password is required"; return; }
+    if (!confirmPassword) { document.getElementById('forgotConfirmPasswordError').textContent = "Confirm your new password"; return; }
+    if (password !== confirmPassword) { document.getElementById('forgotConfirmPasswordError').textContent = "Passwords do not match"; return; }
+    const btn = document.getElementById('forgotPasswordBtn');
+    btn.textContent = "Resetting..."; btn.disabled = true;
+    fetch(`${SHEETDB_API}/email/${encodeURIComponent(email)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: { password } })
+    })
+    .then(res => res.ok ? res.json() : Promise.reject(res))
+    .then((resData) => {
+        btn.textContent = "Reset password";
+        btn.disabled = false;
+        if (resData.updated === 1 || resData.created === 1) {
+            document.getElementById('forgotPasswordSuccess').textContent = "Password reset! You can now sign in.";
+            document.getElementById('forgotPasswordSuccess').style.display = "block";
+            setTimeout(() => { closeModal(document.getElementById('forgotPasswordModal')); forgotPasswordForm.reset(); }, 1800);
+        } else {
+            document.getElementById('forgotPasswordFail').textContent = "Email not found. Try again.";
+            document.getElementById('forgotPasswordFail').style.display = "block";
         }
-    };
+    })
+    .catch(() => {
+        btn.textContent = "Reset password";
+        btn.disabled = false;
+        document.getElementById('forgotPasswordFail').textContent = "Reset failed. Try again.";
+        document.getElementById('forgotPasswordFail').style.display = "block";
+    });
+};
 </script>
 </body>
 </html>
