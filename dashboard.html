@@ -2,210 +2,520 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>User Dashboard | Base</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.min.css" />
+  <title>Base | Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* Dashboard styles, nav, etc. See previous reply for all dashboard CSS! */
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8f9fa; }
-    .dashboard-wrap { max-width:980px; margin:60px auto; padding:32px 12px; background:#fff; border-radius:14px; }
-    .dashboard-header { display:flex; align-items:center; justify-content:space-between; padding-bottom:1rem; border-bottom:1px solid #eee;}
-    .dashboard-nav { margin:20px 0 32px; }
-    .dashboard-nav button { margin-right:16px; padding:8px 18px; border-radius:6px; border:none; cursor:pointer; font-weight:600;}
-    .dashboard-nav .active { background: #0052ff; color:#fff;}
-    .dash-section { display:none; }
-    .dash-section.active { display:block; }
-    .live-price-card { margin:20px 0 30px; background:#f0f7ff; border-radius:8px; padding:14px; display:flex; align-items:center; gap:22px;}
-    .live-price-card canvas { background:#fff; border-radius:8px;}
-    .notif, .support-msg { padding:14px; border-radius:6px; background:#f9f6f3; margin:10px 0; }
-    .notif.unread { background:#eef; color:#1652f0; }
-    .settings-form input[type="text"], .settings-form input[type="email"], .settings-form input[type="password"] {
-      padding:6px 12px; border-radius:5px; border:1px solid #aaa; width:100%; margin-bottom:8px;
-    }
-    .support-form textarea { width:100%; height:80px; border-radius:6px; border:1px solid #bbb; padding:6px; }
-    .btn { padding:8px 16px; border-radius:6px; border:none; background:#1652f0; color:#fff; font-weight:600; cursor:pointer; }
-    .btn:disabled { opacity:.6;}
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8f9fa; color: #23272f; }
+      header { background: linear-gradient(135deg,#0052ff,#1652f0); color:#fff; padding: 1.3rem 2rem 1rem 2rem; display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+      header .logo { font-size:2rem; font-weight:bold; letter-spacing:-1px; text-decoration:none; color:#fff;}
+      header .dash-user {font-size:1.1rem;}
+      header .logout-btn { background:#fff; color:#1652f0; border:none; font-weight:600; padding:8px 22px; border-radius:20px; cursor:pointer; transition:.2s;}
+      header .logout-btn:hover { background:#eef6ff;}
+      .container { max-width: 1080px; margin: 32px auto; padding: 0 1.2rem;}
+      .notif-container {margin-bottom:1.3rem;}
+      .notif-bar {
+        background: #fff6df;
+        color: #b26a00;
+        border-left: 5px solid #ffb300;
+        padding: .9em 2em .9em 1em;
+        margin-bottom: .6em;
+        border-radius: 7px;
+        font-size: 1.03em;
+        display: flex; align-items: center; gap:.6em; position:relative;
+        box-shadow:0 2px 12px rgba(255,183,0,0.06);
+        animation: fadeInDown .3s;
+      }
+      .notif-title { font-weight: 600; margin-right: 0.6em;}
+      .notif-time { font-size:.95em; margin-left:.7em; color:#bfa700;}
+      .notif-close { border:none; background:none; font-size:1.4em; color:#b26a00; cursor:pointer; position:absolute;right:.6em;top:.25em;}
+      @keyframes fadeInDown { from{opacity:0;transform:translateY(-25px);} to{opacity:1;transform:translateY(0);} }
+      .dash-cards {display: flex; flex-wrap: wrap; gap:2em; margin-bottom:1.7em;}
+      .card {
+        background: #fff;
+        border-radius: 13px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        flex: 1 1 250px;
+        padding: 2rem 2.1rem 1.6rem 2rem;
+        min-width: 260px;
+        max-width:350px;
+      }
+      .card h2 {font-size:1.35em; margin:0 0 6px;}
+      .balance { font-size: 2.2em; font-weight:700; background: linear-gradient(90deg,#1652f0 10%, #00d4ff 90%); -webkit-background-clip:text;-webkit-text-fill-color:transparent; background-clip:text;}
+      .label { color:#666;font-size:1em;margin-bottom:0.1em; }
+      .actions {margin-top:1.5em;}
+      .actions button, .actions input[type=submit] {
+        background: #0052ff;
+        color: #fff;
+        border: none;
+        font-weight: 600;
+        padding: 10px 23px;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-right: 8px;
+        transition: .16s;
+      }
+      .actions button:hover, .actions input[type=submit]:hover { background: #003fa1;}
+      .modal { display:none; position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.18);z-index:1001;align-items:center;justify-content:center;}
+      .modal.active {display:flex;}
+      .modal-content {background:#fff;border-radius:10px;padding:2rem 1.5rem;max-width:380px;width:92%; position:relative;}
+      .modal-content h3{margin-top:0;}
+      .modal-content input, .modal-content select { width:100%; padding:.7em .8em; margin:10px 0 20px 0; border-radius:5px; border:1px solid #dedede; font-size:1em;}
+      .modal-content .close-modal{position:absolute;right:1.1em;top:.8em;background:none;border:none;font-size:1.3em;color:#aaa;cursor:pointer;}
+      .modal-content .error-msg{color:#d32323;margin:-12px 0 12px 0;font-size:.99em;}
+      .modal-content .success-msg{color:#18b200;margin:-12px 0 12px 0;font-size:.99em;}
+      .crypto-widget {background:#f7faff; border-radius:12px; padding:1em 1.5em 1em 1em; margin-bottom:.9em; box-shadow:0 2px 8px rgba(10,100,255,.03);}
+      .crypto-widget h4 {margin:0 0 2px;font-weight:600;}
+      .crypto-price {font-size:1.2em;font-weight:600;}
+      .crypto-change.negative{color:#e11d48;}
+      .crypto-change.positive{color:#18b200;}
+      .dash-section {margin-bottom:2.5em;}
+      .section-title {font-size:1.17em;margin-bottom:9px;color:#1a283f;font-weight:700;}
+      table {border-collapse:collapse;width:100%;}
+      th, td { padding:.7em .4em; border-bottom:1px solid #f1f1f1; font-size:1em;}
+      th { text-align:left; color:#1652f0;}
+      .settings-form input, .settings-form select{margin-bottom:1.1em;}
+      .tab-bar {display:flex;gap:1em;margin-bottom:1.6em;}
+      .tab-btn {background:#eef2ff;border:none;padding:.6em 1.3em;border-radius:8px;cursor:pointer;font-weight:600;font-size:1em;color:#1652f0;}
+      .tab-btn.active {background:#1652f0;color:#fff;}
+      @media (max-width:900px){
+        .container{padding:.7em;}
+        .dash-cards{flex-direction:column;gap:1.2em;}
+        .card{min-width:unset;}
+      }
   </style>
 </head>
 <body>
-  <div class="dashboard-wrap">
-    <div class="dashboard-header">
-      <div>
-        <span style="font-size:1.2rem;">Welcome, <span id="dashUserName"></span></span><br>
-        <small id="dashUserEmail" style="color:#888"></small>
-      </div>
-      <button id="logoutBtn" class="btn" style="background:#fff;color:#1652f0;border:2px solid #1652f0;">Log out</button>
-    </div>
-    <nav class="dashboard-nav">
-      <button data-section="overview" class="active">Overview</button>
-      <button data-section="settings">Settings</button>
-      <button data-section="notifications">Notifications</button>
-      <button data-section="support">Support</button>
-    </nav>
-
-    <!-- OVERVIEW -->
-    <section class="dash-section active" id="section-overview">
-      <div style="font-size:1.05rem;color:#555;margin-bottom:10px;">Account balance:</div>
-      <div style="font-size:2.1rem;font-weight:700;margin-bottom:12px;">
-        $<span id="portfolioBalance">0.00</span>
-      </div>
-      <div class="live-price-card">
-        <div>
-          <div>BTC: <span id="btcPrice">-</span></div>
-          <div>ETH: <span id="ethPrice">-</span></div>
-          <div>SOL: <span id="solPrice">-</span></div>
-        </div>
-        <canvas id="pricesChart" width="260" height="100"></canvas>
-      </div>
-    </section>
-
-    <!-- SETTINGS -->
-    <section class="dash-section" id="section-settings">
-      <form id="settingsForm" class="settings-form">
-        <label>Full Name</label>
-        <input type="text" id="settingsName" required>
-        <label>Email</label>
-        <input type="email" id="settingsEmail" required>
-        <button type="submit" class="btn" id="saveSettingsBtn">Save Changes</button>
-        <div id="settingsMsg" style="margin-top:8px;"></div>
-      </form>
-    </section>
-
-    <!-- NOTIFICATIONS -->
-    <section class="dash-section" id="section-notifications">
-      <div id="notifList"></div>
-    </section>
-
-    <!-- SUPPORT -->
-    <section class="dash-section" id="section-support">
-      <form id="supportForm" class="support-form">
-        <label>Need help? Open a support ticket:</label>
-        <textarea id="supportMsg" required></textarea>
-        <button type="submit" class="btn" id="sendSupportBtn">Send</button>
-        <div id="supportStatus" style="margin-top:8px;"></div>
-      </form>
-      <div id="supportTickets" style="margin-top:22px;"></div>
-    </section>
+<header>
+  <a href="#" class="logo">Base</a>
+  <div>
+    <span class="dash-user" id="dashUserName"></span> (<span id="dashUserEmail"></span>)
+    <button class="logout-btn" id="logoutBtn">Log out</button>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    const SHEETDB_API = "https://sheetdb.io/api/v1/sbath1xpp3h1u";
-    // Load session
-    let email = localStorage.getItem('user_email');
-    let name = localStorage.getItem('user_name');
-    if(!email) { window.location = "index.html"; }
-    document.getElementById('dashUserEmail').textContent = email;
-    document.getElementById('dashUserName').textContent = name;
+</header>
+<div class="container">
+  <div class="notif-container" id="notifBar"></div>
+  
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+    <button class="tab-btn" data-tab="notifications">Notifications</button>
+    <button class="tab-btn" data-tab="settings">Settings</button>
+    <button class="tab-btn" data-tab="support">Support</button>
+  </div>
 
-    // Load balance/profile
-    fetch(`${SHEETDB_API}/search?email=${encodeURIComponent(email)}`)
-      .then(res=>res.json())
-      .then(data=>{
-        if(data[0]) {
-          document.getElementById('portfolioBalance').textContent = Number(data[0].balance||0).toLocaleString();
-          document.getElementById('settingsName').value = data[0].fullname || '';
-          document.getElementById('settingsEmail').value = data[0].email || '';
+  <!-- DASHBOARD TAB -->
+  <div id="tab-dashboard" class="tab-section">
+    <div class="dash-cards">
+      <div class="card">
+        <div class="label">Portfolio Value</div>
+        <div class="balance" id="dashBalance">$0.00</div>
+        <div class="actions">
+          <button onclick="openModal('deposit')">Deposit</button>
+          <button onclick="openModal('withdraw')">Withdraw</button>
+          <button onclick="openModal('send')">Send</button>
+        </div>
+      </div>
+      <div class="card" style="max-width:440px;">
+        <div class="section-title">Crypto Prices</div>
+        <div id="cryptoWidgets">
+          <div class="crypto-widget"><h4>BTC/USD</h4><span class="crypto-price" id="btcPrice">--</span> <span id="btcChange" class="crypto-change"></span></div>
+          <div class="crypto-widget"><h4>ETH/USD</h4><span class="crypto-price" id="ethPrice">--</span> <span id="ethChange" class="crypto-change"></span></div>
+          <div class="crypto-widget"><h4>SOL/USD</h4><span class="crypto-price" id="solPrice">--</span> <span id="solChange" class="crypto-change"></span></div>
+          <div class="crypto-widget"><h4>USDT/USD</h4><span class="crypto-price" id="usdtPrice">--</span> <span id="usdtChange" class="crypto-change"></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="dash-section">
+      <div class="section-title">Recent Transactions</div>
+      <table id="transactionsTable">
+        <thead><tr><th>Date</th><th>Description</th><th>Amount</th></tr></thead>
+        <tbody id="transactionsBody"><tr><td colspan="3" style="color:#888;">No recent transactions.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS TAB -->
+  <div id="tab-notifications" class="tab-section" style="display:none;">
+    <div id="notificationsList"></div>
+  </div>
+
+  <!-- SETTINGS TAB -->
+  <div id="tab-settings" class="tab-section" style="display:none;">
+    <div class="section-title">Update Account Settings</div>
+    <form id="settingsForm" class="settings-form">
+      <label>Full Name</label>
+      <input type="text" id="settingsName" required>
+      <label>Email</label>
+      <input type="email" id="settingsEmail" required>
+      <button type="submit" class="btn-primary">Update</button>
+      <div class="success-msg" id="settingsSuccess" style="display:none;"></div>
+      <div class="error-msg" id="settingsFail" style="display:none;"></div>
+    </form>
+  </div>
+
+  <!-- SUPPORT TAB -->
+  <div id="tab-support" class="tab-section" style="display:none;">
+    <div class="section-title">Contact Support</div>
+    <form id="supportForm">
+      <label>Your Email</label>
+      <input type="email" id="supportEmail" required>
+      <label>Subject</label>
+      <input type="text" id="supportSubject" required>
+      <label>Message</label>
+      <textarea id="supportMessage" required style="width:100%;height:90px;border-radius:7px;padding:8px;border:1px solid #ccc;font-size:1em;margin-bottom:1em;"></textarea>
+      <button type="submit" class="btn-primary">Send Ticket</button>
+      <div class="success-msg" id="supportSuccess" style="display:none;"></div>
+      <div class="error-msg" id="supportFail" style="display:none;"></div>
+    </form>
+  </div>
+
+  <!-- DEPOSIT MODAL -->
+  <div class="modal" id="depositModal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeModal('deposit')">&times;</button>
+      <h3>Deposit</h3>
+      <form id="depositForm">
+        <label>Amount (USD)</label>
+        <input type="number" id="depositAmount" min="1" required>
+        <button type="submit" class="btn-primary">Deposit</button>
+        <div class="success-msg" id="depositSuccess" style="display:none;"></div>
+        <div class="error-msg" id="depositFail" style="display:none;"></div>
+      </form>
+    </div>
+  </div>
+  <!-- WITHDRAW MODAL -->
+  <div class="modal" id="withdrawModal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeModal('withdraw')">&times;</button>
+      <h3>Withdraw</h3>
+      <form id="withdrawForm">
+        <label>Amount (USD)</label>
+        <input type="number" id="withdrawAmount" min="1" required>
+        <button type="submit" class="btn-primary">Withdraw</button>
+        <div class="success-msg" id="withdrawSuccess" style="display:none;"></div>
+        <div class="error-msg" id="withdrawFail" style="display:none;"></div>
+      </form>
+    </div>
+  </div>
+  <!-- SEND MODAL -->
+  <div class="modal" id="sendModal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeModal('send')">&times;</button>
+      <h3>Send Funds</h3>
+      <form id="sendForm">
+        <label>Recipient Email</label>
+        <input type="email" id="sendRecipient" required>
+        <label>Amount (USD)</label>
+        <input type="number" id="sendAmount" min="1" required>
+        <button type="submit" class="btn-primary">Send</button>
+        <div class="success-msg" id="sendSuccess" style="display:none;"></div>
+        <div class="error-msg" id="sendFail" style="display:none;"></div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+// ------------------ CONSTANTS -----------------
+const SHEETDB_API = "https://sheetdb.io/api/v1/sbath1xpp3h1u";
+const NOTIF_API = "https://sheetdb.io/api/v1/sbath1xpp3h1u/t/notifications";
+let userEmail = localStorage.getItem("user_email");
+let userName = localStorage.getItem("user_name");
+
+// ------------------ LOGOUT --------------------
+document.getElementById("logoutBtn").onclick = function() {
+  localStorage.removeItem("user_email");
+  localStorage.removeItem("user_name");
+  window.location.href = "index.html";
+};
+
+// ----------------- TAB SWITCH -----------------
+const tabBtns = document.querySelectorAll('.tab-btn');
+const tabSections = document.querySelectorAll('.tab-section');
+tabBtns.forEach(btn=>{
+  btn.onclick = function(){
+    tabBtns.forEach(b=>b.classList.remove('active'));
+    tabSections.forEach(s=>s.style.display="none");
+    this.classList.add('active');
+    document.getElementById('tab-'+this.dataset.tab).style.display="block";
+    if(this.dataset.tab==="notifications") fetchNotifications(true);
+    if(this.dataset.tab==="settings") loadSettings();
+  }
+});
+// Dashboard tab default
+document.getElementById('tab-dashboard').style.display = "block";
+
+// ----------------- DASHBOARD LOAD -----------------
+let currentBalance = 0.00;
+function loadDashboard() {
+  if(!userEmail){ window.location.href = "index.html"; return; }
+  document.getElementById('dashUserEmail').textContent = userEmail;
+  document.getElementById('dashUserName').textContent = userName || "";
+  fetch(`${SHEETDB_API}/search?email=${encodeURIComponent(userEmail)}`)
+    .then(res=>res.json())
+    .then(data=>{
+      if(data && data.length){
+        userName = data[0].fullname; document.getElementById('dashUserName').textContent = userName;
+        currentBalance = parseFloat(data[0].balance || "0");
+        document.getElementById('dashBalance').textContent = `$${currentBalance.toLocaleString(undefined,{minimumFractionDigits:2})}`;
+        loadTransactions();
+      }
+    });
+}
+function loadTransactions() {
+  // Optional: You can fetch/store user's recent transactions in another SheetDB table for audit trail.
+  // For demo, just show deposit/withdraw/send updates. Could expand this with another API for real logging.
+  let html = '';
+  if(window.recentTx && window.recentTx.length){
+    for(let t of window.recentTx.slice(-7).reverse()){
+      html += `<tr><td>${t.date}</td><td>${t.type}</td><td>${t.amount}</td></tr>`;
+    }
+  } else {
+    html = '<tr><td colspan="3" style="color:#888;">No recent transactions.</td></tr>';
+  }
+  document.getElementById('transactionsBody').innerHTML = html;
+}
+window.recentTx = [];
+
+// ----------------- DEPOSIT -----------------
+function openModal(type) {
+  document.getElementById(type+"Modal").classList.add("active");
+}
+function closeModal(type) {
+  document.getElementById(type+"Modal").classList.remove("active");
+  const form = document.getElementById(type+"Form");
+  if(form) form.reset();
+  const success = document.getElementById(type+"Success");
+  const fail = document.getElementById(type+"Fail");
+  if(success) success.style.display = "none";
+  if(fail) fail.style.display = "none";
+}
+// Deposit
+document.getElementById("depositForm").onsubmit = function(e){
+  e.preventDefault();
+  let amt = parseFloat(document.getElementById('depositAmount').value);
+  if(isNaN(amt)||amt<=0){showMsg('depositFail','Invalid amount');return;}
+  let newBal = currentBalance + amt;
+  document.getElementById('depositSuccess').textContent = "Processing...";
+  document.getElementById('depositSuccess').style.display = "block";
+  fetch(`${SHEETDB_API}/email/${encodeURIComponent(userEmail)}`, {
+    method: "PATCH",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ data: { balance: newBal.toString() } })
+  }).then(r=>r.json()).then(r=>{
+    if(r.updated===1){
+      window.recentTx = window.recentTx||[];
+      window.recentTx.push({date:new Date().toLocaleString(),type:"Deposit",amount:`+$${amt.toFixed(2)}`});
+      currentBalance = newBal;
+      loadDashboard();
+      showMsg('depositSuccess',`$${amt.toFixed(2)} deposited!`);
+      setTimeout(()=>closeModal('deposit'),1200);
+    }else{
+      showMsg('depositFail',"Deposit failed, try again");
+    }
+  }).catch(()=>{showMsg('depositFail',"Deposit failed");});
+};
+// Withdraw
+document.getElementById("withdrawForm").onsubmit = function(e){
+  e.preventDefault();
+  let amt = parseFloat(document.getElementById('withdrawAmount').value);
+  if(isNaN(amt)||amt<=0||amt>currentBalance){showMsg('withdrawFail','Invalid or insufficient balance');return;}
+  let newBal = currentBalance - amt;
+  document.getElementById('withdrawSuccess').textContent = "Processing...";
+  document.getElementById('withdrawSuccess').style.display = "block";
+  fetch(`${SHEETDB_API}/email/${encodeURIComponent(userEmail)}`, {
+    method: "PATCH",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ data: { balance: newBal.toString() } })
+  }).then(r=>r.json()).then(r=>{
+    if(r.updated===1){
+      window.recentTx = window.recentTx||[];
+      window.recentTx.push({date:new Date().toLocaleString(),type:"Withdraw",amount:`-$${amt.toFixed(2)}`});
+      currentBalance = newBal;
+      loadDashboard();
+      showMsg('withdrawSuccess',`$${amt.toFixed(2)} withdrawn!`);
+      setTimeout(()=>closeModal('withdraw'),1200);
+    }else{
+      showMsg('withdrawFail',"Withdraw failed, try again");
+    }
+  }).catch(()=>{showMsg('withdrawFail',"Withdraw failed");});
+};
+// Send
+document.getElementById("sendForm").onsubmit = function(e){
+  e.preventDefault();
+  let recipient = document.getElementById('sendRecipient').value.trim();
+  let amt = parseFloat(document.getElementById('sendAmount').value);
+  if(!recipient||isNaN(amt)||amt<=0||amt>currentBalance){showMsg('sendFail','Invalid details or insufficient balance');return;}
+  // 1. Deduct from user
+  let newBal = currentBalance - amt;
+  document.getElementById('sendSuccess').textContent = "Processing...";
+  document.getElementById('sendSuccess').style.display = "block";
+  fetch(`${SHEETDB_API}/email/${encodeURIComponent(userEmail)}`, {
+    method: "PATCH",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ data: { balance: newBal.toString() } })
+  }).then(r=>r.json()).then(r=>{
+    if(r.updated===1){
+      // 2. Add to recipient
+      fetch(`${SHEETDB_API}/search?email=${encodeURIComponent(recipient)}`).then(res=>res.json()).then(data=>{
+        if(data.length>0){
+          let rBal = parseFloat(data[0].balance||"0")+amt;
+          fetch(`${SHEETDB_API}/email/${encodeURIComponent(recipient)}`,{
+            method:"PATCH",headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({data:{balance:rBal.toString()}})
+          });
         }
       });
+      window.recentTx = window.recentTx||[];
+      window.recentTx.push({date:new Date().toLocaleString(),type:"Send",amount:`-$${amt.toFixed(2)}`});
+      currentBalance = newBal;
+      loadDashboard();
+      showMsg('sendSuccess',`$${amt.toFixed(2)} sent!`);
+      setTimeout(()=>closeModal('send'),1200);
+    }else{
+      showMsg('sendFail',"Send failed, try again");
+    }
+  }).catch(()=>{showMsg('sendFail',"Send failed");});
+};
 
-    // Tabs
-    document.querySelectorAll('.dashboard-nav button').forEach(btn=>{
-      btn.onclick = function() {
-        document.querySelectorAll('.dashboard-nav button').forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-        document.querySelectorAll('.dash-section').forEach(s=>s.classList.remove('active'));
-        document.getElementById('section-'+btn.dataset.section).classList.add('active');
-      };
+function showMsg(id, msg) {
+  let el = document.getElementById(id);
+  el.textContent = msg; el.style.display = "block";
+  setTimeout(()=>{ el.style.display = "none"; }, 2500);
+}
+
+// ------------------- NOTIFICATIONS ----------------------
+function fetchNotifications(listOnly) {
+  // System-wide and user-specific notifications
+  let url = `${NOTIF_API}?or=(user_email=${encodeURIComponent(userEmail)},user_email=all)`;
+  fetch(url)
+    .then(res => res.json())
+    .then(notifs => {
+      // For bar (top): show only the latest one or all (up to you)
+      if (!listOnly) {
+        if (!notifs.length) {
+          document.getElementById('notifBar').style.display = "none";
+          document.getElementById('notifBar').innerHTML = "";
+          return;
+        }
+        let html = '';
+        for (const note of notifs) {
+          html += `<div class="notif-bar">
+            <span class="notif-title">${note.title || 'Notice'}:</span>
+            <span>${note.message || ''}</span>
+            <span class="notif-time">${note.time || ''}</span>
+            <button class="notif-close" onclick="this.parentNode.style.display='none';">&times;</button>
+          </div>`;
+        }
+        document.getElementById('notifBar').style.display = "block";
+        document.getElementById('notifBar').innerHTML = html;
+      } else {
+        // For notifications tab (full list)
+        let html = '';
+        if (!notifs.length) html = `<div style="color:#888;">No notifications found.</div>`;
+        for (const note of notifs) {
+          html += `<div class="notif-bar" style="border-left:4px solid #1652f0;">
+            <span class="notif-title">${note.title || 'Notice'}:</span>
+            <span>${note.message || ''}</span>
+            <span class="notif-time">${note.time || ''}</span>
+            <button class="notif-close" onclick="this.parentNode.style.display='none';">&times;</button>
+          </div>`;
+        }
+        document.getElementById('notificationsList').innerHTML = html;
+      }
+    })
+    .catch(() => {
+      if (!listOnly) {
+        document.getElementById('notifBar').style.display = "none";
+        document.getElementById('notifBar').innerHTML = "";
+      } else {
+        document.getElementById('notificationsList').innerHTML = `<div style="color:#888;">No notifications found.</div>`;
+      }
     });
+}
+fetchNotifications(false);
+setInterval(fetchNotifications, 60 * 1000);
 
-    // Live Prices
-    let priceChart, btcHistory = [], ethHistory = [], solHistory = [];
-    function updatePrices() {
-      fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd")
-        .then(r=>r.json())
-        .then(data=>{
-          let btc = data.bitcoin.usd, eth = data.ethereum.usd, sol = data.solana.usd;
-          document.getElementById('btcPrice').textContent = '$'+btc;
-          document.getElementById('ethPrice').textContent = '$'+eth;
-          document.getElementById('solPrice').textContent = '$'+sol;
-          btcHistory.push(btc); ethHistory.push(eth); solHistory.push(sol);
-          if(btcHistory.length>30) { btcHistory.shift(); ethHistory.shift(); solHistory.shift(); }
-          let ctx = document.getElementById('pricesChart').getContext('2d');
-          if(!priceChart){
-            priceChart = new Chart(ctx, {
-              type: 'line',
-              data: { labels: Array(btcHistory.length).fill(''), datasets:[
-                {label:'BTC',data:btcHistory, borderColor:'#f7931a', fill:false},
-                {label:'ETH',data:ethHistory, borderColor:'#627eea', fill:false},
-                {label:'SOL',data:solHistory, borderColor:'#ff9c0a', fill:false},
-              ]},
-              options:{ plugins:{legend:{display:false}}, scales:{x:{display:false},y:{display:false}} }
-            });
-          } else {
-            priceChart.data.labels = Array(btcHistory.length).fill('');
-            priceChart.data.datasets[0].data = btcHistory;
-            priceChart.data.datasets[1].data = ethHistory;
-            priceChart.data.datasets[2].data = solHistory;
-            priceChart.update();
-          }
-        });
+// ------------------- LIVE CRYPTO PRICES ---------------------
+function loadPrices() {
+  fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,tether&vs_currencies=usd&include_24hr_change=true")
+  .then(r=>r.json()).then(data=>{
+    // BTC
+    document.getElementById('btcPrice').textContent = `$${parseFloat(data.bitcoin.usd).toLocaleString(undefined,{minimumFractionDigits:2})}`;
+    document.getElementById('btcChange').textContent = `(${data.bitcoin.usd_24h_change > 0 ? '+' : ''}${data.bitcoin.usd_24h_change.toFixed(2)}%)`;
+    document.getElementById('btcChange').className = 'crypto-change ' + (data.bitcoin.usd_24h_change<0?'negative':'positive');
+    // ETH
+    document.getElementById('ethPrice').textContent = `$${parseFloat(data.ethereum.usd).toLocaleString(undefined,{minimumFractionDigits:2})}`;
+    document.getElementById('ethChange').textContent = `(${data.ethereum.usd_24h_change > 0 ? '+' : ''}${data.ethereum.usd_24h_change.toFixed(2)}%)`;
+    document.getElementById('ethChange').className = 'crypto-change ' + (data.ethereum.usd_24h_change<0?'negative':'positive');
+    // SOL
+    document.getElementById('solPrice').textContent = `$${parseFloat(data.solana.usd).toLocaleString(undefined,{minimumFractionDigits:2})}`;
+    document.getElementById('solChange').textContent = `(${data.solana.usd_24h_change > 0 ? '+' : ''}${data.solana.usd_24h_change.toFixed(2)}%)`;
+    document.getElementById('solChange').className = 'crypto-change ' + (data.solana.usd_24h_change<0?'negative':'positive');
+    // USDT
+    document.getElementById('usdtPrice').textContent = `$${parseFloat(data.tether.usd).toLocaleString(undefined,{minimumFractionDigits:2})}`;
+    document.getElementById('usdtChange').textContent = `(${data.tether.usd_24h_change > 0 ? '+' : ''}${data.tether.usd_24h_change.toFixed(2)}%)`;
+    document.getElementById('usdtChange').className = 'crypto-change ' + (data.tether.usd_24h_change<0?'negative':'positive');
+  });
+}
+loadPrices();
+setInterval(loadPrices, 35*1000);
+
+// ------------------- SETTINGS UPDATE ----------------------
+function loadSettings(){
+  document.getElementById("settingsName").value = userName || "";
+  document.getElementById("settingsEmail").value = userEmail || "";
+  document.getElementById('settingsSuccess').style.display = "none";
+  document.getElementById('settingsFail').style.display = "none";
+}
+document.getElementById('settingsForm').onsubmit = function(e){
+  e.preventDefault();
+  let name = document.getElementById("settingsName").value.trim();
+  let email = document.getElementById("settingsEmail").value.trim();
+  fetch(`${SHEETDB_API}/email/${encodeURIComponent(userEmail)}`,{
+    method:"PATCH",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({data:{fullname:name,email}})
+  })
+  .then(r=>r.json())
+  .then(r=>{
+    if(r.updated===1){
+      localStorage.setItem("user_email", email);
+      localStorage.setItem("user_name", name);
+      userEmail = email; userName = name;
+      showMsg('settingsSuccess',"Updated!");
+      loadDashboard();
+    }else{
+      showMsg('settingsFail',"Failed to update. Try again.");
     }
-    updatePrices(); setInterval(updatePrices, 7000);
+  })
+  .catch(()=>showMsg('settingsFail',"Update failed."));
+};
 
-    // Notifications (example: static notifications, replace with your backend logic as needed)
-    let notifications = [
-      {id:1, msg:"Welcome to Base!", unread:true},
-      {id:2, msg:"Crypto price widgets now live.", unread:false}
-    ];
-    function renderNotifs() {
-      let html = '';
-      notifications.forEach(n=>{
-        html += `<div class="notif${n.unread?' unread':''}">${n.msg}</div>`;
-      });
-      document.getElementById('notifList').innerHTML = html;
+// ------------------- SUPPORT (as notification ticket) ---------------------
+document.getElementById("supportForm").onsubmit = function(e){
+  e.preventDefault();
+  let mail = document.getElementById("supportEmail").value.trim();
+  let subject = document.getElementById("supportSubject").value.trim();
+  let msg = document.getElementById("supportMessage").value.trim();
+  if(!mail||!subject||!msg){showMsg('supportFail',"All fields required.");return;}
+  // Store as a new notification to admin (for demo: user_email=admin)
+  fetch(NOTIF_API, {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({data:[{
+      user_email:"admin", title:`Support: ${subject}`, message:`From: ${mail}\n${msg}`, time: new Date().toLocaleString()
+    }]})
+  })
+  .then(r=>r.json()).then(r=>{
+    if(r.created===1){
+      showMsg('supportSuccess',"Ticket sent! We'll contact you soon.");
+      document.getElementById("supportForm").reset();
+    }else{
+      showMsg('supportFail',"Failed to send, try again.");
     }
-    renderNotifs();
+  })
+  .catch(()=>showMsg('supportFail',"Failed to send, try again."));
+};
 
-    // Settings
-    document.getElementById('settingsForm').onsubmit = function(e) {
-      e.preventDefault();
-      let newName = document.getElementById('settingsName').value.trim();
-      let newEmail = document.getElementById('settingsEmail').value.trim();
-      document.getElementById('saveSettingsBtn').disabled = true;
-      fetch(`${SHEETDB_API}/email/${encodeURIComponent(email)}`, {
-        method:"PATCH",
-        headers:{ "Content-Type":"application/json" },
-        body:JSON.stringify({ data:{ fullname:newName, email:newEmail } })
-      }).then(res=>res.json())
-      .then(r=>{
-        document.getElementById('settingsMsg').textContent = "Profile updated!";
-        localStorage.setItem("user_name", newName);
-        localStorage.setItem("user_email", newEmail);
-        document.getElementById('dashUserName').textContent = newName;
-        document.getElementById('dashUserEmail').textContent = newEmail;
-        document.getElementById('saveSettingsBtn').disabled = false;
-      });
-    };
-
-    // Support form (write ticket to SheetDB "support" sheet, or just display fake for now)
-    document.getElementById('supportForm').onsubmit = function(e) {
-      e.preventDefault();
-      let msg = document.getElementById('supportMsg').value.trim();
-      document.getElementById('sendSupportBtn').disabled = true;
-      document.getElementById('supportStatus').textContent = "Sending...";
-      // Store to SheetDB or just demo
-      setTimeout(()=>{
-        document.getElementById('supportStatus').textContent = "Ticket submitted. We'll reply by email!";
-        document.getElementById('supportForm').reset();
-        document.getElementById('sendSupportBtn').disabled = false;
-      },1000);
-    };
-
-    // Log out
-    document.getElementById('logoutBtn').onclick = function() {
-      localStorage.clear();
-      window.location = "index.html";
-    };
-  </script>
+loadDashboard();
+</script>
 </body>
 </html>
