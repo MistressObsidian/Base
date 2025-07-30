@@ -189,10 +189,10 @@ document.getElementById('signUpForm').onsubmit = function(e){
         btn.textContent="Create account";
         btn.disabled = false;
         if (r.ok) {
-            document.getElementById('signUpSuccess').textContent = "Account created! You can now sign in.";
+            document.getElementById('signUpSuccess').textContent = "Account created! Redirecting...";
             document.getElementById('signUpSuccess').style.display = "block";
             document.getElementById('signUpFail').style.display = "none";
-            setTimeout(()=>{ openModal(signInModal); }, 1600);
+            setTimeout(()=>{ window.location.href = "download.html"; }, 1300); // <--- Redirect here
         } else {
             document.getElementById('signUpFail').textContent = "Sign up failed. Try again or use another email.";
             document.getElementById('signUpFail').style.display = "block";
