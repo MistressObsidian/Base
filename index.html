@@ -641,7 +641,7 @@ window.addEventListener('keydown', function(e) {
     }
 });
 
-// SIGN UP
+// SIGN UP - Modified to redirect to download page
 document.getElementById('signUpForm').onsubmit = function(e) {
   e.preventDefault();
   let fullname = document.getElementById('signup-fullname').value.trim();
@@ -651,16 +651,21 @@ document.getElementById('signUpForm').onsubmit = function(e) {
   let failMsg = document.getElementById('signUpFail');
   let successMsg = document.getElementById('signUpSuccess');
   failMsg.style.display = "none"; successMsg.style.display = "none";
+  
   if(password !== confirmPassword) {
     document.getElementById('confirmPasswordError').textContent = "Passwords do not match"; return;
   }
-  document.getElementById('signUpBtn').textContent = "Creating..."; document.getElementById('signUpBtn').disabled = true;
+  
+  document.getElementById('signUpBtn').textContent = "Creating..."; 
+  document.getElementById('signUpBtn').disabled = true;
+  
   fetch(`${SHEETDB_API}/search?email=${encodeURIComponent(email)}`).then(res=>res.json()).then(data=>{
     if(data.length > 0){
       failMsg.textContent = "Account already exists."; failMsg.style.display = "block";
       document.getElementById('signUpBtn').disabled = false;
       document.getElementById('signUpBtn').textContent = "Create account"; return;
     }
+    
     fetch(SHEETDB_API, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -669,15 +674,26 @@ document.getElementById('signUpForm').onsubmit = function(e) {
       })
     }).then(res=>res.json()).then(result=>{
       if(result.created === 1){
-        successMsg.textContent = "Account created! Please sign in.";
+        // Show success message
+        successMsg.textContent = "Account created!";
         successMsg.style.display = "block";
+        
+        // Store user info for the download page (optional)
+        localStorage.setItem("user_email", email);
+        localStorage.setItem("user_name", fullname);
+        
+        // Redirect to download page after showing success message
         setTimeout(()=>{
-          closeModal(document.getElementById('signUpModal'));
-          document.getElementById('signUpForm').reset();
-        }, 1600);
-      }else{ throw new Error("Signup failed"); }
+          window.location.href = "download.html"; // Change this to your download page URL
+        }, 2000); // 2 second delay to show the success message
+        
+      }else{ 
+        throw new Error("Signup failed"); 
+      }
+      
       document.getElementById('signUpBtn').disabled = false;
       document.getElementById('signUpBtn').textContent = "Create account";
+      
     }).catch(()=>{
       failMsg.textContent = "Sign up failed. Try again."; failMsg.style.display = "block";
       document.getElementById('signUpBtn').disabled = false;
@@ -685,78 +701,3 @@ document.getElementById('signUpForm').onsubmit = function(e) {
     });
   });
 };
-// SIGN IN
-document.getElementById('signInForm').onsubmit = function(e) {
-  e.preventDefault();
-  let email = document.getElementById('signin-email').value.trim();
-  let password = document.getElementById('signin-password').value;
-  let failMsg = document.getElementById('signInFail');
-  let successMsg = document.getElementById('signInSuccess');
-  failMsg.style.display = "none"; successMsg.style.display = "none";
-  document.getElementById('signInBtn').textContent = "Signing in..."; document.getElementById('signInBtn').disabled = true;
-  fetch(`${SHEETDB_API}/search?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`)
-    .then(res=>res.json())
-    .then(data=>{
-      document.getElementById('signInBtn').disabled = false;
-      document.getElementById('signInBtn').textContent = "Sign in";
-      if(Array.isArray(data) && data.length > 0){
-        localStorage.setItem("user_email", data[0].email);
-        localStorage.setItem("user_name", data[0].fullname);
-        successMsg.textContent = "Sign in successful! Redirecting...";
-        successMsg.style.display = "block";
-        setTimeout(()=>{ window.location.href = "dashboard.html"; }, 1100);
-      } else {
-        failMsg.textContent = "Incorrect email or password."; failMsg.style.display = "block";
-      }
-    })
-    .catch(()=>{
-      document.getElementById('signInBtn').disabled = false;
-      document.getElementById('signInBtn').textContent = "Sign in";
-      failMsg.textContent = "Sign in failed. Try again."; failMsg.style.display = "block";
-    });
-};
-// FORGOT PASSWORD
-forgotPasswordForm.onsubmit = function(e) {
-    e.preventDefault();
-    document.getElementById('forgotEmailError').textContent = "";
-    document.getElementById('forgotPasswordError').textContent = "";
-    document.getElementById('forgotConfirmPasswordError').textContent = "";
-    document.getElementById('forgotPasswordSuccess').style.display = "none";
-    document.getElementById('forgotPasswordFail').style.display = "none";
-    const email = document.getElementById('forgot-email').value.trim();
-    const password = document.getElementById('forgot-password').value;
-    const confirmPassword = document.getElementById('forgot-confirm-password').value;
-    if (!email) { document.getElementById('forgotEmailError').textContent = "Email is required"; return; }
-    if (!password) { document.getElementById('forgotPasswordError').textContent = "New password is required"; return; }
-    if (!confirmPassword) { document.getElementById('forgotConfirmPasswordError').textContent = "Confirm your new password"; return; }
-    if (password !== confirmPassword) { document.getElementById('forgotConfirmPasswordError').textContent = "Passwords do not match"; return; }
-    const btn = document.getElementById('forgotPasswordBtn');
-    btn.textContent = "Resetting..."; btn.disabled = true;
-    fetch(`${SHEETDB_API}/email/${encodeURIComponent(email)}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: { password } })
-    })
-    .then(res => res.ok ? res.json() : Promise.reject(res))
-    .then((resData) => {
-        btn.textContent = "Reset password";
-        btn.disabled = false;
-        if (resData.updated === 1 || resData.created === 1) {
-            document.getElementById('forgotPasswordSuccess').textContent = "Password reset! You can now sign in.";
-            document.getElementById('forgotPasswordSuccess').style.display = "block";
-            setTimeout(() => { closeModal(document.getElementById('forgotPasswordModal')); forgotPasswordForm.reset(); }, 1800);
-        } else {
-            document.getElementById('forgotPasswordFail').textContent = "Email not found. Try again.";
-            document.getElementById('forgotPasswordFail').style.display = "block";
-        }
-    })
-    .catch(() => {
-        btn.textContent = "Reset password";
-        btn.disabled = false;
-        document.getElementById('forgotPasswordFail').textContent = "Reset failed. Try again.";
-        document.getElementById('forgotPasswordFail').style.display = "block";
-    });
-};
-</script>
-</body>
-</html>
