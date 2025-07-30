@@ -654,7 +654,7 @@ window.addEventListener('keydown', function(e) {
     }
 });
 
-// SIGN UP - Modified to redirect to download page
+// SIGN UP - Redirect to download.html after SheetDB account creation
 if(signUpForm) {
     signUpForm.onsubmit = function(e) {
       e.preventDefault();
@@ -707,6 +707,56 @@ if(signUpForm) {
         });
       });
     };
+}
+
+// SIGN IN - Check user via SheetDB and redirect to dashboard.html
+if(signInForm) {
+    signInForm.onsubmit = function(e) {
+        e.preventDefault();
+
+        let email = document.getElementById('signin-email').value.trim();
+        let password = document.getElementById('signin-password').value;
+        let failMsg = document.getElementById('signInFail');
+        let successMsg = document.getElementById('signInSuccess');
+        failMsg.style.display = "none"; successMsg.style.display = "none";
+        document.getElementById('signInBtn').textContent = "Signing in...";
+        document.getElementById('signInBtn').disabled = true;
+
+        fetch(`${SHEETDB_API}/search?email=${encodeURIComponent(email)}`)
+        .then(res => res.json())
+        .then(data => {
+            if(data.length === 0) {
+                failMsg.textContent = "Account not found.";
+                failMsg.style.display = "block";
+                document.getElementById('signInBtn').disabled = false;
+                document.getElementById('signInBtn').textContent = "Sign in";
+                return;
+            }
+            // Now check password
+            const user = data.find(u => u.email === email && u.password === password);
+            if(!user) {
+                failMsg.textContent = "Incorrect password.";
+                failMsg.style.display = "block";
+                document.getElementById('signInBtn').disabled = false;
+                document.getElementById('signInBtn').textContent = "Sign in";
+                return;
+            }
+            // Successful login
+            successMsg.textContent = "Login successful! Redirecting...";
+            successMsg.style.display = "block";
+            localStorage.setItem("user_email", email);
+            localStorage.setItem("user_name", user.fullname || "");
+            setTimeout(()=>{
+                window.location.href = "dashboard.html";
+            }, 1500);
+        })
+        .catch(()=>{
+            failMsg.textContent = "Sign in failed. Try again.";
+            failMsg.style.display = "block";
+            document.getElementById('signInBtn').disabled = false;
+            document.getElementById('signInBtn').textContent = "Sign in";
+        });
+    }
 }
 </script>
 </body>
