@@ -42,12 +42,14 @@
         gap: 0.5rem;
     }
     .logo::before {
-        content: '●';
-        font-size: 1.5rem;
+        content: '';
+        display: inline-block;
+        width: 1.5rem;
+        height: 1.5rem;
         background: linear-gradient(135deg, #0052ff, #1652f0);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+        border-radius: 6px;
+        margin-right: 0.3rem;
+        vertical-align: middle;
     }
     .nav-links {
         display: flex;
@@ -362,26 +364,26 @@
 <body>
 <div id="mainLanding">
     <!-- Header -->
-    <header class="header">
-        <nav class="nav">
-            <a href="#" class="logo">Base</a>
-            <ul class="nav-links">
-                <li><a href="#prices">Prices</a></li>
-                <li><a href="#learn">Learn</a></li>
-                <li class="mobile-auth-buttons">
-                    <a href="#" id="openSignInModalMobile" class="btn btn-secondary">Sign in</a>
-                    <a href="#" id="openSignUpModalMobile" class="btn btn-primary">Sign up</a>
+    <header class="header" role="banner" aria-label="Main header">
+        <nav class="nav" aria-label="Main navigation">
+            <a href="#" class="logo" aria-label="Base homepage">Base</a>
+            <ul class="nav-links" role="menubar">
+                <li role="none"><a role="menuitem" href="#prices">Prices</a></li>
+                <li role="none"><a role="menuitem" href="#learn">Learn</a></li>
+                <li class="mobile-auth-buttons" role="none">
+                    <a href="#" id="openSignInModalMobile" class="btn btn-secondary" aria-label="Sign in">Sign in</a>
+                    <a href="#" id="openSignUpModalMobile" class="btn btn-primary" aria-label="Sign up">Sign up</a>
                 </li>
             </ul>
             <div class="auth-buttons">
-                <a href="#" id="openSignInModal" class="btn btn-secondary">Sign in</a>
-                <a href="#" id="openSignUpModalDesktop" class="btn btn-primary">Sign up</a>
+                <a href="#" id="openSignInModal" class="btn btn-secondary" aria-label="Sign in">Sign in</a>
+                <a href="#" id="openSignUpModalDesktop" class="btn btn-primary" aria-label="Sign up">Sign up</a>
             </div>
-            <div class="mobile-menu-toggle">
+            <button class="mobile-menu-toggle" aria-label="Open mobile menu" aria-expanded="false" aria-controls="nav-links">
                 <span></span>
                 <span></span>
                 <span></span>
-            </div>
+            </button>
         </nav>
     </header>
     <!-- Hero Section -->
@@ -493,86 +495,108 @@
 </div>
 
 <!-- SIGN IN MODAL -->
-<div class="modal-overlay" id="signInModal">
-  <div class="modal">
-    <button type="button" class="modal-close" id="closeSignInModal">&times;</button>
-    <h2>Sign in to Base</h2>
-    <form id="signInForm" autocomplete="off">
-      <div>
-        <label for="signin-email">Email address</label>
-        <input type="email" id="signin-email" name="email" required placeholder="your@email.com" />
-        <div id="emailError" class="error-message"></div>
+<div class="modal-overlay" id="signInModal" aria-modal="true" role="dialog" aria-labelledby="signInTitle">
+  <div class="modal" style="padding:2.5rem 2rem; box-shadow:0 8px 32px rgba(0,82,255,0.10);">
+    <button type="button" class="modal-close" id="closeSignInModal" aria-label="Close sign in modal">&times;</button>
+    <h2 id="signInTitle" style="font-size:2rem; font-weight:700; color:#0052ff; margin-bottom:1.5rem; text-align:center;">Sign in to Base</h2>
+    <form id="signInForm" autocomplete="off" style="display:flex; flex-direction:column; gap:1.2rem;">
+      <div style="display:flex; flex-direction:column; gap:0.4rem;">
+        <label for="signin-email" style="font-weight:500; color:#333;">Email address</label>
+        <input type="email" id="signin-email" name="email" required placeholder="your@email.com" aria-required="true"
+          style="padding:0.8rem 1rem; border:1.5px solid #e5e7eb; border-radius:8px; font-size:1rem; transition:border 0.2s; outline:none;" 
+          onfocus="this.style.borderColor='#0052ff'" onblur="this.style.borderColor='#e5e7eb'" />
+        <div id="emailError" class="error-message" aria-live="polite"></div>
       </div>
-      <div>
-        <label for="signin-password">Password</label>
-        <input type="password" id="signin-password" name="password" required minlength="8" placeholder="Password" />
-        <div id="passwordError" class="error-message"></div>
+      <div style="display:flex; flex-direction:column; gap:0.4rem;">
+        <label for="signin-password" style="font-weight:500; color:#333;">Password</label>
+        <input type="password" id="signin-password" name="password" required minlength="8" placeholder="Password" aria-required="true"
+          style="padding:0.8rem 1rem; border:1.5px solid #e5e7eb; border-radius:8px; font-size:1rem; transition:border 0.2s; outline:none;" 
+          onfocus="this.style.borderColor='#0052ff'" onblur="this.style.borderColor='#e5e7eb'" />
+        <div id="passwordError" class="error-message" aria-live="polite"></div>
       </div>
-      <button type="submit" class="btn btn-primary" id="signInBtn">Sign in</button>
-      <div id="signInSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
-      <div id="signInFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
-      <a href="#" class="forgot-link" id="openForgotPasswordModal">Forgot your password?</a>
-      <a href="#" class="signup-link" id="openSignUpModalFromSignIn">Don't have an account? Sign up</a>
+      <button type="submit" class="btn btn-primary" id="signInBtn" style="margin-top:0.5rem; font-size:1.1rem; border-radius:10px;">Sign in</button>
+      <div id="signInSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;" aria-live="polite"></div>
+      <div id="signInFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;" aria-live="polite"></div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.5rem;">
+        <a href="#" class="forgot-link" id="openForgotPasswordModal" style="color:#0052ff; font-size:0.98rem; text-decoration:none;">Forgot password?</a>
+        <a href="#" class="signup-link" id="openSignUpModalFromSignIn" style="color:#333; font-size:0.98rem; text-decoration:underline;">Sign up</a>
+      </div>
     </form>
   </div>
 </div>
 
 <!-- SIGN UP MODAL -->
 <div class="modal-overlay" id="signUpModal">
-  <div class="modal">
-    <button type="button" class="modal-close" id="closeSignUpModal">&times;</button>
-    <h2>Create your account</h2>
-    <form id="signUpForm" autocomplete="off">
-      <div>
-        <label for="signup-fullname">Full name</label>
-        <input type="text" id="signup-fullname" name="fullname" required placeholder="Enter your full name" />
+  <div class="modal" style="padding:2.5rem 2rem; box-shadow:0 8px 32px rgba(0,82,255,0.10);">
+    <button type="button" class="modal-close" id="closeSignUpModal" aria-label="Close sign up modal">&times;</button>
+    <h2 style="font-size:2rem; font-weight:700; color:#0052ff; margin-bottom:1.5rem; text-align:center;">Create your account</h2>
+    <form id="signUpForm" autocomplete="off" style="display:flex; flex-direction:column; gap:1.2rem;">
+      <div style="display:flex; flex-direction:column; gap:0.4rem;">
+        <label for="signup-fullname" style="font-weight:500; color:#333;">Full name</label>
+        <input type="text" id="signup-fullname" name="fullname" required placeholder="Enter your full name"
+          style="padding:0.8rem 1rem; border:1.5px solid #e5e7eb; border-radius:8px; font-size:1rem; transition:border 0.2s; outline:none;" 
+          onfocus="this.style.borderColor='#0052ff'" onblur="this.style.borderColor='#e5e7eb'" />
         <div id="fullnameError" class="error-message"></div>
       </div>
-      <div>
-        <label for="signup-email">Email address</label>
-        <input type="email" id="signup-email" name="email" required placeholder="your@email.com" />
+      <div style="display:flex; flex-direction:column; gap:0.4rem;">
+        <label for="signup-email" style="font-weight:500; color:#333;">Email address</label>
+        <input type="email" id="signup-email" name="email" required placeholder="your@email.com"
+          style="padding:0.8rem 1rem; border:1.5px solid #e5e7eb; border-radius:8px; font-size:1rem; transition:border 0.2s; outline:none;" 
+          onfocus="this.style.borderColor='#0052ff'" onblur="this.style.borderColor='#e5e7eb'" />
         <div id="signupEmailError" class="error-message"></div>
       </div>
-      <div>
-        <label for="signup-password">Password</label>
-        <input type="password" id="signup-password" name="password" required minlength="8" placeholder="Create a password (8+ characters)" />
+      <div style="display:flex; flex-direction:column; gap:0.4rem;">
+        <label for="signup-password" style="font-weight:500; color:#333;">Password</label>
+        <input type="password" id="signup-password" name="password" required minlength="8" placeholder="Create a password (8+ characters)"
+          style="padding:0.8rem 1rem; border:1.5px solid #e5e7eb; border-radius:8px; font-size:1rem; transition:border 0.2s; outline:none;" 
+          onfocus="this.style.borderColor='#0052ff'" onblur="this.style.borderColor='#e5e7eb'" />
         <div id="signupPasswordError" class="error-message"></div>
       </div>
-      <div>
-        <label for="signup-confirm-password">Confirm password</label>
-        <input type="password" id="signup-confirm-password" name="confirmPassword" required minlength="8" placeholder="Confirm your password" />
+      <div style="display:flex; flex-direction:column; gap:0.4rem;">
+        <label for="signup-confirm-password" style="font-weight:500; color:#333;">Confirm password</label>
+        <input type="password" id="signup-confirm-password" name="confirmPassword" required minlength="8" placeholder="Confirm your password"
+          style="padding:0.8rem 1rem; border:1.5px solid #e5e7eb; border-radius:8px; font-size:1rem; transition:border 0.2s; outline:none;" 
+          onfocus="this.style.borderColor='#0052ff'" onblur="this.style.borderColor='#e5e7eb'" />
         <div id="confirmPasswordError" class="error-message"></div>
       </div>
-      <button type="submit" class="btn btn-primary" id="signUpBtn">Create account</button>
+      <button type="submit" class="btn btn-primary" id="signUpBtn" style="margin-top:0.5rem; font-size:1.1rem; border-radius:10px;">Create account</button>
       <div id="signUpSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
       <div id="signUpFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
-      <a href="#" class="signup-link" id="openSignInModalFromSignUp">Already have an account? Sign in</a>
+      <div style="text-align:center; margin-top:0.5rem;">
+        <a href="#" class="signup-link" id="openSignInModalFromSignUp" style="color:#333; font-size:0.98rem; text-decoration:underline;">Already have an account? Sign in</a>
+      </div>
     </form>
   </div>
 </div>
 
 <!-- FORGOT PASSWORD MODAL -->
 <div class="modal-overlay" id="forgotPasswordModal">
-  <div class="modal">
-    <button type="button" class="modal-close" id="closeForgotPasswordModal">&times;</button>
-    <h2>Reset Password</h2>
-    <form id="forgotPasswordForm" autocomplete="off">
-      <div>
-        <label for="forgot-email">Email address</label>
-        <input type="email" id="forgot-email" required placeholder="Your email" />
+  <div class="modal" style="padding:2.5rem 2rem; box-shadow:0 8px 32px rgba(0,82,255,0.10);">
+    <button type="button" class="modal-close" id="closeForgotPasswordModal" aria-label="Close reset password modal">&times;</button>
+    <h2 style="font-size:2rem; font-weight:700; color:#0052ff; margin-bottom:1.5rem; text-align:center;">Reset Password</h2>
+    <form id="forgotPasswordForm" autocomplete="off" style="display:flex; flex-direction:column; gap:1.2rem;">
+      <div style="display:flex; flex-direction:column; gap:0.4rem;">
+        <label for="forgot-email" style="font-weight:500; color:#333;">Email address</label>
+        <input type="email" id="forgot-email" required placeholder="Your email"
+          style="padding:0.8rem 1rem; border:1.5px solid #e5e7eb; border-radius:8px; font-size:1rem; transition:border 0.2s; outline:none;" 
+          onfocus="this.style.borderColor='#0052ff'" onblur="this.style.borderColor='#e5e7eb'" />
         <div id="forgotEmailError" class="error-message"></div>
       </div>
-      <div>
-        <label for="forgot-password">New password</label>
-        <input type="password" id="forgot-password" required minlength="8" placeholder="New password" />
+      <div style="display:flex; flex-direction:column; gap:0.4rem;">
+        <label for="forgot-password" style="font-weight:500; color:#333;">New password</label>
+        <input type="password" id="forgot-password" required minlength="8" placeholder="New password"
+          style="padding:0.8rem 1rem; border:1.5px solid #e5e7eb; border-radius:8px; font-size:1rem; transition:border 0.2s; outline:none;" 
+          onfocus="this.style.borderColor='#0052ff'" onblur="this.style.borderColor='#e5e7eb'" />
         <div id="forgotPasswordError" class="error-message"></div>
       </div>
-      <div>
-        <label for="forgot-confirm-password">Confirm new password</label>
-        <input type="password" id="forgot-confirm-password" required minlength="8" placeholder="Confirm password" />
+      <div style="display:flex; flex-direction:column; gap:0.4rem;">
+        <label for="forgot-confirm-password" style="font-weight:500; color:#333;">Confirm new password</label>
+        <input type="password" id="forgot-confirm-password" required minlength="8" placeholder="Confirm password"
+          style="padding:0.8rem 1rem; border:1.5px solid #e5e7eb; border-radius:8px; font-size:1rem; transition:border 0.2s; outline:none;" 
+          onfocus="this.style.borderColor='#0052ff'" onblur="this.style.borderColor='#e5e7eb'" />
         <div id="forgotConfirmPasswordError" class="error-message"></div>
       </div>
-      <button type="submit" class="btn btn-primary" id="forgotPasswordBtn">Reset password</button>
+      <button type="submit" class="btn btn-primary" id="forgotPasswordBtn" style="margin-top:0.5rem; font-size:1.1rem; border-radius:10px;">Reset password</button>
       <div id="forgotPasswordSuccess" style="color: #10b981; text-align:center; margin-top:10px; display:none;"></div>
       <div id="forgotPasswordFail" style="color: #e11d48; text-align:center; margin-top:10px; display:none;"></div>
     </form>
