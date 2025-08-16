@@ -1,0 +1,2 @@
+# Keep SPA routing for the React app under /app
+/app/*   /app.html   200
