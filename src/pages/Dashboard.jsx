@@ -28,7 +28,7 @@ export default function Dashboard() {
   const [notifs, setNotifs] = useState([])
 
   const btnStyle = useMemo(()=>({
-    background:'linear-gradient(90deg, #1652f0 60%, #00d4ff 100%)',color:'#fff',border:'none',fontWeight:600,padding:'10px 23px',borderRadius:8,cursor:'pointer',boxShadow:'0 2px 8px rgba(0,82,255,0.08)'
+    background:'linear-gradient(90deg, #1652f0 60%, #0f3ac0 100%)',color:'#fff',border:'none',fontWeight:700,padding:'10px 23px',borderRadius:10,cursor:'pointer',boxShadow:'0 2px 10px rgba(22,82,240,0.18)'
   }),[])
 
   // Auth load
@@ -156,8 +156,8 @@ export default function Dashboard() {
 
   return (
     <div>
-      <header style={{background:'linear-gradient(135deg,#0052ff,#1652f0)',color:'#fff',padding:'1.3rem 2rem 1rem 2rem',display:'flex',justifyContent:'space-between',alignItems:'center',boxShadow:'0 2px 16px rgba(0,82,255,0.10)',borderBottomLeftRadius:18,borderBottomRightRadius:18}}>
-        <a href="#" style={{fontSize:'2rem',fontWeight:'bold',letterSpacing:'-1px',textDecoration:'none',color:'#fff',display:'flex',alignItems:'center',gap:'.7rem'}}>Base</a>
+      <header style={{background:'linear-gradient(135deg,#0f3ac0,#1652f0)',color:'#fff',padding:'1.2rem 2rem 1rem',display:'flex',justifyContent:'space-between',alignItems:'center',boxShadow:'0 4px 20px rgba(22,82,240,0.14)',borderBottomLeftRadius:18,borderBottomRightRadius:18}}>
+        <a href="#" style={{fontSize:'1.9rem',fontWeight:800,letterSpacing:'-0.03em',textDecoration:'none',color:'#fff',display:'flex',alignItems:'center',gap:'.7rem'}}>Base</a>
         <div>
           <span style={{fontSize:'1.1rem',background:'#fff',color:'#1652f0',padding:'.3em .9em',borderRadius:8,marginRight:'.7em',fontWeight:500,boxShadow:'0 2px 8px rgba(0,82,255,0.07)'}}>{userName}</span>
           (<span>{userEmail}</span>)
@@ -165,7 +165,7 @@ export default function Dashboard() {
         </div>
       </header>
 
-      <div style={{maxWidth:1100,margin:'36px auto 0',padding:'0 1.2rem 2.5rem',background:'#fff',borderRadius:18,boxShadow:'0 4px 32px rgba(0,82,255,0.07)'}}>
+  <div style={{maxWidth:1100,margin:'36px auto 0',padding:'0 1.2rem 2.5rem',background:'#fff',borderRadius:18,boxShadow:'0 6px 36px rgba(10,50,150,0.08)'}}>
         <div id="notifBar" style={{marginBottom:'1.3rem'}}>
           {notifs && notifs.length ? notifs.map((n,i)=> (
             <div key={i} style={{background:'#f3f7ff',color:'#1652f0',borderLeft:'5px solid #00d4ff',padding:'.9em 2em .9em 1em',marginBottom:'.6em',borderRadius:7,fontSize:'1.03em',display:'flex',alignItems:'center',gap:'.6em',position:'relative',boxShadow:'0 2px 12px rgba(0,82,255,0.06)'}}>
@@ -212,7 +212,7 @@ export default function Dashboard() {
                         {k:'tether', label:'USDT/USD'},
                       ].map(({k,label}) => (
                         <div key={k} style={{background:'#f7faff',borderRadius:12,padding:'1em 1.5em 1em 1em',marginBottom:'.9em',boxShadow:'0 2px 8px rgba(10,100,255,.03)',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-                          <h4 style={{margin:0,fontWeight:600,color:'#1652f0',fontSize:'1.1em'}}>{label}</h4>
+                          <h4 style={{margin:0,fontWeight:700,color:'#1652f0',fontSize:'1.05em',letterSpacing:'.01em'}}>{label}</h4>
                           <div>
                             <span style={{fontSize:'1.2em',fontWeight:600,marginRight:'.7em'}}>${parseFloat(prices[k].usd).toLocaleString(undefined,{minimumFractionDigits:2})}</span>
                             <span style={{color: prices[k].usd_24h_change<0?'#e11d48':'#18b200'}}>
