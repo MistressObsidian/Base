@@ -4,10 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+  "predev": "node scripts/sync-clean.cjs",
+  "dev": "vite",
+  "prebuild": "node scripts/sync-clean.cjs",
+  "build": "vite build",
+  "lint": "eslint .",
+  "preview": "vite preview"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
