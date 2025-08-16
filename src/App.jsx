@@ -309,11 +309,13 @@ function Landing() {
         .mobile-auth-buttons { display: flex; gap: 1rem; padding-top: 1rem; margin-top: 1rem; border-top: 1px solid rgba(0, 0, 0, 0.1); justify-content: center; }
         .mobile-auth-buttons .btn { flex: 1; text-align: center; justify-content: center; }
     }
-    @media (min-width: 769px) { .mobile-auth-buttons { display: none; } }
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-    .modal-overlay { position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.3);display:none;align-items:center;justify-content:center;z-index:3000;}
-    .modal-overlay.active { display:flex; }
-    .modal { background: #fff; border-radius: 14px; max-width: 400px; width:95%; padding: 2rem 1.5rem; position:relative; }
+  @media (min-width: 769px) { .mobile-auth-buttons { display: none; } }
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  /* Responsive modals */
+  .modal-overlay { position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.3);display:none;align-items:center;justify-content:center;z-index:3000;padding:1rem;overflow:auto; }
+  .modal-overlay.active { display:flex; }
+  .modal { background:#fff; border-radius:14px; position:relative; box-sizing:border-box; width:min(92vw,520px); max-width:520px; padding: 2rem 1.5rem; max-height:90vh; overflow-y:auto; }
+  @media (max-width: 480px) { .modal { width:100vw; height:100vh; max-width:none; max-height:none; border-radius:0; padding:1.25rem; } }
     .modal-close { position:absolute;right:1rem;top:1rem;font-size:1.3rem;background:none;border:none;color:#aaa;cursor:pointer;}
     .error-message {color:#e11d48; font-size:.96rem;}
     .btn { padding:.6rem 1.2rem; border-radius:6px; border:none; cursor:pointer; font-weight:600;}
