@@ -457,7 +457,7 @@ function Landing() {
               if (successMsg) { successMsg.textContent = 'Account created!'; successMsg.style.display = 'block' }
               localStorage.setItem('user_email', email)
               localStorage.setItem('user_name', fullname)
-              setTimeout(() => { window.location.href = 'download.html' }, 2000)
+              setTimeout(() => { window.location.href = '/download' }, 2000)
             } else { throw new Error('Signup failed') }
             if (btn) { btn.disabled = false; btn.textContent = 'Create account' }
           })
@@ -498,7 +498,7 @@ function Landing() {
           if (successMsg) { successMsg.textContent = 'Login successful! Redirecting...'; successMsg.style.display = 'block' }
           localStorage.setItem('user_email', email)
           localStorage.setItem('user_name', user.fullname || '')
-          setTimeout(() => { window.location.href = 'dashboard.html' }, 1500)
+          setTimeout(() => { window.location.href = '/dashboard' }, 1500)
         })
         .catch(() => {
           if (failMsg) { failMsg.textContent = 'Sign in failed. Try again.'; failMsg.style.display = 'block' }
