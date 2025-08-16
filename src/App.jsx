@@ -24,7 +24,7 @@ function Landing() {
                 <span></span>
                 <span></span>
             </button>
-        </nav>
+  </nav>
     </header>
     <section class="hero">
         <div class="hero-content">
@@ -368,6 +368,21 @@ function Landing() {
       }
       window.addEventListener('scroll', onScroll)
 
+      // Dark mode toggle
+      const stored = localStorage.getItem('theme')
+      if (stored) document.documentElement.setAttribute('data-theme', stored)
+      const toggleTheme = () => {
+        const curr = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+        document.documentElement.setAttribute('data-theme', curr)
+        localStorage.setItem('theme', curr)
+      }
+      const themeBtn = document.createElement('button')
+      themeBtn.innerText = 'Theme'
+      themeBtn.setAttribute('aria-label','Toggle dark mode')
+      themeBtn.style.cssText = 'margin-left:12px;background:transparent;border:1px solid rgba(255,255,255,.6);color:#fff;padding:.4rem .7rem;border-radius:10px;cursor:pointer;font-weight:600;'
+      const navRight = document.querySelector('.auth-buttons')
+      if (navRight) { navRight.appendChild(themeBtn); themeBtn.addEventListener('click', toggleTheme) }
+
       // Cleanup
       return () => {
         mobileToggle.removeEventListener('click', toggleHandler)
@@ -375,6 +390,7 @@ function Landing() {
         anchors.forEach((off) => off())
         linkClicks.forEach((off) => off())
         window.removeEventListener('scroll', onScroll)
+        if (themeBtn) themeBtn.removeEventListener('click', toggleTheme)
       }
     }
   }, [])

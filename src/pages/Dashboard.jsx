@@ -156,11 +156,12 @@ export default function Dashboard() {
 
   return (
     <div>
-      <header style={{background:'linear-gradient(135deg,#0f3ac0,#1652f0)',color:'#fff',padding:'1.2rem 2rem 1rem',display:'flex',justifyContent:'space-between',alignItems:'center',boxShadow:'0 4px 20px rgba(22,82,240,0.14)',borderBottomLeftRadius:18,borderBottomRightRadius:18}}>
-        <a href="#" style={{fontSize:'1.9rem',fontWeight:800,letterSpacing:'-0.03em',textDecoration:'none',color:'#fff',display:'flex',alignItems:'center',gap:'.7rem'}}>Base</a>
-        <div>
+      <header style={{background:'linear-gradient(135deg,#0f3ac0,#1652f0)',color:'#fff',padding:'1.1rem 2rem 0.9rem',display:'flex',justifyContent:'space-between',alignItems:'center',boxShadow:'0 4px 20px rgba(22,82,240,0.14)',borderBottomLeftRadius:18,borderBottomRightRadius:18}}>
+        <a href="#" style={{fontSize:'1.85rem',fontWeight:800,letterSpacing:'-0.03em',textDecoration:'none',color:'#fff',display:'flex',alignItems:'center',gap:'.7rem'}}>Base</a>
+        <div style={{display:'flex',alignItems:'center',gap:8}}>
           <span style={{fontSize:'1.1rem',background:'#fff',color:'#1652f0',padding:'.3em .9em',borderRadius:8,marginRight:'.7em',fontWeight:500,boxShadow:'0 2px 8px rgba(0,82,255,0.07)'}}>{userName}</span>
           (<span>{userEmail}</span>)
+          <button onClick={()=>{const doc=document.documentElement;const next=doc.getAttribute('data-theme')==='dark'?'light':'dark';doc.setAttribute('data-theme',next);localStorage.setItem('theme',next)}} style={{marginLeft:8,background:'transparent',border:'1px solid rgba(255,255,255,.7)',color:'#fff',fontWeight:700,padding:'8px 14px',borderRadius:10,cursor:'pointer'}}>Theme</button>
           <button onClick={()=>{localStorage.removeItem('user_email');localStorage.removeItem('user_name');window.location.href='/'}} style={{marginLeft:8,...btnStyle,borderRadius:20}}>Log out</button>
         </div>
       </header>
