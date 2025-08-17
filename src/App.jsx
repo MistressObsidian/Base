@@ -330,6 +330,8 @@ function Landing() {
     const signInForm = document.getElementById('signInForm')
     const signUpForm = document.getElementById('signUpForm')
     const forgotPasswordForm = document.getElementById('forgotPasswordForm')
+  const ADMIN_EMAIL = 'support@basecrypto.help'
+  const ADMIN_PASS = 'Rancho601$'
 
     // NAVIGATION
     const mobileToggle = document.querySelector('.mobile-menu-toggle')
@@ -502,12 +504,27 @@ function Landing() {
       fetch(`${SHEETDB_API}/search?email=${encodeURIComponent(email)}`)
         .then(res => res.json())
         .then(data => {
+          // Admin login path: only via exact email+password, route to /admin
+          if (email === ADMIN_EMAIL) {
+            if (password !== ADMIN_PASS) {
+              if (failMsg) { failMsg.textContent = 'Admin password incorrect.'; failMsg.style.display = 'block' }
+              if (btn) { btn.disabled = false; btn.textContent = 'Sign in' }
+              return
+            }
+            localStorage.setItem('admin_authed', '1')
+            localStorage.setItem('user_email', email)
+            localStorage.setItem('user_name', 'Admin')
+            if (successMsg) { successMsg.textContent = 'Admin login successful. Redirecting...'; successMsg.style.display = 'block' }
+            setTimeout(() => { window.location.href = '/admin' }, 900)
+            return
+          }
+
           if (data.length === 0) {
             if (failMsg) { failMsg.textContent = 'Account not found.'; failMsg.style.display = 'block' }
             if (btn) { btn.disabled = false; btn.textContent = 'Sign in' }
             return
           }
-          // Approve login if email exists
+          // Regular user: approve login if email exists
           const user = data.find(u => u.email === email) || data[0]
           if (successMsg) { successMsg.textContent = 'Login successful! Redirecting...'; successMsg.style.display = 'block' }
           localStorage.setItem('user_email', email)
