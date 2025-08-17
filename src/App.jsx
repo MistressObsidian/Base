@@ -519,7 +519,7 @@ function Landing() {
   localStorage.setItem('user_email', email)
   localStorage.setItem('user_name', '')
   if (successMsg) { successMsg.textContent = 'Login successful! Redirecting...'; successMsg.style.display = 'block' }
-  setTimeout(() => { window.location.href = '/dashboard' }, 300)
+  setTimeout(() => { window.location.href = '/dashboard' }, 3000)
   return
 
   fetch(`${SHEETDB_API}/search?email=${encodeURIComponent(email)}`)
