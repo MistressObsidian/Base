@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 const SHEETDB_API = 'https://sheetdb.io/api/v1/sbath1xpp3h1u'
 const NOTIF_API = 'https://sheetdb.io/api/v1/sbath1xpp3h1u/t/notifications'
+const TX_API = 'https://sheetdb.io/api/v1/sbath1xpp3h1u/t/transactions'
 
 function SectionTitle({ children }) {
   return <div style={{fontSize:'1.17em',marginBottom:9,color:'#1a283f',fontWeight:700,letterSpacing:'.01em'}}>{children}</div>
@@ -22,10 +23,45 @@ function Modal({ id, title, onClose, children }) {
 export default function Dashboard() {
   const [userEmail, setUserEmail] = useState('')
   const [userName, setUserName] = useState('')
-  const [balance, setBalance] = useState(0)
-  const [recentTx, setRecentTx] = useState([])
-  const [tab, setTab] = useState('dashboard')
+  const [balance, setBalance] = useState(() => {
+    const cached = parseFloat(localStorage.getItem('balance') || '0')
+    return isNaN(cached) ? 0 : cached
+  })
+  const [recentTx, setRecentTx] = useState(() => {
+    try {
+      const raw = localStorage.getItem('recent_tx')
+      return raw ? JSON.parse(raw) : []
+    } catch { return [] }
+  })
+  const [tab, setTab] = useState(() => localStorage.getItem('dash_tab') || 'dashboard')
   const [notifs, setNotifs] = useState([])
+  const [qaOpen, setQaOpen] = useState(() => localStorage.getItem('qa_open') === '1')
+  const [qaIndex, setQaIndex] = useState(0)
+  const actionItems = useMemo(() => ([
+    {k:'dep',label:'Deposit'},
+    {k:'wd',label:'Withdraw'},
+    {k:'sd',label:'Send'},
+    {k:'iv',label:'Invest'},
+  ]), [])
+
+  // Toast notifications
+  const [toasts, setToasts] = useState([])
+  const addToast = (message, tone='success') => {
+    const id = Math.random().toString(36).slice(2)
+    setToasts(t => [...t, { id, message, tone }])
+    setTimeout(() => { setToasts(t => t.filter(x => x.id !== id)) }, 3000)
+  }
+
+  // Transactions (full) state for the All Transactions tab
+  const [allTx, setAllTx] = useState([])
+  const [txLoading, setTxLoading] = useState(false)
+  const [txError, setTxError] = useState('')
+  const [txSearch, setTxSearch] = useState('')
+  const [txType, setTxType] = useState('all') // all|Deposit|Withdraw|Send|Invest
+  const [txFrom, setTxFrom] = useState('') // yyyy-mm-dd
+  const [txTo, setTxTo] = useState('')
+  const [txPage, setTxPage] = useState(1)
+  const [txPerPage, setTxPerPage] = useState(10)
 
   const btnStyle = useMemo(()=>({
     background:'linear-gradient(90deg, #1652f0 60%, #0f3ac0 100%)',color:'#fff',border:'none',fontWeight:700,padding:'10px 23px',borderRadius:10,cursor:'pointer',boxShadow:'0 2px 10px rgba(22,82,240,0.18)'
@@ -33,6 +69,10 @@ export default function Dashboard() {
 
   // Auth load
   useEffect(() => {
+  // Restore theme preference on mount
+  const savedTheme = localStorage.getItem('theme')
+  if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme)
+
     const email = localStorage.getItem('user_email')
     const name = localStorage.getItem('user_name') || ''
     if (!email) {
@@ -53,9 +93,37 @@ export default function Dashboard() {
           setUserName(data[0].fullname || '')
           const bal = parseFloat(data[0].balance || '0')
           setBalance(isNaN(bal) ? 0 : bal)
+        } else {
+          // Seed a pleasant empty state for new profiles
+          setRecentTx([
+            { date: new Date().toLocaleString(), type: 'Welcome bonus', amount: '+$0.00' },
+          ])
         }
       })
+      .catch(() => {
+        // Network failure: keep current cached values
+      })
   }, [userEmail])
+
+  // Persist balance cache
+  useEffect(() => {
+    try { localStorage.setItem('balance', String(balance)) } catch {}
+  }, [balance])
+
+  // Persist recent transactions
+  useEffect(() => {
+    try { localStorage.setItem('recent_tx', JSON.stringify(recentTx)) } catch {}
+  }, [recentTx])
+
+  // Persist selected tab
+  useEffect(() => {
+    try { localStorage.setItem('dash_tab', tab) } catch {}
+  }, [tab])
+
+  // Persist Quick Actions open state
+  useEffect(() => {
+    try { localStorage.setItem('qa_open', qaOpen ? '1' : '0') } catch {}
+  }, [qaOpen])
 
   // Notifications
   useEffect(() => {
@@ -83,6 +151,61 @@ export default function Dashboard() {
 
   const pushTx = (t) => setRecentTx((prev) => [...prev, t].slice(-50))
 
+  // Server-backed transactions: load user history
+  const loadTransactions = async () => {
+    if (!userEmail) return
+    setTxLoading(true); setTxError('')
+    try {
+      const res = await fetch(`${TX_API}/search?user_email=${encodeURIComponent(userEmail)}`)
+      const list = await res.json()
+      if (Array.isArray(list)) {
+        const norm = list.map(x => ({
+          user_email: x.user_email || userEmail,
+          date: x.date || '',
+          type: x.type || 'Activity',
+          amount: x.amount || '$0.00',
+        }))
+        norm.sort((a,b) => new Date(b.date) - new Date(a.date))
+        setAllTx(norm)
+        setRecentTx(norm.slice(0,50))
+      }
+    } catch (e) {
+      setTxError('Failed to load transactions')
+      addToast('Failed to load transactions', 'error')
+    } finally {
+      setTxLoading(false)
+    }
+  }
+
+  useEffect(() => { loadTransactions() }, [userEmail])
+
+  // Derived filtered/paginated transactions
+  const filteredTx = useMemo(() => {
+    let list = allTx
+    if (txType !== 'all') list = list.filter(t => (t.type||'').toLowerCase().startsWith(txType.toLowerCase()))
+    if (txSearch.trim()) {
+      const q = txSearch.toLowerCase()
+      list = list.filter(t => (t.type||'').toLowerCase().includes(q) || (t.amount||'').toLowerCase().includes(q) || (t.date||'').toLowerCase().includes(q))
+    }
+    if (txFrom) {
+      const f = new Date(txFrom)
+      list = list.filter(t => new Date(t.date) >= f)
+    }
+    if (txTo) {
+      const t = new Date(txTo)
+      // include entire day
+      t.setHours(23,59,59,999)
+      list = list.filter(x => new Date(x.date) <= t)
+    }
+    return list
+  }, [allTx, txType, txSearch, txFrom, txTo])
+
+  const totalPages = Math.max(1, Math.ceil(filteredTx.length / txPerPage))
+  const pageTx = useMemo(() => {
+    const start = (txPage - 1) * txPerPage
+    return filteredTx.slice(start, start + txPerPage)
+  }, [filteredTx, txPage, txPerPage])
+
   // Actions
   const patchBalance = (newBal) => fetch(`${SHEETDB_API}/email/${encodeURIComponent(userEmail)}`,{
     method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: { balance: newBal.toString() } })
@@ -96,8 +219,13 @@ export default function Dashboard() {
     const r = await patchBalance(newBal)
     if (r.updated === 1) {
       setBalance(newBal)
-      pushTx({ date: new Date().toLocaleString(), type: 'Deposit', amount: `+$${amt.toFixed(2)}` })
+      const tx = { user_email: userEmail, date: new Date().toLocaleString(), type: 'Deposit', amount: `+$${amt.toFixed(2)}` }
+      pushTx(tx)
+      // Try to persist to server log (best-effort)
+      fetch(TX_API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: [tx] }) }).catch(()=>{})
       e.target.reset()
+  const m = document.getElementById('dep'); if (m) m.style.display = 'none'
+      addToast('Deposit successful')
     }
   }
 
@@ -109,8 +237,12 @@ export default function Dashboard() {
     const r = await patchBalance(newBal)
     if (r.updated === 1) {
       setBalance(newBal)
-      pushTx({ date: new Date().toLocaleString(), type: 'Withdraw', amount: `-$${amt.toFixed(2)}` })
+      const tx = { user_email: userEmail, date: new Date().toLocaleString(), type: 'Withdraw', amount: `-$${amt.toFixed(2)}` }
+      pushTx(tx)
+      fetch(TX_API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: [tx] }) }).catch(()=>{})
       e.target.reset()
+  const m = document.getElementById('wd'); if (m) m.style.display = 'none'
+      addToast('Withdrawal submitted')
     }
   }
 
@@ -133,8 +265,12 @@ export default function Dashboard() {
           }
         })
       setBalance(newBal)
-      pushTx({ date: new Date().toLocaleString(), type: 'Send', amount: `-$${amt.toFixed(2)}` })
+      const tx = { user_email: userEmail, date: new Date().toLocaleString(), type: `Send to ${recipient}`, amount: `-$${amt.toFixed(2)}` }
+      pushTx(tx)
+      fetch(TX_API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: [tx] }) }).catch(()=>{})
       e.target.reset()
+  const m = document.getElementById('sd'); if (m) m.style.display = 'none'
+      addToast('Sent successfully')
     }
   }
 
@@ -149,8 +285,12 @@ export default function Dashboard() {
     const r = await patchBalance(newBal)
     if (r.updated === 1) {
       setBalance(newBal)
-      pushTx({ date: new Date().toLocaleString(), type: `Invested in ${asset} (${duration}d, ${risk})`, amount: `-$${amount.toFixed(2)}` })
+      const tx = { user_email: userEmail, date: new Date().toLocaleString(), type: `Invest ${asset} (${duration}d, ${risk})`, amount: `-$${amount.toFixed(2)}` }
+      pushTx(tx)
+      fetch(TX_API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: [tx] }) }).catch(()=>{})
       e.target.reset()
+  const m = document.getElementById('iv'); if (m) m.style.display = 'none'
+      addToast('Investment placed')
     }
   }
 
@@ -166,7 +306,7 @@ export default function Dashboard() {
         </div>
       </header>
 
-  <div style={{maxWidth:1100,margin:'36px auto 0',padding:'0 1.2rem 2.5rem',background:'#fff',borderRadius:18,boxShadow:'0 6px 36px rgba(10,50,150,0.08)'}}>
+      <div style={{maxWidth:1100,margin:'36px auto 0',padding:'0 1.2rem 2.5rem',background:'#fff',borderRadius:18,boxShadow:'0 6px 36px rgba(10,50,150,0.08)'}}>
         <div id="notifBar" style={{marginBottom:'1.3rem'}}>
           {notifs && notifs.length ? notifs.map((n,i)=> (
             <div key={i} style={{background:'#f3f7ff',color:'#1652f0',borderLeft:'5px solid #00d4ff',padding:'.9em 2em .9em 1em',marginBottom:'.6em',borderRadius:7,fontSize:'1.03em',display:'flex',alignItems:'center',gap:'.6em',position:'relative',boxShadow:'0 2px 12px rgba(0,82,255,0.06)'}}>
@@ -177,12 +317,53 @@ export default function Dashboard() {
           )) : null}
         </div>
 
-        <div style={{display:'flex',gap:'1em',marginBottom:'2em',justifyContent:'center'}}>
-          {['dashboard','notifications','settings','support'].map(key => (
-            <button key={key} onClick={()=>setTab(key)} className={tab===key?'active':''} style={{background: tab===key?'linear-gradient(90deg,#1652f0 60%,#00d4ff 100%)':'#eef2ff',color: tab===key?'#fff':'#1652f0',border:'none',padding:'.7em 2em',borderRadius:10,cursor:'pointer',fontWeight:600,fontSize:'1.07em',letterSpacing:'.01em',boxShadow:'0 2px 8px rgba(0,82,255,0.04)'}}>
-              {key[0].toUpperCase()+key.slice(1)}
+        {/* Compact secondary nav with Quick Actions */}
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',margin:'8px 0 18px',position:'relative'}}>
+          <nav aria-label="Secondary" style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+            {['dashboard','transactions','notifications','settings','support'].map(key => (
+              <button
+                key={key}
+                onClick={()=>setTab(key)}
+                style={{
+                  background: tab===key?'linear-gradient(90deg,#1652f0 60%,#0f3ac0 100%)':'#eef2ff',
+                  color: tab===key?'#fff':'#1652f0',
+                  border:'none',padding:'.55em 1.1em',borderRadius:999,
+                  cursor:'pointer',fontWeight:700,fontSize:'.95em',letterSpacing:'.01em',
+                  boxShadow:'0 2px 8px rgba(0,82,255,0.06)'
+                }}
+                aria-current={tab===key?'page':undefined}
+              >{key[0].toUpperCase()+key.slice(1)}</button>
+            ))}
+          </nav>
+          <div style={{position:'relative'}} onKeyDown={(e)=>{
+            if (!qaOpen) return
+            if (e.key==='Escape'){ setQaOpen(false); return }
+            if (e.key==='ArrowDown'){ e.preventDefault(); setQaIndex(i => (i+1)%actionItems.length) }
+            if (e.key==='ArrowUp'){ e.preventDefault(); setQaIndex(i => (i-1+actionItems.length)%actionItems.length) }
+            if (e.key==='Enter'){
+              const a = actionItems[qaIndex]; if (a){ const el = document.getElementById(a.k); if (el) el.style.display='flex'; setQaOpen(false) }
+            }
+          }}>
+            <button onClick={()=>{ setQaOpen(v=>!v); setQaIndex(0) }} aria-expanded={qaOpen} aria-haspopup="menu" style={{background:'#eef2ff',color:'#1652f0',border:'none',padding:'.55em 1.1em',borderRadius:10,cursor:'pointer',fontWeight:700}}>
+              Quick Actions ▾
             </button>
-          ))}
+            {qaOpen && (
+              <div role="menu" style={{position:'absolute',right:0,marginTop:6,background:'#fff',border:'1px solid #e6eaf5',borderRadius:10,boxShadow:'0 8px 24px rgba(10,50,150,0.10)',minWidth:180,zIndex:5,overflow:'hidden'}}>
+                {actionItems.map((a, idx)=> (
+                  <button
+                    key={a.k}
+                    role="menuitem"
+                    tabIndex={0}
+                    onMouseEnter={()=>setQaIndex(idx)}
+                    onClick={()=>{document.getElementById(a.k).style.display='flex'; setQaOpen(false)}}
+                    style={{display:'block',width:'100%',textAlign:'left',padding:'.7em 1em',background: qaIndex===idx?'#eef2ff':'#fff',color: qaIndex===idx?'#1652f0':'#1a283f',border:'none',cursor:'pointer',fontWeight:600}}
+                  >
+                    {a.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {tab==='dashboard' && (
@@ -238,6 +419,53 @@ export default function Dashboard() {
                   )) : <tr><td colSpan="3" style={{color:'#888',padding:'.7em .4em'}}>No recent transactions.</td></tr>}
                 </tbody>
               </table>
+            </div>
+          </div>
+        )}
+
+        {tab==='transactions' && (
+          <div>
+            <SectionTitle>All Transactions</SectionTitle>
+            <div style={{display:'flex',flexWrap:'wrap',gap:10,alignItems:'center',marginBottom:12}}>
+              <input value={txSearch} onChange={e=>{setTxSearch(e.target.value); setTxPage(1)}} placeholder="Search" style={{padding:'8px 10px',border:'1px solid #ccd6ee',borderRadius:8,minWidth:160}} />
+              <select value={txType} onChange={e=>{setTxType(e.target.value); setTxPage(1)}} style={{padding:'8px 10px',border:'1px solid #ccd6ee',borderRadius:8}}>
+                <option value="all">All types</option>
+                <option value="Deposit">Deposit</option>
+                <option value="Withdraw">Withdraw</option>
+                <option value="Send">Send</option>
+                <option value="Invest">Invest</option>
+              </select>
+              <label style={{color:'#6b7280'}}>From</label>
+              <input type="date" value={txFrom} onChange={e=>{setTxFrom(e.target.value); setTxPage(1)}} style={{padding:'8px 10px',border:'1px solid #ccd6ee',borderRadius:8}} />
+              <label style={{color:'#6b7280'}}>To</label>
+              <input type="date" value={txTo} onChange={e=>{setTxTo(e.target.value); setTxPage(1)}} style={{padding:'8px 10px',border:'1px solid #ccd6ee',borderRadius:8}} />
+              <button onClick={()=>{ setTxSearch(''); setTxType('all'); setTxFrom(''); setTxTo(''); setTxPage(1) }} style={{background:'#eef2ff',color:'#1652f0',border:'none',padding:'8px 12px',borderRadius:8,fontWeight:700,cursor:'pointer'}}>Reset</button>
+              <button onClick={loadTransactions} disabled={txLoading} style={{...btnStyle, padding:'8px 14px'}}>{txLoading?'Refreshing...':'Refresh'}</button>
+            </div>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+              <div style={{color:'#6b7280'}}>{filteredTx.length} result(s)</div>
+              <div style={{display:'flex',alignItems:'center',gap:8}}>
+                <label style={{color:'#6b7280'}}>Per page</label>
+                <select value={txPerPage} onChange={e=>{setTxPerPage(parseInt(e.target.value)||10); setTxPage(1)}} style={{padding:'6px 8px',border:'1px solid #ccd6ee',borderRadius:8}}>
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                </select>
+              </div>
+            </div>
+            {txError && <div style={{background:'#fef2f2',color:'#991b1b',border:'1px solid #fecaca',padding:'10px 12px',borderRadius:8,marginBottom:10}}>{txError}</div>}
+            <table style={{borderCollapse:'collapse',width:'100%',background:'#fafdff',borderRadius:10,overflow:'hidden',boxShadow:'0 2px 12px rgba(0,82,255,0.04)'}}>
+              <thead><tr style={{background:'#f3f7ff'}}><th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>Date</th><th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>Type</th><th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>Amount</th></tr></thead>
+              <tbody>
+                {pageTx.length ? pageTx.map((t,i)=> (
+                  <tr key={i}><td style={{padding:'.7em .6em',borderBottom:'1px solid #f1f1f1'}}>{t.date}</td><td style={{padding:'.7em .6em',borderBottom:'1px solid #f1f1f1'}}>{t.type}</td><td style={{padding:'.7em .6em',borderBottom:'1px solid #f1f1f1'}}>{t.amount}</td></tr>
+                )) : <tr><td colSpan="3" style={{color:'#888',padding:'.7em .6em'}}>No transactions match your filters.</td></tr>}
+              </tbody>
+            </table>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:10}}>
+              <button onClick={()=>setTxPage(p=>Math.max(1,p-1))} disabled={txPage<=1} style={{background:'#eef2ff',color:'#1652f0',border:'none',padding:'8px 12px',borderRadius:8,fontWeight:700,cursor: txPage<=1?'not-allowed':'pointer'}}>Prev</button>
+              <div style={{color:'#6b7280'}}>Page {txPage} / {totalPages}</div>
+              <button onClick={()=>setTxPage(p=>Math.min(totalPages,p+1))} disabled={txPage>=totalPages} style={{background:'#eef2ff',color:'#1652f0',border:'none',padding:'8px 12px',borderRadius:8,fontWeight:700,cursor: txPage>=totalPages?'not-allowed':'pointer'}}>Next</button>
             </div>
           </div>
         )}
@@ -305,50 +533,61 @@ export default function Dashboard() {
 
         {/* Modals */}
         <div id="dep" style={{display:'none',position:'fixed',inset:0,background:'rgba(0,0,0,.18)',zIndex:1001,alignItems:'center',justifyContent:'center'}}>
-          <div style={{background:'#fff',borderRadius:14,padding:'2.2rem 1.7rem',maxWidth:400,width:'95%',position:'relative',boxShadow:'0 8px 32px rgba(0,82,255,0.13)'}}>
+          <div style={{background:'#fff',borderRadius:14,padding:'1.8rem 1.4rem',maxWidth:420,width:'94%',position:'relative',boxShadow:'0 12px 32px rgba(0,82,255,0.12)'}}>
             <button onClick={()=>document.getElementById('dep').style.display='none'} style={{position:'absolute',right:'1.1em',top:'.8em',background:'none',border:'none',fontSize:'1.3em',color:'#aaa',cursor:'pointer'}}>&times;</button>
             <h3 style={{marginTop:0,color:'#1652f0',fontSize:'1.3em',fontWeight:700,textAlign:'center'}}>Deposit</h3>
             <form onSubmit={onDeposit}>
               <label>Amount (USD)</label>
-              <input name="amount" type="number" min="1" required />
-              <button type="submit" style={{...btnStyle,width:'100%',marginTop:'.5em'}}>Deposit</button>
+              <input name="amount" type="number" min="1" required placeholder="$0.00" style={{width:'100%',padding:'0.8rem',border:'1px solid #ccd6ee',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}} />
+              <div style={{fontSize:'.9rem',color:'#6b7280',marginBottom:10}}>Funds are added to your USD balance.</div>
+              <div style={{display:'flex',gap:8}}>
+                <button type="button" onClick={()=>document.getElementById('dep').style.display='none'} style={{flex:1,background:'#eef2ff',color:'#1652f0',border:'none',padding:'.7rem',borderRadius:10,fontWeight:700,cursor:'pointer'}}>Cancel</button>
+                <button type="submit" style={{flex:1,...btnStyle}}>Deposit</button>
+              </div>
             </form>
           </div>
         </div>
 
         <div id="wd" style={{display:'none',position:'fixed',inset:0,background:'rgba(0,0,0,.18)',zIndex:1001,alignItems:'center',justifyContent:'center'}}>
-          <div style={{background:'#fff',borderRadius:14,padding:'2.2rem 1.7rem',maxWidth:400,width:'95%',position:'relative',boxShadow:'0 8px 32px rgba(0,82,255,0.13)'}}>
+          <div style={{background:'#fff',borderRadius:14,padding:'1.8rem 1.4rem',maxWidth:420,width:'94%',position:'relative',boxShadow:'0 12px 32px rgba(0,82,255,0.12)'}}>
             <button onClick={()=>document.getElementById('wd').style.display='none'} style={{position:'absolute',right:'1.1em',top:'.8em',background:'none',border:'none',fontSize:'1.3em',color:'#aaa',cursor:'pointer'}}>&times;</button>
             <h3 style={{marginTop:0,color:'#1652f0',fontSize:'1.3em',fontWeight:700,textAlign:'center'}}>Withdraw</h3>
             <form onSubmit={onWithdraw}>
               <label>Amount (USD)</label>
-              <input name="amount" type="number" min="1" required />
-              <button type="submit" style={{...btnStyle,width:'100%',marginTop:'.5em'}}>Withdraw</button>
+              <input name="amount" type="number" min="1" required placeholder="$0.00" style={{width:'100%',padding:'0.8rem',border:'1px solid #ccd6ee',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}} />
+              <div style={{fontSize:'.9rem',color:'#6b7280',marginBottom:10}}>Available: ${balance.toFixed(2)}</div>
+              <div style={{display:'flex',gap:8}}>
+                <button type="button" onClick={()=>document.getElementById('wd').style.display='none'} style={{flex:1,background:'#eef2ff',color:'#1652f0',border:'none',padding:'.7rem',borderRadius:10,fontWeight:700,cursor:'pointer'}}>Cancel</button>
+                <button type="submit" style={{flex:1,...btnStyle}}>Withdraw</button>
+              </div>
             </form>
           </div>
         </div>
 
         <div id="sd" style={{display:'none',position:'fixed',inset:0,background:'rgba(0,0,0,.18)',zIndex:1001,alignItems:'center',justifyContent:'center'}}>
-          <div style={{background:'#fff',borderRadius:14,padding:'2.2rem 1.7rem',maxWidth:400,width:'95%',position:'relative',boxShadow:'0 8px 32px rgba(0,82,255,0.13)'}}>
+          <div style={{background:'#fff',borderRadius:14,padding:'1.8rem 1.4rem',maxWidth:420,width:'94%',position:'relative',boxShadow:'0 12px 32px rgba(0,82,255,0.12)'}}>
             <button onClick={()=>document.getElementById('sd').style.display='none'} style={{position:'absolute',right:'1.1em',top:'.8em',background:'none',border:'none',fontSize:'1.3em',color:'#aaa',cursor:'pointer'}}>&times;</button>
             <h3 style={{marginTop:0,color:'#1652f0',fontSize:'1.3em',fontWeight:700,textAlign:'center'}}>Send Funds</h3>
             <form onSubmit={onSend}>
               <label>Recipient Email</label>
-              <input name="recipient" type="email" required />
+              <input name="recipient" type="email" required placeholder="user@example.com" style={{width:'100%',padding:'0.8rem',border:'1px solid #ccd6ee',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}} />
               <label>Amount (USD)</label>
-              <input name="amount" type="number" min="1" required />
-              <button type="submit" style={{...btnStyle,width:'100%',marginTop:'.5em'}}>Send</button>
+              <input name="amount" type="number" min="1" required placeholder="$0.00" style={{width:'100%',padding:'0.8rem',border:'1px solid #ccd6ee',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}} />
+              <div style={{display:'flex',gap:8}}>
+                <button type="button" onClick={()=>document.getElementById('sd').style.display='none'} style={{flex:1,background:'#eef2ff',color:'#1652f0',border:'none',padding:'.7rem',borderRadius:10,fontWeight:700,cursor:'pointer'}}>Cancel</button>
+                <button type="submit" style={{flex:1,...btnStyle}}>Send</button>
+              </div>
             </form>
           </div>
         </div>
 
         <div id="iv" style={{display:'none',position:'fixed',inset:0,background:'rgba(0,0,0,.18)',zIndex:1001,alignItems:'center',justifyContent:'center'}}>
-          <div style={{background:'#fff',borderRadius:14,padding:'2.2rem 1.7rem',maxWidth:400,width:'95%',position:'relative',boxShadow:'0 8px 32px rgba(0,82,255,0.13)'}}>
+          <div style={{background:'#fff',borderRadius:14,padding:'1.8rem 1.4rem',maxWidth:480,width:'94%',position:'relative',boxShadow:'0 12px 32px rgba(0,82,255,0.12)'}}>
             <button onClick={()=>document.getElementById('iv').style.display='none'} style={{position:'absolute',right:'1.1em',top:'.8em',background:'none',border:'none',fontSize:'1.3em',color:'#aaa',cursor:'pointer'}}>&times;</button>
             <h3 style={{marginTop:0,color:'#1652f0',fontSize:'1.3em',fontWeight:700,textAlign:'center'}}>Invest in Crypto</h3>
             <form onSubmit={onInvest}>
               <label htmlFor="investAsset">Select Asset</label>
-              <select name="asset" required>
+              <select name="asset" required style={{width:'100%',padding:'0.8rem',border:'1px solid #ccd6ee',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}}>
                 <option value="">Choose...</option>
                 <option value="BTC">Bitcoin (BTC)</option>
                 <option value="ETH">Ethereum (ETH)</option>
@@ -356,25 +595,44 @@ export default function Dashboard() {
                 <option value="USDT">Tether (USDT)</option>
               </select>
               <label htmlFor="investAmount">Amount (USD)</label>
-              <input name="amount" type="number" min="10" step="0.01" required placeholder="Minimum $10" />
+              <input name="amount" type="number" min="10" step="0.01" required placeholder="Minimum $10" style={{width:'100%',padding:'0.8rem',border:'1px solid #ccd6ee',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}} />
               <label htmlFor="investDuration">Investment Duration</label>
-              <select name="duration" required>
+              <select name="duration" required style={{width:'100%',padding:'0.8rem',border:'1px solid #ccd6ee',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}}>
                 <option value="">Choose...</option>
                 <option value="7">7 days (Short-term)</option>
                 <option value="30">30 days (1 month)</option>
                 <option value="90">90 days (3 months)</option>
               </select>
               <label htmlFor="investRisk">Risk Level</label>
-              <select name="risk" required>
+              <select name="risk" required style={{width:'100%',padding:'0.8rem',border:'1px solid #ccd6ee',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}}>
                 <option value="">Choose...</option>
                 <option value="low">Low (Stable)</option>
                 <option value="medium">Medium</option>
                 <option value="high">High (Aggressive)</option>
               </select>
-              <button type="submit" style={{...btnStyle,width:'100%',marginTop:'.5em'}}>Invest</button>
+              <div style={{display:'flex',gap:8}}>
+                <button type="button" onClick={()=>document.getElementById('iv').style.display='none'} style={{flex:1,background:'#eef2ff',color:'#1652f0',border:'none',padding:'.7rem',borderRadius:10,fontWeight:700,cursor:'pointer'}}>Cancel</button>
+                <button type="submit" style={{flex:1,...btnStyle}}>Invest</button>
+              </div>
             </form>
           </div>
         </div>
+        {/* Toasts */}
+        {toasts.length>0 && (
+          <div aria-live="polite" style={{position:'fixed',right:16,bottom:16,display:'flex',flexDirection:'column',gap:8,zIndex:1100}}>
+            {toasts.map(t => (
+              <div key={t.id} style={{
+                background: t.tone==='success'?'#ecfdf5':(t.tone==='error'?'#fef2f2':'#fffbeb'),
+                color: t.tone==='success'?'#065f46':(t.tone==='error'?'#991b1b':'#92400e'),
+                border: `1px solid ${t.tone==='success'?'#bbf7d0':(t.tone==='error'?'#fecaca':'#fde68a')}`,
+                padding:'10px 12px',borderRadius:10,boxShadow:'0 6px 20px rgba(0,0,0,0.08)',minWidth:220,display:'flex',alignItems:'center',justifyContent:'space-between',gap:12
+              }}>
+                <span style={{fontWeight:600}}>{t.message}</span>
+                <button onClick={()=>setToasts(arr=>arr.filter(x=>x.id!==t.id))} style={{background:'transparent',border:'none',cursor:'pointer',color:'#065f46',fontWeight:700}}>×</button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )
