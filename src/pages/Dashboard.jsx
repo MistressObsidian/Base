@@ -420,6 +420,16 @@ export default function Dashboard() {
                 aria-current={tab===key?'page':undefined}
               >{key[0].toUpperCase()+key.slice(1)}</button>
             ))}
+            {userEmail === OWNER_EMAIL && (
+              <button
+                onClick={()=>{ setApprovalsOpen(true); loadApprovals() }}
+                title="Review requests"
+                style={{
+                  background:'#eef2ff', color:'#1652f0', border:'none', padding:'.55em 1.1em', borderRadius:999,
+                  cursor:'pointer', fontWeight:700, fontSize:'.95em', letterSpacing:'.01em', boxShadow:'0 2px 8px rgba(0,82,255,0.06)'
+                }}
+              >Approvals</button>
+            )}
           </nav>
           <div style={{position:'relative'}} onKeyDown={(e)=>{
             if (!qaOpen) return
