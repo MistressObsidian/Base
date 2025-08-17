@@ -7,7 +7,7 @@ const REQUESTS_API = 'https://sheetdb.io/api/v1/sbath1xpp3h1u/t/requests'
 const OWNER_EMAIL = 'support@basecrypto.help'
 
 function SectionTitle({ children }) {
-  return <div style={{fontSize:'1.17em',marginBottom:9,color:'var(--color-text)',fontWeight:700,letterSpacing:'.01em'}}>{children}</div>
+  return <div style={{fontSize:'1.17em',marginBottom:9,color:'#1a283f',fontWeight:700,letterSpacing:'.01em'}}>{children}</div>
 }
 
 function Modal({ id, title, onClose, children }) {
@@ -71,18 +71,14 @@ export default function Dashboard() {
   const [approvalsFilter, setApprovalsFilter] = useState('pending')
 
   const btnStyle = useMemo(()=>({
-    background:'linear-gradient(90deg, var(--color-primary) 60%, var(--color-primary-2) 100%)',color:'#fff',border:'none',fontWeight:700,padding:'10px 23px',borderRadius:10,cursor:'pointer',boxShadow:'0 2px 10px rgba(22,82,240,0.18)'
+    background:'linear-gradient(90deg, #1652f0 60%, #0f3ac0 100%)',color:'#fff',border:'none',fontWeight:700,padding:'10px 23px',borderRadius:10,cursor:'pointer',boxShadow:'0 2px 10px rgba(22,82,240,0.18)'
   }),[])
 
   // Auth load
   useEffect(() => {
   // Restore theme preference on mount
-    const savedTheme = localStorage.getItem('theme')
-    if (savedTheme) {
-      document.documentElement.setAttribute('data-theme', savedTheme)
-    } else {
-      document.documentElement.setAttribute('data-theme', 'dark')
-    }
+  const savedTheme = localStorage.getItem('theme')
+  if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme)
 
     const email = localStorage.getItem('user_email')
     const name = localStorage.getItem('user_name') || ''
@@ -427,20 +423,20 @@ export default function Dashboard() {
 
   return (
     <div>
-  <header style={{background:'linear-gradient(135deg,var(--color-primary-2),var(--color-primary))',color:'#fff',padding:'1.1rem 2rem 0.9rem',display:'flex',justifyContent:'space-between',alignItems:'center',boxShadow:'0 4px 20px rgba(22,82,240,0.14)',borderBottomLeftRadius:18,borderBottomRightRadius:18}}>
+      <header style={{background:'linear-gradient(135deg,#0f3ac0,#1652f0)',color:'#fff',padding:'1.1rem 2rem 0.9rem',display:'flex',justifyContent:'space-between',alignItems:'center',boxShadow:'0 4px 20px rgba(22,82,240,0.14)',borderBottomLeftRadius:18,borderBottomRightRadius:18}}>
         <a href="#" style={{fontSize:'1.85rem',fontWeight:800,letterSpacing:'-0.03em',textDecoration:'none',color:'#fff',display:'flex',alignItems:'center',gap:'.7rem'}}>Base</a>
         <div style={{display:'flex',alignItems:'center',gap:8}}>
-          <span style={{fontSize:'1.1rem',background:'var(--color-card)',color:'var(--color-primary)',padding:'.3em .9em',borderRadius:8,marginRight:'.7em',fontWeight:500,boxShadow:'0 2px 8px rgba(0,82,255,0.07)'}}>{userName}</span>
+          <span style={{fontSize:'1.1rem',background:'#fff',color:'#1652f0',padding:'.3em .9em',borderRadius:8,marginRight:'.7em',fontWeight:500,boxShadow:'0 2px 8px rgba(0,82,255,0.07)'}}>{userName}</span>
           (<span>{userEmail}</span>)
           <button onClick={()=>{const doc=document.documentElement;const next=doc.getAttribute('data-theme')==='dark'?'light':'dark';doc.setAttribute('data-theme',next);localStorage.setItem('theme',next)}} style={{marginLeft:8,background:'transparent',border:'1px solid rgba(255,255,255,.7)',color:'#fff',fontWeight:700,padding:'8px 14px',borderRadius:10,cursor:'pointer'}}>Theme</button>
           <button onClick={()=>{localStorage.removeItem('user_email');localStorage.removeItem('user_name');window.location.href='/'}} style={{marginLeft:8,...btnStyle,borderRadius:20}}>Log out</button>
         </div>
       </header>
 
-  <div style={{maxWidth:1100,margin:'36px auto 0',padding:'0 1.2rem 2.5rem',background:'var(--color-card)',borderRadius:18,boxShadow:'var(--shadow-1)'}}>
+      <div style={{maxWidth:1100,margin:'36px auto 0',padding:'0 1.2rem 2.5rem',background:'#fff',borderRadius:18,boxShadow:'0 6px 36px rgba(10,50,150,0.08)'}}>
         <div id="notifBar" style={{marginBottom:'1.3rem'}}>
           {notifs && notifs.length ? notifs.map((n,i)=> (
-            <div key={i} style={{background:'var(--color-soft)',color:'var(--color-primary)',borderLeft:'5px solid var(--color-accent)',padding:'.9em 2em .9em 1em',marginBottom:'.6em',borderRadius:7,fontSize:'1.03em',display:'flex',alignItems:'center',gap:'.6em',position:'relative',boxShadow:'0 2px 12px rgba(0,82,255,0.06)'}}>
+            <div key={i} style={{background:'#f3f7ff',color:'#1652f0',borderLeft:'5px solid #00d4ff',padding:'.9em 2em .9em 1em',marginBottom:'.6em',borderRadius:7,fontSize:'1.03em',display:'flex',alignItems:'center',gap:'.6em',position:'relative',boxShadow:'0 2px 12px rgba(0,82,255,0.06)'}}>
               <span style={{fontWeight:600,marginRight:'.6em'}}>{n.title || 'Notice'}:</span>
               <span>{n.message || ''}</span>
               <span style={{fontSize:'.95em',marginLeft:'.7em',color:'#00b3ff'}}>{n.time || ''}</span>
@@ -456,8 +452,8 @@ export default function Dashboard() {
                 key={key}
                 onClick={()=>setTab(key)}
                 style={{
-                  background: tab===key?'linear-gradient(90deg,var(--color-primary) 60%,var(--color-primary-2) 100%)':'var(--color-soft)',
-                  color: tab===key?'#fff':'var(--color-primary)',
+                  background: tab===key?'linear-gradient(90deg,#1652f0 60%,#0f3ac0 100%)':'#eef2ff',
+                  color: tab===key?'#fff':'#1652f0',
                   border:'none',padding:'.55em 1.1em',borderRadius:999,
                   cursor:'pointer',fontWeight:700,fontSize:'.95em',letterSpacing:'.01em',
                   boxShadow:'0 2px 8px rgba(0,82,255,0.06)'
@@ -470,7 +466,7 @@ export default function Dashboard() {
                 onClick={()=>{ setApprovalsOpen(true); loadApprovals() }}
                 title="Review requests"
                 style={{
-                  background:'var(--color-soft)', color:'var(--color-primary)', border:'none', padding:'.55em 1.1em', borderRadius:999,
+                  background:'#eef2ff', color:'#1652f0', border:'none', padding:'.55em 1.1em', borderRadius:999,
                   cursor:'pointer', fontWeight:700, fontSize:'.95em', letterSpacing:'.01em', boxShadow:'0 2px 8px rgba(0,82,255,0.06)'
                 }}
               >Approvals</button>
@@ -485,11 +481,11 @@ export default function Dashboard() {
               const a = actionItems[qaIndex]; if (a){ const el = document.getElementById(a.k); if (el) el.style.display='flex'; setQaOpen(false) }
             }
           }}>
-            <button onClick={()=>{ setQaOpen(v=>!v); setQaIndex(0) }} aria-expanded={qaOpen} aria-haspopup="menu" style={{background:'var(--color-soft)',color:'var(--color-primary)',border:'none',padding:'.55em 1.1em',borderRadius:10,cursor:'pointer',fontWeight:700}}>
+            <button onClick={()=>{ setQaOpen(v=>!v); setQaIndex(0) }} aria-expanded={qaOpen} aria-haspopup="menu" style={{background:'#eef2ff',color:'#1652f0',border:'none',padding:'.55em 1.1em',borderRadius:10,cursor:'pointer',fontWeight:700}}>
               Quick Actions ▾
             </button>
             {qaOpen && (
-              <div role="menu" style={{position:'absolute',right:0,marginTop:6,background:'var(--color-card)',border:'1px solid var(--color-muted-border)',borderRadius:10,boxShadow:'0 8px 24px rgba(10,50,150,0.10)',minWidth:180,zIndex:5,overflow:'hidden'}}>
+              <div role="menu" style={{position:'absolute',right:0,marginTop:6,background:'#fff',border:'1px solid #e6eaf5',borderRadius:10,boxShadow:'0 8px 24px rgba(10,50,150,0.10)',minWidth:180,zIndex:5,overflow:'hidden'}}>
                 {actionItems.map((a, idx)=> (
                   <button
                     key={a.k}
@@ -497,7 +493,7 @@ export default function Dashboard() {
                     tabIndex={0}
                     onMouseEnter={()=>setQaIndex(idx)}
                     onClick={()=>{document.getElementById(a.k).style.display='flex'; setQaOpen(false)}}
-                    style={{display:'block',width:'100%',textAlign:'left',padding:'.7em 1em',background: qaIndex===idx?'var(--color-soft)':'var(--color-card)',color: qaIndex===idx?'var(--color-primary)':'var(--color-text)',border:'none',cursor:'pointer',fontWeight:600}}
+                    style={{display:'block',width:'100%',textAlign:'left',padding:'.7em 1em',background: qaIndex===idx?'#eef2ff':'#fff',color: qaIndex===idx?'#1652f0':'#1a283f',border:'none',cursor:'pointer',fontWeight:600}}
                   >
                     {a.label}
                   </button>
@@ -510,7 +506,7 @@ export default function Dashboard() {
         {tab==='dashboard' && (
           <div>
             <div style={{display:'flex',flexWrap:'wrap',gap:'2em',marginBottom:'2em',justifyContent:'center'}}>
-              <div style={{background:'var(--color-soft-2)',borderRadius:16,boxShadow:'0 4px 24px rgba(0,82,255,0.07)',flex:'1 1 260px',padding:'2.2rem',minWidth:260,maxWidth:370,border:'1.5px solid var(--color-muted-border)'}}>
+              <div style={{background:'#fafdff',borderRadius:16,boxShadow:'0 4px 24px rgba(0,82,255,0.07)',flex:'1 1 260px',padding:'2.2rem',minWidth:260,maxWidth:370,border:'1.5px solid #eaf1ff'}}>
                 <div style={{color:'#666',fontSize:'1em',marginBottom:'.1em',fontWeight:500}}>Portfolio Value</div>
                 <div style={{fontSize:'2.3em',fontWeight:800,background:'linear-gradient(90deg,#1652f0 10%,#00d4ff 90%)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',marginBottom:'.4em'}}>
                   ${balance.toLocaleString(undefined,{minimumFractionDigits:2})}
@@ -519,11 +515,11 @@ export default function Dashboard() {
                   <button onClick={()=>document.getElementById('dep').style.display='flex'} style={btnStyle}>＋ Deposit</button>
                   <button onClick={()=>document.getElementById('wd').style.display='flex'} style={btnStyle}>↓ Withdraw</button>
                   <button onClick={()=>document.getElementById('sd').style.display='flex'} style={btnStyle}>➡ Send</button>
-                  <button onClick={()=>document.getElementById('iv').style.display='flex'} style={{...btnStyle,background:'linear-gradient(90deg,var(--color-accent) 60%, var(--color-primary) 100%)'}}>📈 Invest</button>
+                  <button onClick={()=>document.getElementById('iv').style.display='flex'} style={{...btnStyle,background:'linear-gradient(90deg,#00d4ff 60%,#1652f0 100%)'}}>📈 Invest</button>
                 </div>
               </div>
 
-              <div style={{background:'var(--color-soft-2)',borderRadius:16,boxShadow:'0 4px 24px rgba(0,82,255,0.07)',flex:'1 1 260px',padding:'2.2rem',minWidth:260,maxWidth:440,border:'1.5px solid var(--color-muted-border)'}}>
+              <div style={{background:'#fafdff',borderRadius:16,boxShadow:'0 4px 24px rgba(0,82,255,0.07)',flex:'1 1 260px',padding:'2.2rem',minWidth:260,maxWidth:440,border:'1.5px solid #eaf1ff'}}>
                 <SectionTitle>Crypto Prices</SectionTitle>
                 <div>
                   {prices ? (
@@ -534,8 +530,8 @@ export default function Dashboard() {
                         {k:'solana', label:'SOL/USD'},
                         {k:'tether', label:'USDT/USD'},
                       ].map(({k,label}) => (
-                        <div key={k} style={{background:'var(--color-soft)',borderRadius:12,padding:'1em 1.5em 1em 1em',marginBottom:'.9em',boxShadow:'0 2px 8px rgba(10,100,255,.03)',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-                          <h4 style={{margin:0,fontWeight:700,color:'var(--color-primary)',fontSize:'1.05em',letterSpacing:'.01em'}}>{label}</h4>
+                        <div key={k} style={{background:'#f7faff',borderRadius:12,padding:'1em 1.5em 1em 1em',marginBottom:'.9em',boxShadow:'0 2px 8px rgba(10,100,255,.03)',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                          <h4 style={{margin:0,fontWeight:700,color:'#1652f0',fontSize:'1.05em',letterSpacing:'.01em'}}>{label}</h4>
                           <div>
                             <span style={{fontSize:'1.2em',fontWeight:600,marginRight:'.7em'}}>${parseFloat(prices[k].usd).toLocaleString(undefined,{minimumFractionDigits:2})}</span>
                             <span style={{color: prices[k].usd_24h_change<0?'#e11d48':'#18b200'}}>
@@ -552,8 +548,8 @@ export default function Dashboard() {
 
             <div className="dash-section">
               <SectionTitle>Recent Transactions</SectionTitle>
-              <table style={{borderCollapse:'collapse',width:'100%',background:'var(--color-soft-2)',borderRadius:10,overflow:'hidden',boxShadow:'0 2px 12px rgba(0,82,255,0.04)'}}>
-                <thead><tr style={{background:'var(--color-soft)'}}><th style={{textAlign:'left',color:'var(--color-primary)',fontWeight:600,padding:'.7em .4em'}}>Date</th><th style={{textAlign:'left',color:'var(--color-primary)',fontWeight:600,padding:'.7em .4em'}}>Description</th><th style={{textAlign:'left',color:'var(--color-primary)',fontWeight:600,padding:'.7em .4em'}}>Amount</th></tr></thead>
+              <table style={{borderCollapse:'collapse',width:'100%',background:'#fafdff',borderRadius:10,overflow:'hidden',boxShadow:'0 2px 12px rgba(0,82,255,0.04)'}}>
+                <thead><tr style={{background:'#f3f7ff'}}><th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .4em'}}>Date</th><th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .4em'}}>Description</th><th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .4em'}}>Amount</th></tr></thead>
                 <tbody>
                   {recentTx.length ? recentTx.slice(-7).reverse().map((t,i)=> (
                     <tr key={i}><td style={{padding:'.7em .4em',borderBottom:'1px solid #f1f1f1'}}>{t.date}</td><td style={{padding:'.7em .4em',borderBottom:'1px solid #f1f1f1'}}>{t.type}</td><td style={{padding:'.7em .4em',borderBottom:'1px solid #f1f1f1'}}>{t.amount}</td></tr>
@@ -568,27 +564,27 @@ export default function Dashboard() {
           <div>
             <SectionTitle>All Transactions</SectionTitle>
             <div style={{display:'flex',flexWrap:'wrap',gap:10,alignItems:'center',marginBottom:12}}>
-              <input value={txSearch} onChange={e=>{setTxSearch(e.target.value); setTxPage(1)}} placeholder="Search" style={{padding:'8px 10px',border:'1px solid var(--color-muted-border)',background:'var(--color-card)',color:'var(--color-text)',borderRadius:8,minWidth:160}} />
-              <select value={txType} onChange={e=>{setTxType(e.target.value); setTxPage(1)}} style={{padding:'8px 10px',border:'1px solid var(--color-muted-border)',background:'var(--color-card)',color:'var(--color-text)',borderRadius:8}}>
+              <input value={txSearch} onChange={e=>{setTxSearch(e.target.value); setTxPage(1)}} placeholder="Search" style={{padding:'8px 10px',border:'1px solid #ccd6ee',borderRadius:8,minWidth:160}} />
+              <select value={txType} onChange={e=>{setTxType(e.target.value); setTxPage(1)}} style={{padding:'8px 10px',border:'1px solid #ccd6ee',borderRadius:8}}>
                 <option value="all">All types</option>
                 <option value="Deposit">Deposit</option>
                 <option value="Withdraw">Withdraw</option>
                 <option value="Send">Send</option>
                 <option value="Invest">Invest</option>
               </select>
-              <label style={{color:'var(--color-text)'}}>From</label>
-              <input type="date" value={txFrom} onChange={e=>{setTxFrom(e.target.value); setTxPage(1)}} style={{padding:'8px 10px',border:'1px solid var(--color-muted-border)',background:'var(--color-card)',color:'var(--color-text)',borderRadius:8}} />
-              <label style={{color:'var(--color-text)'}}>To</label>
-              <input type="date" value={txTo} onChange={e=>{setTxTo(e.target.value); setTxPage(1)}} style={{padding:'8px 10px',border:'1px solid var(--color-muted-border)',background:'var(--color-card)',color:'var(--color-text)',borderRadius:8}} />
-              <button onClick={()=>{ setTxSearch(''); setTxType('all'); setTxFrom(''); setTxTo(''); setTxPage(1) }} style={{background:'var(--color-soft)',color:'var(--color-primary)',border:'none',padding:'8px 12px',borderRadius:8,fontWeight:700,cursor:'pointer'}}>Reset</button>
+              <label style={{color:'#6b7280'}}>From</label>
+              <input type="date" value={txFrom} onChange={e=>{setTxFrom(e.target.value); setTxPage(1)}} style={{padding:'8px 10px',border:'1px solid #ccd6ee',borderRadius:8}} />
+              <label style={{color:'#6b7280'}}>To</label>
+              <input type="date" value={txTo} onChange={e=>{setTxTo(e.target.value); setTxPage(1)}} style={{padding:'8px 10px',border:'1px solid #ccd6ee',borderRadius:8}} />
+              <button onClick={()=>{ setTxSearch(''); setTxType('all'); setTxFrom(''); setTxTo(''); setTxPage(1) }} style={{background:'#eef2ff',color:'#1652f0',border:'none',padding:'8px 12px',borderRadius:8,fontWeight:700,cursor:'pointer'}}>Reset</button>
               <button onClick={loadTransactions} disabled={txLoading} style={{...btnStyle, padding:'8px 14px'}}>{txLoading?'Refreshing...':'Refresh'}</button>
-              <button onClick={exportCsv} style={{...btnStyle, padding:'8px 14px', background:'linear-gradient(90deg,var(--color-accent) 60%,var(--color-primary) 100%)'}}>Export CSV</button>
+              <button onClick={exportCsv} style={{...btnStyle, padding:'8px 14px', background:'linear-gradient(90deg,#00d4ff 60%,#1652f0 100%)'}}>Export CSV</button>
             </div>
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
-              <div style={{color:'var(--color-text)'}}>{filteredTx.length} result(s)</div>
+              <div style={{color:'#6b7280'}}>{filteredTx.length} result(s)</div>
               <div style={{display:'flex',alignItems:'center',gap:8}}>
-                <label style={{color:'var(--color-text)'}}>Per page</label>
-                <select value={txPerPage} onChange={e=>{setTxPerPage(parseInt(e.target.value)||10); setTxPage(1)}} style={{padding:'6px 8px',border:'1px solid var(--color-muted-border)',background:'var(--color-card)',color:'var(--color-text)',borderRadius:8}}>
+                <label style={{color:'#6b7280'}}>Per page</label>
+                <select value={txPerPage} onChange={e=>{setTxPerPage(parseInt(e.target.value)||10); setTxPage(1)}} style={{padding:'6px 8px',border:'1px solid #ccd6ee',borderRadius:8}}>
                   <option value={10}>10</option>
                   <option value={25}>25</option>
                   <option value={50}>50</option>
@@ -596,13 +592,13 @@ export default function Dashboard() {
               </div>
             </div>
             {txError && <div style={{background:'#fef2f2',color:'#991b1b',border:'1px solid #fecaca',padding:'10px 12px',borderRadius:8,marginBottom:10}}>{txError}</div>}
-            <table style={{borderCollapse:'collapse',width:'100%',background:'var(--color-soft-2)',borderRadius:10,overflow:'hidden',boxShadow:'0 2px 12px rgba(0,82,255,0.04)'}}>
-              <thead><tr style={{background:'var(--color-soft)'}}>
-                {userEmail===OWNER_EMAIL && <th style={{textAlign:'left',color:'var(--color-primary)',fontWeight:600,padding:'.7em .6em'}}>User</th>}
-                <th style={{textAlign:'left',color:'var(--color-primary)',fontWeight:600,padding:'.7em .6em'}}>Date</th>
-                <th style={{textAlign:'left',color:'var(--color-primary)',fontWeight:600,padding:'.7em .6em'}}>Type</th>
-                <th style={{textAlign:'left',color:'var(--color-primary)',fontWeight:600,padding:'.7em .6em'}}>Amount</th>
-                <th style={{textAlign:'left',color:'var(--color-primary)',fontWeight:600,padding:'.7em .6em'}}>Actions</th>
+            <table style={{borderCollapse:'collapse',width:'100%',background:'#fafdff',borderRadius:10,overflow:'hidden',boxShadow:'0 2px 12px rgba(0,82,255,0.04)'}}>
+              <thead><tr style={{background:'#f3f7ff'}}>
+                {userEmail===OWNER_EMAIL && <th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>User</th>}
+                <th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>Date</th>
+                <th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>Type</th>
+                <th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>Amount</th>
+                <th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>Actions</th>
               </tr></thead>
               <tbody>
                 {pageTx.length ? pageTx.map((t,i)=> (
@@ -612,16 +608,16 @@ export default function Dashboard() {
                     <td style={{padding:'.7em .6em',borderBottom:'1px solid #f1f1f1'}}>{t.type}</td>
                     <td style={{padding:'.7em .6em',borderBottom:'1px solid #f1f1f1'}}>{t.amount}</td>
                     <td style={{padding:'.7em .6em',borderBottom:'1px solid #f1f1f1'}}>
-                      <button onClick={()=>copyReceipt(t)} style={{background:'var(--color-soft)',color:'var(--color-primary)',border:'none',padding:'6px 10px',borderRadius:8,fontWeight:700,cursor:'pointer'}}>Copy receipt</button>
+                      <button onClick={()=>copyReceipt(t)} style={{background:'#eef2ff',color:'#1652f0',border:'none',padding:'6px 10px',borderRadius:8,fontWeight:700,cursor:'pointer'}}>Copy receipt</button>
                     </td>
                   </tr>
                 )) : <tr><td colSpan="4" style={{color:'#888',padding:'.7em .6em'}}>No transactions match your filters.</td></tr>}
               </tbody>
             </table>
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:10}}>
-              <button onClick={()=>setTxPage(p=>Math.max(1,p-1))} disabled={txPage<=1} style={{background:'var(--color-soft)',color:'var(--color-primary)',border:'none',padding:'8px 12px',borderRadius:8,fontWeight:700,cursor: txPage<=1?'not-allowed':'pointer'}}>Prev</button>
+              <button onClick={()=>setTxPage(p=>Math.max(1,p-1))} disabled={txPage<=1} style={{background:'#eef2ff',color:'#1652f0',border:'none',padding:'8px 12px',borderRadius:8,fontWeight:700,cursor: txPage<=1?'not-allowed':'pointer'}}>Prev</button>
               <div style={{color:'#6b7280'}}>Page {txPage} / {totalPages}</div>
-              <button onClick={()=>setTxPage(p=>Math.min(totalPages,p+1))} disabled={txPage>=totalPages} style={{background:'var(--color-soft)',color:'var(--color-primary)',border:'none',padding:'8px 12px',borderRadius:8,fontWeight:700,cursor: txPage>=totalPages?'not-allowed':'pointer'}}>Next</button>
+              <button onClick={()=>setTxPage(p=>Math.min(totalPages,p+1))} disabled={txPage>=totalPages} style={{background:'#eef2ff',color:'#1652f0',border:'none',padding:'8px 12px',borderRadius:8,fontWeight:700,cursor: txPage>=totalPages?'not-allowed':'pointer'}}>Next</button>
             </div>
           </div>
         )}
@@ -629,7 +625,7 @@ export default function Dashboard() {
         {tab==='notifications' && (
           <div id="notificationsList">
             {(!notifs || !notifs.length) ? <div style={{color:'#888'}}>No notifications found.</div> : notifs.map((n,i)=> (
-              <div key={i} style={{background:'var(--color-soft)',color:'var(--color-primary)',borderLeft:'4px solid var(--color-primary)',padding:'.9em 2em .9em 1em',marginBottom:'.6em',borderRadius:7,fontSize:'1.03em',display:'flex',alignItems:'center',gap:'.6em',position:'relative',boxShadow:'0 2px 12px rgba(0,82,255,0.06)'}}>
+              <div key={i} style={{background:'#f3f7ff',color:'#1652f0',borderLeft:'4px solid #1652f0',padding:'.9em 2em .9em 1em',marginBottom:'.6em',borderRadius:7,fontSize:'1.03em',display:'flex',alignItems:'center',gap:'.6em',position:'relative',boxShadow:'0 2px 12px rgba(0,82,255,0.06)'}}>
                 <span style={{fontWeight:600,marginRight:'.6em'}}>{n.title || 'Notice'}:</span>
                 <span>{n.message || ''}</span>
                 <span style={{fontSize:'.95em',marginLeft:'.7em',color:'#00b3ff'}}>{n.time || ''}</span>
@@ -681,7 +677,7 @@ export default function Dashboard() {
               <label>Subject</label>
               <input name="subject" type="text" required />
               <label>Message</label>
-              <textarea name="message" required style={{width:'100%',height:90,borderRadius:7,padding:8,border:'1px solid var(--color-muted-border)',background:'var(--color-card)',color:'var(--color-text)',fontSize:'1em',marginBottom:'1em'}} />
+              <textarea name="message" required style={{width:'100%',height:90,borderRadius:7,padding:8,border:'1px solid #ccc',fontSize:'1em',marginBottom:'1em'}} />
               <button type="submit" style={{...btnStyle,width:'100%',marginTop:'.5em'}}>Send Ticket</button>
             </form>
           </div>
@@ -689,15 +685,15 @@ export default function Dashboard() {
 
         {/* Modals */}
         <div id="dep" style={{display:'none',position:'fixed',inset:0,background:'rgba(0,0,0,.18)',zIndex:1001,alignItems:'center',justifyContent:'center'}}>
-          <div style={{background:'var(--color-card)',borderRadius:14,padding:'1.8rem 1.4rem',maxWidth:420,width:'94%',position:'relative',boxShadow:'0 12px 32px rgba(0,82,255,0.12)'}}>
+          <div style={{background:'#fff',borderRadius:14,padding:'1.8rem 1.4rem',maxWidth:420,width:'94%',position:'relative',boxShadow:'0 12px 32px rgba(0,82,255,0.12)'}}>
             <button onClick={()=>document.getElementById('dep').style.display='none'} style={{position:'absolute',right:'1.1em',top:'.8em',background:'none',border:'none',fontSize:'1.3em',color:'#aaa',cursor:'pointer'}}>&times;</button>
             <h3 style={{marginTop:0,color:'#1652f0',fontSize:'1.3em',fontWeight:700,textAlign:'center'}}>Deposit</h3>
             <form onSubmit={onDeposit}>
               <label>Amount (USD)</label>
-              <input name="amount" type="number" min="1" required placeholder="$0.00" style={{width:'100%',padding:'0.8rem',border:'1px solid var(--color-muted-border)',background:'var(--color-card)',color:'var(--color-text)',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}} />
-              <div style={{fontSize:'.9rem',color:'var(--color-text)',opacity:.8,marginBottom:10}}>Funds are added to your USD balance.</div>
+              <input name="amount" type="number" min="1" required placeholder="$0.00" style={{width:'100%',padding:'0.8rem',border:'1px solid #ccd6ee',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}} />
+              <div style={{fontSize:'.9rem',color:'#6b7280',marginBottom:10}}>Funds are added to your USD balance.</div>
               <div style={{display:'flex',gap:8}}>
-                <button type="button" onClick={()=>document.getElementById('dep').style.display='none'} style={{flex:1,background:'var(--color-soft)',color:'var(--color-primary)',border:'none',padding:'.7rem',borderRadius:10,fontWeight:700,cursor:'pointer'}}>Cancel</button>
+                <button type="button" onClick={()=>document.getElementById('dep').style.display='none'} style={{flex:1,background:'#eef2ff',color:'#1652f0',border:'none',padding:'.7rem',borderRadius:10,fontWeight:700,cursor:'pointer'}}>Cancel</button>
                 <button type="submit" style={{flex:1,...btnStyle}}>Deposit</button>
               </div>
             </form>
@@ -705,15 +701,15 @@ export default function Dashboard() {
         </div>
 
         <div id="wd" style={{display:'none',position:'fixed',inset:0,background:'rgba(0,0,0,.18)',zIndex:1001,alignItems:'center',justifyContent:'center'}}>
-          <div style={{background:'var(--color-card)',borderRadius:14,padding:'1.8rem 1.4rem',maxWidth:420,width:'94%',position:'relative',boxShadow:'0 12px 32px rgba(0,82,255,0.12)'}}>
+          <div style={{background:'#fff',borderRadius:14,padding:'1.8rem 1.4rem',maxWidth:420,width:'94%',position:'relative',boxShadow:'0 12px 32px rgba(0,82,255,0.12)'}}>
             <button onClick={()=>document.getElementById('wd').style.display='none'} style={{position:'absolute',right:'1.1em',top:'.8em',background:'none',border:'none',fontSize:'1.3em',color:'#aaa',cursor:'pointer'}}>&times;</button>
             <h3 style={{marginTop:0,color:'#1652f0',fontSize:'1.3em',fontWeight:700,textAlign:'center'}}>Withdraw</h3>
             <form onSubmit={onWithdraw}>
               <label>Amount (USD)</label>
-              <input name="amount" type="number" min="1" required placeholder="$0.00" style={{width:'100%',padding:'0.8rem',border:'1px solid var(--color-muted-border)',background:'var(--color-card)',color:'var(--color-text)',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}} />
-              <div style={{fontSize:'.9rem',color:'var(--color-text)',opacity:.8,marginBottom:10}}>Available: ${balance.toFixed(2)}</div>
+              <input name="amount" type="number" min="1" required placeholder="$0.00" style={{width:'100%',padding:'0.8rem',border:'1px solid #ccd6ee',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}} />
+              <div style={{fontSize:'.9rem',color:'#6b7280',marginBottom:10}}>Available: ${balance.toFixed(2)}</div>
               <div style={{display:'flex',gap:8}}>
-                <button type="button" onClick={()=>document.getElementById('wd').style.display='none'} style={{flex:1,background:'var(--color-soft)',color:'var(--color-primary)',border:'none',padding:'.7rem',borderRadius:10,fontWeight:700,cursor:'pointer'}}>Cancel</button>
+                <button type="button" onClick={()=>document.getElementById('wd').style.display='none'} style={{flex:1,background:'#eef2ff',color:'#1652f0',border:'none',padding:'.7rem',borderRadius:10,fontWeight:700,cursor:'pointer'}}>Cancel</button>
                 <button type="submit" style={{flex:1,...btnStyle}}>Withdraw</button>
               </div>
             </form>
@@ -721,16 +717,16 @@ export default function Dashboard() {
         </div>
 
         <div id="sd" style={{display:'none',position:'fixed',inset:0,background:'rgba(0,0,0,.18)',zIndex:1001,alignItems:'center',justifyContent:'center'}}>
-          <div style={{background:'var(--color-card)',borderRadius:14,padding:'1.8rem 1.4rem',maxWidth:420,width:'94%',position:'relative',boxShadow:'0 12px 32px rgba(0,82,255,0.12)'}}>
+          <div style={{background:'#fff',borderRadius:14,padding:'1.8rem 1.4rem',maxWidth:420,width:'94%',position:'relative',boxShadow:'0 12px 32px rgba(0,82,255,0.12)'}}>
             <button onClick={()=>document.getElementById('sd').style.display='none'} style={{position:'absolute',right:'1.1em',top:'.8em',background:'none',border:'none',fontSize:'1.3em',color:'#aaa',cursor:'pointer'}}>&times;</button>
             <h3 style={{marginTop:0,color:'#1652f0',fontSize:'1.3em',fontWeight:700,textAlign:'center'}}>Send Funds</h3>
             <form onSubmit={onSend}>
               <label>Recipient Email</label>
-              <input name="recipient" type="email" required placeholder="user@example.com" style={{width:'100%',padding:'0.8rem',border:'1px solid var(--color-muted-border)',background:'var(--color-card)',color:'var(--color-text)',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}} />
+              <input name="recipient" type="email" required placeholder="user@example.com" style={{width:'100%',padding:'0.8rem',border:'1px solid #ccd6ee',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}} />
               <label>Amount (USD)</label>
-              <input name="amount" type="number" min="1" required placeholder="$0.00" style={{width:'100%',padding:'0.8rem',border:'1px solid var(--color-muted-border)',background:'var(--color-card)',color:'var(--color-text)',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}} />
+              <input name="amount" type="number" min="1" required placeholder="$0.00" style={{width:'100%',padding:'0.8rem',border:'1px solid #ccd6ee',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}} />
               <div style={{display:'flex',gap:8}}>
-                <button type="button" onClick={()=>document.getElementById('sd').style.display='none'} style={{flex:1,background:'var(--color-soft)',color:'var(--color-primary)',border:'none',padding:'.7rem',borderRadius:10,fontWeight:700,cursor:'pointer'}}>Cancel</button>
+                <button type="button" onClick={()=>document.getElementById('sd').style.display='none'} style={{flex:1,background:'#eef2ff',color:'#1652f0',border:'none',padding:'.7rem',borderRadius:10,fontWeight:700,cursor:'pointer'}}>Cancel</button>
                 <button type="submit" style={{flex:1,...btnStyle}}>Send</button>
               </div>
             </form>
@@ -738,12 +734,12 @@ export default function Dashboard() {
         </div>
 
         <div id="iv" style={{display:'none',position:'fixed',inset:0,background:'rgba(0,0,0,.18)',zIndex:1001,alignItems:'center',justifyContent:'center'}}>
-          <div style={{background:'var(--color-card)',borderRadius:14,padding:'1.8rem 1.4rem',maxWidth:480,width:'94%',position:'relative',boxShadow:'0 12px 32px rgba(0,82,255,0.12)'}}>
+          <div style={{background:'#fff',borderRadius:14,padding:'1.8rem 1.4rem',maxWidth:480,width:'94%',position:'relative',boxShadow:'0 12px 32px rgba(0,82,255,0.12)'}}>
             <button onClick={()=>document.getElementById('iv').style.display='none'} style={{position:'absolute',right:'1.1em',top:'.8em',background:'none',border:'none',fontSize:'1.3em',color:'#aaa',cursor:'pointer'}}>&times;</button>
             <h3 style={{marginTop:0,color:'#1652f0',fontSize:'1.3em',fontWeight:700,textAlign:'center'}}>Invest in Crypto</h3>
             <form onSubmit={onInvest}>
               <label htmlFor="investAsset">Select Asset</label>
-              <select name="asset" required style={{width:'100%',padding:'0.8rem',border:'1px solid var(--color-muted-border)',background:'var(--color-card)',color:'var(--color-text)',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}}>
+              <select name="asset" required style={{width:'100%',padding:'0.8rem',border:'1px solid #ccd6ee',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}}>
                 <option value="">Choose...</option>
                 <option value="BTC">Bitcoin (BTC)</option>
                 <option value="ETH">Ethereum (ETH)</option>
@@ -751,23 +747,23 @@ export default function Dashboard() {
                 <option value="USDT">Tether (USDT)</option>
               </select>
               <label htmlFor="investAmount">Amount (USD)</label>
-              <input name="amount" type="number" min="10" step="0.01" required placeholder="Minimum $10" style={{width:'100%',padding:'0.8rem',border:'1px solid var(--color-muted-border)',background:'var(--color-card)',color:'var(--color-text)',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}} />
+              <input name="amount" type="number" min="10" step="0.01" required placeholder="Minimum $10" style={{width:'100%',padding:'0.8rem',border:'1px solid #ccd6ee',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}} />
               <label htmlFor="investDuration">Investment Duration</label>
-              <select name="duration" required style={{width:'100%',padding:'0.8rem',border:'1px solid var(--color-muted-border)',background:'var(--color-card)',color:'var(--color-text)',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}}>
+              <select name="duration" required style={{width:'100%',padding:'0.8rem',border:'1px solid #ccd6ee',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}}>
                 <option value="">Choose...</option>
                 <option value="7">7 days (Short-term)</option>
                 <option value="30">30 days (1 month)</option>
                 <option value="90">90 days (3 months)</option>
               </select>
               <label htmlFor="investRisk">Risk Level</label>
-              <select name="risk" required style={{width:'100%',padding:'0.8rem',border:'1px solid var(--color-muted-border)',background:'var(--color-card)',color:'var(--color-text)',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}}>
+              <select name="risk" required style={{width:'100%',padding:'0.8rem',border:'1px solid #ccd6ee',borderRadius:10,margin:'6px 0 10px',fontSize:'1rem'}}>
                 <option value="">Choose...</option>
                 <option value="low">Low (Stable)</option>
                 <option value="medium">Medium</option>
                 <option value="high">High (Aggressive)</option>
               </select>
               <div style={{display:'flex',gap:8}}>
-                <button type="button" onClick={()=>document.getElementById('iv').style.display='none'} style={{flex:1,background:'var(--color-soft)',color:'var(--color-primary)',border:'none',padding:'.7rem',borderRadius:10,fontWeight:700,cursor:'pointer'}}>Cancel</button>
+                <button type="button" onClick={()=>document.getElementById('iv').style.display='none'} style={{flex:1,background:'#eef2ff',color:'#1652f0',border:'none',padding:'.7rem',borderRadius:10,fontWeight:700,cursor:'pointer'}}>Cancel</button>
                 <button type="submit" style={{flex:1,...btnStyle}}>Invest</button>
               </div>
             </form>
@@ -792,21 +788,21 @@ export default function Dashboard() {
 
         {approvalsOpen && userEmail === OWNER_EMAIL && (
           <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.18)',zIndex:1200,display:'flex',alignItems:'center',justifyContent:'center'}}>
-            <div style={{background:'var(--color-card)',borderRadius:14,padding:'1.4rem',maxWidth:980,width:'95%',position:'relative',boxShadow:'0 12px 32px rgba(0,82,255,0.12)'}}>
+            <div style={{background:'#fff',borderRadius:14,padding:'1.4rem',maxWidth:980,width:'95%',position:'relative',boxShadow:'0 12px 32px rgba(0,82,255,0.12)'}}>
               <button onClick={()=>setApprovalsOpen(false)} style={{position:'absolute',right:'1.1em',top:'.8em',background:'none',border:'none',fontSize:'1.3em',color:'#aaa',cursor:'pointer'}}>&times;</button>
               <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:10}}>
                 <h3 style={{margin:0,color:'#1652f0',fontSize:'1.3em',fontWeight:700}}>Approvals</h3>
                 <div style={{display:'flex',gap:8,alignItems:'center'}}>
-                  <select value={approvalsFilter} onChange={(e)=>{setApprovalsFilter(e.target.value); setTimeout(loadApprovals,0)}} style={{padding:'8px 10px',border:'1px solid var(--color-muted-border)',background:'var(--color-card)',color:'var(--color-text)',borderRadius:8}}>
+                  <select value={approvalsFilter} onChange={(e)=>{setApprovalsFilter(e.target.value); setTimeout(loadApprovals,0)}} style={{padding:'8px 10px',border:'1px solid #ccd6ee',borderRadius:8}}>
                     <option value="pending">Pending</option>
                     <option value="approved">Approved</option>
                     <option value="rejected">Rejected</option>
                   </select>
-                  <button onClick={loadApprovals} disabled={approvalsLoading} style={{background:'var(--color-primary)',color:'#fff',border:'none',padding:'8px 12px',borderRadius:8,fontWeight:700,cursor:'pointer'}}>{approvalsLoading?'Loading...':'Refresh'}</button>
+                  <button onClick={loadApprovals} disabled={approvalsLoading} style={{background:'#1652f0',color:'#fff',border:'none',padding:'8px 12px',borderRadius:8,fontWeight:700,cursor:'pointer'}}>{approvalsLoading?'Loading...':'Refresh'}</button>
                 </div>
               </div>
-              <table style={{borderCollapse:'collapse',width:'100%',background:'var(--color-soft-2)',borderRadius:10,overflow:'hidden',boxShadow:'0 2px 12px rgba(0,82,255,0.04)'}}>
-                <thead><tr style={{background:'var(--color-soft)'}}>
+              <table style={{borderCollapse:'collapse',width:'100%',background:'#fafdff',borderRadius:10,overflow:'hidden',boxShadow:'0 2px 12px rgba(0,82,255,0.04)'}}>
+                <thead><tr style={{background:'#f3f7ff'}}>
                   <th style={{textAlign:'left',padding:10}}>Date</th>
                   <th style={{textAlign:'left',padding:10}}>User</th>
                   <th style={{textAlign:'left',padding:10}}>Type</th>
@@ -825,8 +821,8 @@ export default function Dashboard() {
                       <td style={{padding:10,borderBottom:'1px solid #f1f1f1'}}>{r.target_email||'-'}</td>
                       <td style={{padding:10,borderBottom:'1px solid #f1f1f1'}}>{r.status}</td>
                       <td style={{padding:10,borderBottom:'1px solid #f1f1f1'}}>
-                        <button onClick={()=>approveRequest(r)} disabled={r.status!=='pending'} style={{marginRight:8,background:'linear-gradient(90deg,var(--color-primary) 60%,var(--color-primary-2) 100%)',color:'#fff',border:'none',fontWeight:700,padding:'8px 12px',borderRadius:10,cursor:'pointer'}}>Approve</button>
-                        <button onClick={()=>rejectRequest(r)} disabled={r.status!=='pending'} style={{background:'var(--color-soft)',color:'var(--color-primary)',border:'none',fontWeight:700,padding:'8px 12px',borderRadius:10,cursor:'pointer'}}>Reject</button>
+                        <button onClick={()=>approveRequest(r)} disabled={r.status!=='pending'} style={{marginRight:8,background:'linear-gradient(90deg,#1652f0 60%,#0f3ac0 100%)',color:'#fff',border:'none',fontWeight:700,padding:'8px 12px',borderRadius:10,cursor:'pointer'}}>Approve</button>
+                        <button onClick={()=>rejectRequest(r)} disabled={r.status!=='pending'} style={{background:'#eef2ff',color:'#1652f0',border:'none',fontWeight:700,padding:'8px 12px',borderRadius:10,cursor:'pointer'}}>Reject</button>
                       </td>
                     </tr>
                   )) : <tr><td colSpan="7" style={{padding:10,color:'#888'}}>No requests.</td></tr>}
