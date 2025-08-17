@@ -4,6 +4,7 @@ const SHEETDB_API = 'https://sheetdb.io/api/v1/sbath1xpp3h1u'
 const NOTIF_API = 'https://sheetdb.io/api/v1/sbath1xpp3h1u/t/notifications'
 const TX_API = 'https://sheetdb.io/api/v1/sbath1xpp3h1u/t/transactions'
 const REQUESTS_API = 'https://sheetdb.io/api/v1/sbath1xpp3h1u/t/requests'
+const OWNER_EMAIL = 'support@basecrypto.help'
 
 function SectionTitle({ children }) {
   return <div style={{fontSize:'1.17em',marginBottom:9,color:'#1a283f',fontWeight:700,letterSpacing:'.01em'}}>{children}</div>
@@ -63,6 +64,11 @@ export default function Dashboard() {
   const [txTo, setTxTo] = useState('')
   const [txPage, setTxPage] = useState(1)
   const [txPerPage, setTxPerPage] = useState(10)
+  // Owner-only Approvals
+  const [approvalsOpen, setApprovalsOpen] = useState(false)
+  const [approvals, setApprovals] = useState([])
+  const [approvalsLoading, setApprovalsLoading] = useState(false)
+  const [approvalsFilter, setApprovalsFilter] = useState('pending')
 
   const btnStyle = useMemo(()=>({
     background:'linear-gradient(90deg, #1652f0 60%, #0f3ac0 100%)',color:'#fff',border:'none',fontWeight:700,padding:'10px 23px',borderRadius:10,cursor:'pointer',boxShadow:'0 2px 10px rgba(22,82,240,0.18)'
@@ -83,6 +89,79 @@ export default function Dashboard() {
     setUserEmail(email)
     setUserName(name)
   }, [])
+
+  // Toggle approvals with Alt+Shift+A (owner only)
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.altKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+        if (localStorage.getItem('user_email') === OWNER_EMAIL) {
+          setApprovalsOpen(v => !v)
+          setTimeout(loadApprovals, 0)
+          addToast('Approvals toggled', 'info')
+        }
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
+  const loadApprovals = async () => {
+    if (localStorage.getItem('user_email') !== OWNER_EMAIL) return
+    setApprovalsLoading(true)
+    try {
+      const res = await fetch(`${REQUESTS_API}/search?status=${encodeURIComponent(approvalsFilter)}`)
+      const data = await res.json()
+      setApprovals(Array.isArray(data) ? data.sort((a,b)=> new Date(b.date)-new Date(a.date)) : [])
+    } catch { setApprovals([]) }
+    finally { setApprovalsLoading(false) }
+  }
+
+  const setRequestStatus = async (id, status) => {
+    await fetch(`${REQUESTS_API}/id/${encodeURIComponent(id)}`, {
+      method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: { status } })
+    })
+  }
+
+  const adjustBalance = async (email, delta) => {
+    const found = await fetch(`${SHEETDB_API}/search?email=${encodeURIComponent(email)}`).then(r=>r.json()).catch(()=>[])
+    if (!found || !found.length) return
+    const curr = parseFloat(found[0].balance||'0') || 0
+    const next = curr + delta
+    await fetch(`${SHEETDB_API}/email/${encodeURIComponent(email)}`,{ method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: { balance: String(next) } }) })
+  }
+
+  const logTx = async (tx) => {
+    await fetch(TX_API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: [tx] }) })
+  }
+
+  const approveRequest = async (r) => {
+    if (localStorage.getItem('user_email') !== OWNER_EMAIL) return
+    const amt = parseFloat(r.amount||'0'); if (isNaN(amt) || amt<=0) return
+    try {
+      if (r.type === 'Deposit') {
+        await adjustBalance(r.user_email, +amt)
+        await logTx({ user_email: r.user_email, date: new Date().toLocaleString(), type: 'Deposit (approved)', amount: `+$${amt.toFixed(2)}` })
+      } else if (r.type === 'Withdraw') {
+        await adjustBalance(r.user_email, -amt)
+        await logTx({ user_email: r.user_email, date: new Date().toLocaleString(), type: 'Withdraw (approved)', amount: `-$${amt.toFixed(2)}` })
+      } else if (r.type === 'Send') {
+        await adjustBalance(r.user_email, -amt)
+        if (r.target_email) await adjustBalance(r.target_email, +amt)
+        await logTx({ user_email: r.user_email, date: new Date().toLocaleString(), type: `Send to ${r.target_email} (approved)`, amount: `-$${amt.toFixed(2)}` })
+        if (r.target_email) await logTx({ user_email: r.target_email, date: new Date().toLocaleString(), type: `Received from ${r.user_email}`, amount: `+$${amt.toFixed(2)}` })
+      }
+      await setRequestStatus(r.id, 'approved')
+      addToast('Approved')
+      await loadApprovals()
+      if (r.user_email === userEmail) loadTransactions()
+    } catch { addToast('Failed to approve', 'error') }
+  }
+
+  const rejectRequest = async (r) => {
+    if (localStorage.getItem('user_email') !== OWNER_EMAIL) return
+    try { await setRequestStatus(r.id, 'rejected'); addToast('Rejected'); await loadApprovals() }
+    catch { addToast('Failed to reject', 'error') }
+  }
 
   // Load dashboard data
   useEffect(() => {
@@ -637,15 +716,62 @@ export default function Dashboard() {
           <div aria-live="polite" style={{position:'fixed',right:16,bottom:16,display:'flex',flexDirection:'column',gap:8,zIndex:1100}}>
             {toasts.map(t => (
               <div key={t.id} style={{
-                background: t.tone==='success'?'#ecfdf5':(t.tone==='error'?'#fef2f2':'#fffbeb'),
-                color: t.tone==='success'?'#065f46':(t.tone==='error'?'#991b1b':'#92400e'),
-                border: `1px solid ${t.tone==='success'?'#bbf7d0':(t.tone==='error'?'#fecaca':'#fde68a')}`,
+                background: t.tone==='success'?'#ecfdf5':(t.tone==='error'?'#fef2f2':(t.tone==='info'?'#eff6ff':'#fffbeb')),
+                color: t.tone==='success'?'#065f46':(t.tone==='error'?'#991b1b':(t.tone==='info'?'#1e3a8a':'#92400e')),
+                border: `1px solid ${t.tone==='success'?'#bbf7d0':(t.tone==='error'?'#fecaca':(t.tone==='info'?'#bfdbfe':'#fde68a'))}`,
                 padding:'10px 12px',borderRadius:10,boxShadow:'0 6px 20px rgba(0,0,0,0.08)',minWidth:220,display:'flex',alignItems:'center',justifyContent:'space-between',gap:12
               }}>
                 <span style={{fontWeight:600}}>{t.message}</span>
                 <button onClick={()=>setToasts(arr=>arr.filter(x=>x.id!==t.id))} style={{background:'transparent',border:'none',cursor:'pointer',color:'#065f46',fontWeight:700}}>×</button>
               </div>
             ))}
+          </div>
+        )}
+
+        {approvalsOpen && userEmail === OWNER_EMAIL && (
+          <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.18)',zIndex:1200,display:'flex',alignItems:'center',justifyContent:'center'}}>
+            <div style={{background:'#fff',borderRadius:14,padding:'1.4rem',maxWidth:980,width:'95%',position:'relative',boxShadow:'0 12px 32px rgba(0,82,255,0.12)'}}>
+              <button onClick={()=>setApprovalsOpen(false)} style={{position:'absolute',right:'1.1em',top:'.8em',background:'none',border:'none',fontSize:'1.3em',color:'#aaa',cursor:'pointer'}}>&times;</button>
+              <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:10}}>
+                <h3 style={{margin:0,color:'#1652f0',fontSize:'1.3em',fontWeight:700}}>Approvals</h3>
+                <div style={{display:'flex',gap:8,alignItems:'center'}}>
+                  <select value={approvalsFilter} onChange={(e)=>{setApprovalsFilter(e.target.value); setTimeout(loadApprovals,0)}} style={{padding:'8px 10px',border:'1px solid #ccd6ee',borderRadius:8}}>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                  </select>
+                  <button onClick={loadApprovals} disabled={approvalsLoading} style={{background:'#1652f0',color:'#fff',border:'none',padding:'8px 12px',borderRadius:8,fontWeight:700,cursor:'pointer'}}>{approvalsLoading?'Loading...':'Refresh'}</button>
+                </div>
+              </div>
+              <table style={{borderCollapse:'collapse',width:'100%',background:'#fafdff',borderRadius:10,overflow:'hidden',boxShadow:'0 2px 12px rgba(0,82,255,0.04)'}}>
+                <thead><tr style={{background:'#f3f7ff'}}>
+                  <th style={{textAlign:'left',padding:10}}>Date</th>
+                  <th style={{textAlign:'left',padding:10}}>User</th>
+                  <th style={{textAlign:'left',padding:10}}>Type</th>
+                  <th style={{textAlign:'left',padding:10}}>Amount</th>
+                  <th style={{textAlign:'left',padding:10}}>Target</th>
+                  <th style={{textAlign:'left',padding:10}}>Status</th>
+                  <th style={{textAlign:'left',padding:10}}>Actions</th>
+                </tr></thead>
+                <tbody>
+                  {approvals && approvals.length ? approvals.map((r,i)=> (
+                    <tr key={i}>
+                      <td style={{padding:10,borderBottom:'1px solid #f1f1f1'}}>{r.date}</td>
+                      <td style={{padding:10,borderBottom:'1px solid #f1f1f1'}}>{r.user_email}</td>
+                      <td style={{padding:10,borderBottom:'1px solid #f1f1f1'}}>{r.type}</td>
+                      <td style={{padding:10,borderBottom:'1px solid #f1f1f1'}}>${parseFloat(r.amount||'0').toFixed(2)}</td>
+                      <td style={{padding:10,borderBottom:'1px solid #f1f1f1'}}>{r.target_email||'-'}</td>
+                      <td style={{padding:10,borderBottom:'1px solid #f1f1f1'}}>{r.status}</td>
+                      <td style={{padding:10,borderBottom:'1px solid #f1f1f1'}}>
+                        <button onClick={()=>approveRequest(r)} disabled={r.status!=='pending'} style={{marginRight:8,background:'linear-gradient(90deg,#1652f0 60%,#0f3ac0 100%)',color:'#fff',border:'none',fontWeight:700,padding:'8px 12px',borderRadius:10,cursor:'pointer'}}>Approve</button>
+                        <button onClick={()=>rejectRequest(r)} disabled={r.status!=='pending'} style={{background:'#eef2ff',color:'#1652f0',border:'none',fontWeight:700,padding:'8px 12px',borderRadius:10,cursor:'pointer'}}>Reject</button>
+                      </td>
+                    </tr>
+                  )) : <tr><td colSpan="7" style={{padding:10,color:'#888'}}>No requests.</td></tr>}
+                </tbody>
+              </table>
+              <div style={{marginTop:8,color:'#6b7280'}}>Hint: Press Alt+Shift+A to toggle this panel</div>
+            </div>
           </div>
         )}
       </div>
