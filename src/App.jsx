@@ -515,17 +515,28 @@ function Landing() {
       }
 
       fetch(`${SHEETDB_API}/search?email=${encodeURIComponent(email)}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.length === 0) {
+        .then(async (res) => { if (!res.ok) { throw new Error(`HTTP ${res.status}`) }; return res.json() })
+        .then(async (data) => {
+          const inputEmail = email.toLowerCase()
+          let user = Array.isArray(data) && data.length > 0
+            ? (data.find(u => (u.email || '').toLowerCase() === inputEmail) || data[0])
+            : null
+
+          if (!user) {
+            const allRes = await fetch(`${SHEETDB_API}`)
+            if (!allRes.ok) throw new Error(`HTTP ${allRes.status}`)
+            const all = await allRes.json()
+            user = Array.isArray(all) ? all.find(u => (u.email || '').toLowerCase() === inputEmail) : null
+          }
+
+          if (!user) {
             if (failMsg) { failMsg.textContent = 'Account not found.'; failMsg.style.display = 'block' }
             if (btn) { btn.disabled = false; btn.textContent = 'Sign in' }
             return
           }
-          // Regular user: approve login if email exists
-          const user = data.find(u => u.email === email) || data[0]
+
           if (successMsg) { successMsg.textContent = 'Login successful! Redirecting...'; successMsg.style.display = 'block' }
-          localStorage.setItem('user_email', email)
+          localStorage.setItem('user_email', user.email || email)
           localStorage.setItem('user_name', (user && user.fullname) || '')
           setTimeout(() => { window.location.href = '/dashboard' }, 1200)
         })
