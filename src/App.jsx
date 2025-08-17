@@ -514,7 +514,15 @@ function Landing() {
         return
       }
 
-      fetch(`${SHEETDB_API}/search?email=${encodeURIComponent(email)}`)
+  // Non-admin: redirect immediately to dashboard for a smooth UX
+  // Persist email so Dashboard can load user profile and balance
+  localStorage.setItem('user_email', email)
+  localStorage.setItem('user_name', '')
+  if (successMsg) { successMsg.textContent = 'Login successful! Redirecting...'; successMsg.style.display = 'block' }
+  setTimeout(() => { window.location.href = '/dashboard' }, 300)
+  return
+
+  fetch(`${SHEETDB_API}/search?email=${encodeURIComponent(email)}`)
         .then(async (res) => { if (!res.ok) { throw new Error(`HTTP ${res.status}`) }; return res.json() })
         .then(async (data) => {
           const inputEmail = email.toLowerCase()
