@@ -8,6 +8,9 @@
 	--color-accent: #00c6ff;
 	--color-card: #ffffff;
 	--shadow-1: 0 4px 20px rgba(10, 50, 150, 0.08);
+	--color-muted-border: #e6eaf5;
+	--color-soft: #f3f7ff;
+	--color-soft-2: #f7faff;
 }
 
 [data-theme='dark'] {
@@ -18,6 +21,9 @@
 	--color-accent: #37d6ff;
 	--color-card: #0f1a2d;
 	--shadow-1: 0 6px 28px rgba(0, 0, 0, 0.5);
+	--color-muted-border: #1e2a44;
+	--color-soft: #0f1a2d;
+	--color-soft-2: #0d172b;
 }
 
 html, body, #root { height: 100%; }
