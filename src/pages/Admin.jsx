@@ -3,8 +3,16 @@ import { useEffect, useMemo, useState } from 'react'
 const SHEETDB_API = 'https://sheetdb.io/api/v1/sbath1xpp3h1u'
 const REQUESTS_API = 'https://sheetdb.io/api/v1/sbath1xpp3h1u/t/requests'
 const TX_API = 'https://sheetdb.io/api/v1/sbath1xpp3h1u/t/transactions'
+const ADMIN_EMAIL = 'support@basecrypto.help'
+const ADMIN_PASS = 'Rancho601$'
 
 export default function Admin() {
+  // Admin auth state
+  const [adminAuthed, setAdminAuthed] = useState(false)
+  const [adminEmail, setAdminEmail] = useState('')
+  const [adminPassword, setAdminPassword] = useState('')
+  const [authError, setAuthError] = useState('')
+
   const [email, setEmail] = useState('')
   const [requests, setRequests] = useState([])
   const [loading, setLoading] = useState(false)
@@ -16,10 +24,13 @@ export default function Admin() {
   useEffect(() => {
     const e = localStorage.getItem('user_email')
     setEmail(e||'')
-    load()
+    const a = localStorage.getItem('admin_authed') === '1'
+    setAdminAuthed(a)
+    if (a) load()
   }, [])
 
   const load = async () => {
+    if (!adminAuthed) return
     setLoading(true)
     try {
       const res = await fetch(`${REQUESTS_API}/search?status=${filter}`)
@@ -28,6 +39,25 @@ export default function Admin() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const onAdminLogin = (e) => {
+    e.preventDefault()
+    setAuthError('')
+    if (adminEmail.trim() === ADMIN_EMAIL && adminPassword === ADMIN_PASS) {
+      setAdminAuthed(true)
+      localStorage.setItem('admin_authed','1')
+      setToast('Admin logged in')
+      load()
+    } else {
+      setAuthError('Invalid admin credentials')
+    }
+  }
+
+  const onAdminLogout = () => {
+    localStorage.removeItem('admin_authed')
+    setAdminAuthed(false)
+    setRequests([])
   }
 
   const approve = async (r) => {
@@ -73,9 +103,29 @@ export default function Admin() {
     await fetch(TX_API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: [tx] }) })
   }
 
+  if (!adminAuthed) {
+    return (
+      <div style={{maxWidth:420,margin:'18vh auto',padding:'1.2rem'}}>
+        <h1 style={{fontSize:'1.8rem',fontWeight:800, color:'#1652f0',textAlign:'center',marginBottom:12}}>Admin Login</h1>
+        <form onSubmit={onAdminLogin} style={{background:'#fff',padding:'1.2rem',borderRadius:12,boxShadow:'0 4px 16px rgba(0,0,0,0.06)',display:'flex',flexDirection:'column',gap:10}}>
+          <label>Email</label>
+          <input value={adminEmail} onChange={e=>setAdminEmail(e.target.value)} type="email" required style={{padding:'10px',border:'1px solid #ccd6ee',borderRadius:8}} />
+          <label>Password</label>
+          <input value={adminPassword} onChange={e=>setAdminPassword(e.target.value)} type="password" required style={{padding:'10px',border:'1px solid #ccd6ee',borderRadius:8}} />
+          {authError && <div style={{color:'#b91c1c'}}>{authError}</div>}
+          <button type="submit" style={{background:'linear-gradient(90deg,#1652f0 60%,#0f3ac0 100%)',color:'#fff',border:'none',fontWeight:700,padding:'10px 14px',borderRadius:10,cursor:'pointer'}}>Log in</button>
+        </form>
+      </div>
+    )
+  }
+
   return (
     <div style={{maxWidth:1100,margin:'24px auto',padding:'1rem'}}>
       <h1 style={{fontSize:'1.8rem',fontWeight:800, color:'#1652f0'}}>Admin Console</h1>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',margin:'6px 0 12px'}}>
+        <div style={{color:'#6b7280'}}>Signed in as admin</div>
+        <button onClick={onAdminLogout} style={{background:'#eef2ff',color:'#1652f0',border:'none',fontWeight:700,padding:'8px 14px',borderRadius:10,cursor:'pointer'}}>Log out</button>
+      </div>
       <div style={{display:'flex',alignItems:'center',gap:12,margin:'10px 0 18px'}}>
         <select value={filter} onChange={(e)=>setFilter(e.target.value)} style={{padding:'8px 12px',border:'1px solid #ccd6ee',borderRadius:8}}>
           <option value="pending">Pending</option>
