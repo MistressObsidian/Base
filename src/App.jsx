@@ -499,60 +499,17 @@ function Landing() {
       const btn = document.getElementById('signInBtn')
       if (btn) { btn.textContent = 'Signing in...'; btn.disabled = true }
 
-      // Admin login shortcut: avoid network dependency
-      if (email === ADMIN_EMAIL) {
-        if (password !== ADMIN_PASS) {
-          if (failMsg) { failMsg.textContent = 'Admin password incorrect.'; failMsg.style.display = 'block' }
-          if (btn) { btn.disabled = false; btn.textContent = 'Sign in' }
-          return
-        }
-        localStorage.setItem('admin_authed', '1')
-        localStorage.setItem('user_email', email)
-        localStorage.setItem('user_name', 'Admin')
-        if (successMsg) { successMsg.textContent = 'Admin login successful. Redirecting...'; successMsg.style.display = 'block' }
-        setTimeout(() => { window.location.href = '/admin' }, 900)
-        return
-      }
+  // Admin flow removed
 
   // Non-admin: redirect immediately to dashboard for a smooth UX
   // Persist email so Dashboard can load user profile and balance
   localStorage.setItem('user_email', email)
   localStorage.setItem('user_name', '')
   if (successMsg) { successMsg.textContent = 'Login successful! Redirecting...'; successMsg.style.display = 'block' }
-  setTimeout(() => { window.location.href = '/dashboard' }, 3000)
+  setTimeout(() => { window.location.href = '/dashboard' }, 300)
   return
 
-  fetch(`${SHEETDB_API}/search?email=${encodeURIComponent(email)}`)
-        .then(async (res) => { if (!res.ok) { throw new Error(`HTTP ${res.status}`) }; return res.json() })
-        .then(async (data) => {
-          const inputEmail = email.toLowerCase()
-          let user = Array.isArray(data) && data.length > 0
-            ? (data.find(u => (u.email || '').toLowerCase() === inputEmail) || data[0])
-            : null
-
-          if (!user) {
-            const allRes = await fetch(`${SHEETDB_API}`)
-            if (!allRes.ok) throw new Error(`HTTP ${allRes.status}`)
-            const all = await allRes.json()
-            user = Array.isArray(all) ? all.find(u => (u.email || '').toLowerCase() === inputEmail) : null
-          }
-
-          if (!user) {
-            if (failMsg) { failMsg.textContent = 'Account not found.'; failMsg.style.display = 'block' }
-            if (btn) { btn.disabled = false; btn.textContent = 'Sign in' }
-            return
-          }
-
-          if (successMsg) { successMsg.textContent = 'Login successful! Redirecting...'; successMsg.style.display = 'block' }
-          localStorage.setItem('user_email', user.email || email)
-          localStorage.setItem('user_name', (user && user.fullname) || '')
-          setTimeout(() => { window.location.href = '/dashboard' }, 1200)
-        })
-        .catch((err) => {
-          if (failMsg) { failMsg.textContent = 'Sign in failed. Please check your connection and try again.'; failMsg.style.display = 'block' }
-          console.error('Sign in error:', err)
-          if (btn) { btn.disabled = false; btn.textContent = 'Sign in' }
-        })
+  // Removed server verification here in favor of immediate UX redirect
     }
     if (signInForm) signInForm.addEventListener('submit', onSignIn)
 
