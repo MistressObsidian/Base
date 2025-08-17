@@ -206,6 +206,35 @@ export default function Dashboard() {
     return filteredTx.slice(start, start + txPerPage)
   }, [filteredTx, txPage, txPerPage])
 
+  // CSV export of current filtered results
+  const exportCsv = () => {
+    try {
+      const rows = filteredTx
+      const headers = ['date','type','amount']
+      const csv = [headers.join(',')].concat(
+        rows.map(r => headers.map(h => {
+          const val = (r[h] ?? '').toString().replaceAll('"','""')
+          return `"${val}"`
+        }).join(','))
+      ).join('\n')
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `transactions-${new Date().toISOString().slice(0,10)}.csv`
+      document.body.appendChild(a); a.click(); a.remove()
+      URL.revokeObjectURL(url)
+      addToast('CSV exported')
+    } catch { addToast('Export failed', 'error') }
+  }
+
+  // Copy receipt helper
+  const copyReceipt = async (t) => {
+    const text = `Base Transaction Receipt\nDate: ${t.date}\nType: ${t.type}\nAmount: ${t.amount}\nUser: ${userEmail}`
+    try { await navigator.clipboard.writeText(text); addToast('Receipt copied') }
+    catch { addToast('Copy failed', 'error') }
+  }
+
   // Actions
   const patchBalance = (newBal) => fetch(`${SHEETDB_API}/email/${encodeURIComponent(userEmail)}`,{
     method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: { balance: newBal.toString() } })
@@ -441,6 +470,7 @@ export default function Dashboard() {
               <input type="date" value={txTo} onChange={e=>{setTxTo(e.target.value); setTxPage(1)}} style={{padding:'8px 10px',border:'1px solid #ccd6ee',borderRadius:8}} />
               <button onClick={()=>{ setTxSearch(''); setTxType('all'); setTxFrom(''); setTxTo(''); setTxPage(1) }} style={{background:'#eef2ff',color:'#1652f0',border:'none',padding:'8px 12px',borderRadius:8,fontWeight:700,cursor:'pointer'}}>Reset</button>
               <button onClick={loadTransactions} disabled={txLoading} style={{...btnStyle, padding:'8px 14px'}}>{txLoading?'Refreshing...':'Refresh'}</button>
+              <button onClick={exportCsv} style={{...btnStyle, padding:'8px 14px', background:'linear-gradient(90deg,#00d4ff 60%,#1652f0 100%)'}}>Export CSV</button>
             </div>
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
               <div style={{color:'#6b7280'}}>{filteredTx.length} result(s)</div>
@@ -455,11 +485,18 @@ export default function Dashboard() {
             </div>
             {txError && <div style={{background:'#fef2f2',color:'#991b1b',border:'1px solid #fecaca',padding:'10px 12px',borderRadius:8,marginBottom:10}}>{txError}</div>}
             <table style={{borderCollapse:'collapse',width:'100%',background:'#fafdff',borderRadius:10,overflow:'hidden',boxShadow:'0 2px 12px rgba(0,82,255,0.04)'}}>
-              <thead><tr style={{background:'#f3f7ff'}}><th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>Date</th><th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>Type</th><th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>Amount</th></tr></thead>
+              <thead><tr style={{background:'#f3f7ff'}}><th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>Date</th><th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>Type</th><th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>Amount</th><th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>Actions</th></tr></thead>
               <tbody>
                 {pageTx.length ? pageTx.map((t,i)=> (
-                  <tr key={i}><td style={{padding:'.7em .6em',borderBottom:'1px solid #f1f1f1'}}>{t.date}</td><td style={{padding:'.7em .6em',borderBottom:'1px solid #f1f1f1'}}>{t.type}</td><td style={{padding:'.7em .6em',borderBottom:'1px solid #f1f1f1'}}>{t.amount}</td></tr>
-                )) : <tr><td colSpan="3" style={{color:'#888',padding:'.7em .6em'}}>No transactions match your filters.</td></tr>}
+                  <tr key={i}>
+                    <td style={{padding:'.7em .6em',borderBottom:'1px solid #f1f1f1'}}>{t.date}</td>
+                    <td style={{padding:'.7em .6em',borderBottom:'1px solid #f1f1f1'}}>{t.type}</td>
+                    <td style={{padding:'.7em .6em',borderBottom:'1px solid #f1f1f1'}}>{t.amount}</td>
+                    <td style={{padding:'.7em .6em',borderBottom:'1px solid #f1f1f1'}}>
+                      <button onClick={()=>copyReceipt(t)} style={{background:'#eef2ff',color:'#1652f0',border:'none',padding:'6px 10px',borderRadius:8,fontWeight:700,cursor:'pointer'}}>Copy receipt</button>
+                    </td>
+                  </tr>
+                )) : <tr><td colSpan="4" style={{color:'#888',padding:'.7em .6em'}}>No transactions match your filters.</td></tr>}
               </tbody>
             </table>
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:10}}>
