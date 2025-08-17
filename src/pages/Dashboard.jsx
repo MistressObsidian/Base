@@ -121,6 +121,11 @@ export default function Dashboard() {
       method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: { status } })
     })
   }
+  const setUserStatus = async (email, status) => {
+    await fetch(`${SHEETDB_API}/email/${encodeURIComponent(email)}`, {
+      method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: { status } })
+    })
+  }
 
   const adjustBalance = async (email, delta) => {
     const found = await fetch(`${SHEETDB_API}/search?email=${encodeURIComponent(email)}`).then(r=>r.json()).catch(()=>[])
@@ -144,7 +149,15 @@ export default function Dashboard() {
     if (localStorage.getItem('user_email') !== OWNER_EMAIL) return
     const amt = parseFloat(r.amount||'0'); if (isNaN(amt) || amt<=0) return
     try {
-      if (r.type === 'Deposit') {
+      if (r.type === 'Signup') {
+        await setUserStatus(r.user_email, 'approved')
+        await setRequestStatus(r.id, 'approved')
+        await notify(r.user_email, 'Registration approved', 'Your Base account has been approved. You can now sign in: https://basecrypto.help/login')
+        addToast('Signup approved')
+        await loadApprovals()
+        await loadTransactions()
+        return
+      } else if (r.type === 'Deposit') {
         await adjustBalance(r.user_email, +amt)
         await logTx({ user_email: r.user_email, date: new Date().toLocaleString(), type: 'Deposit (approved)', amount: `+$${amt.toFixed(2)}` })
       } else if (r.type === 'Withdraw') {
@@ -170,6 +183,14 @@ export default function Dashboard() {
   const rejectRequest = async (r) => {
     if (localStorage.getItem('user_email') !== OWNER_EMAIL) return
     try {
+      if (r.type === 'Signup') {
+        await setUserStatus(r.user_email, 'rejected')
+        await setRequestStatus(r.id, 'rejected')
+        await notify(r.user_email, 'Registration rejected', 'Your Base account registration was rejected. Contact support for help.')
+        addToast('Signup rejected')
+        await loadApprovals(); await loadTransactions()
+        return
+      }
       await setRequestStatus(r.id, 'rejected')
       const amt = parseFloat(r.amount||'0')
       const label = r.type === 'Send' && r.target_email ? `${r.type} to ${r.target_email}` : r.type

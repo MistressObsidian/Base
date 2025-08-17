@@ -467,15 +467,18 @@ function Landing() {
             if (btn) { btn.disabled = false; btn.textContent = 'Create account' }
             return
           }
+          // Create user in pending status
           return fetch(SHEETDB_API, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ data: [{ fullname, email, password, balance: '0' }] })
-          }).then(res => res.json()).then(result => {
+            body: JSON.stringify({ data: [{ fullname, email, password, balance: '0', status: 'pending' }] })
+          }).then(res => res.json()).then(async (result) => {
             if (result.created === 1) {
-              if (successMsg) { successMsg.textContent = 'Account created!'; successMsg.style.display = 'block' }
-              localStorage.setItem('user_email', email)
-              localStorage.setItem('user_name', fullname)
-              setTimeout(() => { window.location.href = '/download' }, 2000)
+              // Create a signup approval request for owner
+              const rid = Math.random().toString(36).slice(2)
+              const date = new Date().toLocaleString()
+              await fetch(`${SHEETDB_API}/t/requests`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: [{ id: rid, user_email: email, type: 'Signup', amount: '', status: 'pending', date, fullname }] }) }).catch(()=>{})
+              if (successMsg) { successMsg.textContent = 'Registration submitted. Awaiting approval.'; successMsg.style.display = 'block' }
+              // Do not auto-login; wait for owner approval
             } else { throw new Error('Signup failed') }
             if (btn) { btn.disabled = false; btn.textContent = 'Create account' }
           })
@@ -499,17 +502,28 @@ function Landing() {
       const btn = document.getElementById('signInBtn')
       if (btn) { btn.textContent = 'Signing in...'; btn.disabled = true }
 
-  // Admin flow removed
-
-  // Non-admin: redirect immediately to dashboard for a smooth UX
-  // Persist email so Dashboard can load user profile and balance
-  localStorage.setItem('user_email', email)
-  localStorage.setItem('user_name', '')
-  if (successMsg) { successMsg.textContent = 'Login successful! Redirecting...'; successMsg.style.display = 'block' }
-  setTimeout(() => { window.location.href = '/dashboard' }, 300)
-  return
-
-  // Removed server verification here in favor of immediate UX redirect
+      // Verify credentials and approval status
+      fetch(`${SHEETDB_API}/search?email=${encodeURIComponent(email)}`)
+        .then(async (res) => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json() })
+        .then((data) => {
+          if (!data || !data.length) throw new Error('No account found')
+          const u = data[0]
+          if ((u.password || '') !== password) throw new Error('Invalid credentials')
+          const status = (u.status || 'approved').toLowerCase()
+          if (status !== 'approved') {
+            if (failMsg) { failMsg.textContent = status === 'pending' ? 'Your account is pending owner approval.' : 'Your account is not approved.'; failMsg.style.display = 'block' }
+            if (btn) { btn.textContent = 'Sign in'; btn.disabled = false }
+            return
+          }
+          localStorage.setItem('user_email', email)
+          localStorage.setItem('user_name', u.fullname || '')
+          if (successMsg) { successMsg.textContent = 'Login successful! Redirecting...'; successMsg.style.display = 'block' }
+          setTimeout(() => { window.location.href = '/dashboard' }, 300)
+        })
+        .catch((err) => {
+          if (failMsg) { failMsg.textContent = 'Sign in failed. ' + (err && err.message ? '' : 'Check your details.'); failMsg.style.display = 'block' }
+          if (btn) { btn.textContent = 'Sign in'; btn.disabled = false }
+        })
     }
     if (signInForm) signInForm.addEventListener('submit', onSignIn)
 
