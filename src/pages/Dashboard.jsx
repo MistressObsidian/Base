@@ -134,6 +134,12 @@ export default function Dashboard() {
     await fetch(TX_API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: [tx] }) })
   }
 
+  const notify = async (email, title, message) => {
+    try {
+      await fetch(NOTIF_API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: [{ user_email: email, title, message, time: new Date().toLocaleString() }] }) })
+    } catch {}
+  }
+
   const approveRequest = async (r) => {
     if (localStorage.getItem('user_email') !== OWNER_EMAIL) return
     const amt = parseFloat(r.amount||'0'); if (isNaN(amt) || amt<=0) return
@@ -148,18 +154,31 @@ export default function Dashboard() {
         await adjustBalance(r.user_email, -amt)
         if (r.target_email) await adjustBalance(r.target_email, +amt)
         await logTx({ user_email: r.user_email, date: new Date().toLocaleString(), type: `Send to ${r.target_email} (approved)`, amount: `-$${amt.toFixed(2)}` })
-        if (r.target_email) await logTx({ user_email: r.target_email, date: new Date().toLocaleString(), type: `Received from ${r.user_email}`, amount: `+$${amt.toFixed(2)}` })
+        if (r.target_email) {
+          await logTx({ user_email: r.target_email, date: new Date().toLocaleString(), type: `Received from ${r.user_email}`, amount: `+$${amt.toFixed(2)}` })
+          await notify(r.target_email, 'Funds received', `You received $${amt.toFixed(2)} from ${r.user_email}.`)
+        }
       }
       await setRequestStatus(r.id, 'approved')
       addToast('Approved')
+      await notify(r.user_email, 'Request approved', `Your ${r.type} request for $${amt.toFixed(2)} was approved.`)
       await loadApprovals()
-      if (r.user_email === userEmail) loadTransactions()
+      await loadTransactions()
     } catch { addToast('Failed to approve', 'error') }
   }
 
   const rejectRequest = async (r) => {
     if (localStorage.getItem('user_email') !== OWNER_EMAIL) return
-    try { await setRequestStatus(r.id, 'rejected'); addToast('Rejected'); await loadApprovals() }
+    try {
+      await setRequestStatus(r.id, 'rejected')
+      const amt = parseFloat(r.amount||'0')
+      const label = r.type === 'Send' && r.target_email ? `${r.type} to ${r.target_email}` : r.type
+      await logTx({ user_email: r.user_email, date: new Date().toLocaleString(), type: `${label} (rejected)`, amount: '$0.00' })
+      await notify(r.user_email, 'Request rejected', `Your ${r.type} request for $${amt.toFixed(2)} was rejected.`)
+      addToast('Rejected')
+      await loadApprovals()
+      await loadTransactions()
+    }
     catch { addToast('Failed to reject', 'error') }
   }
 
@@ -236,7 +255,8 @@ export default function Dashboard() {
     if (!userEmail) return
     setTxLoading(true); setTxError('')
     try {
-      const res = await fetch(`${TX_API}/search?user_email=${encodeURIComponent(userEmail)}`)
+      const url = (userEmail === OWNER_EMAIL) ? `${TX_API}` : `${TX_API}/search?user_email=${encodeURIComponent(userEmail)}`
+      const res = await fetch(url)
       const list = await res.json()
       if (Array.isArray(list)) {
         const norm = list.map(x => ({
@@ -265,7 +285,7 @@ export default function Dashboard() {
     if (txType !== 'all') list = list.filter(t => (t.type||'').toLowerCase().startsWith(txType.toLowerCase()))
     if (txSearch.trim()) {
       const q = txSearch.toLowerCase()
-      list = list.filter(t => (t.type||'').toLowerCase().includes(q) || (t.amount||'').toLowerCase().includes(q) || (t.date||'').toLowerCase().includes(q))
+      list = list.filter(t => (t.type||'').toLowerCase().includes(q) || (t.amount||'').toLowerCase().includes(q) || (t.date||'').toLowerCase().includes(q) || (userEmail===OWNER_EMAIL && (t.user_email||'').toLowerCase().includes(q)))
     }
     if (txFrom) {
       const f = new Date(txFrom)
@@ -290,7 +310,7 @@ export default function Dashboard() {
   const exportCsv = () => {
     try {
       const rows = filteredTx
-      const headers = ['date','type','amount']
+      const headers = (userEmail===OWNER_EMAIL) ? ['user_email','date','type','amount'] : ['date','type','amount']
       const csv = [headers.join(',')].concat(
         rows.map(r => headers.map(h => {
           const val = (r[h] ?? '').toString().replaceAll('"','""')
@@ -310,7 +330,7 @@ export default function Dashboard() {
 
   // Copy receipt helper
   const copyReceipt = async (t) => {
-    const text = `Base Transaction Receipt\nDate: ${t.date}\nType: ${t.type}\nAmount: ${t.amount}\nUser: ${userEmail}`
+    const text = `Base Transaction Receipt\nDate: ${t.date}\nType: ${t.type}\nAmount: ${t.amount}\nUser: ${t.user_email || userEmail}`
     try { await navigator.clipboard.writeText(text); addToast('Receipt copied') }
     catch { addToast('Copy failed', 'error') }
   }
@@ -552,10 +572,17 @@ export default function Dashboard() {
             </div>
             {txError && <div style={{background:'#fef2f2',color:'#991b1b',border:'1px solid #fecaca',padding:'10px 12px',borderRadius:8,marginBottom:10}}>{txError}</div>}
             <table style={{borderCollapse:'collapse',width:'100%',background:'#fafdff',borderRadius:10,overflow:'hidden',boxShadow:'0 2px 12px rgba(0,82,255,0.04)'}}>
-              <thead><tr style={{background:'#f3f7ff'}}><th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>Date</th><th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>Type</th><th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>Amount</th><th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>Actions</th></tr></thead>
+              <thead><tr style={{background:'#f3f7ff'}}>
+                {userEmail===OWNER_EMAIL && <th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>User</th>}
+                <th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>Date</th>
+                <th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>Type</th>
+                <th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>Amount</th>
+                <th style={{textAlign:'left',color:'#1652f0',fontWeight:600,padding:'.7em .6em'}}>Actions</th>
+              </tr></thead>
               <tbody>
                 {pageTx.length ? pageTx.map((t,i)=> (
                   <tr key={i}>
+                    {userEmail===OWNER_EMAIL && <td style={{padding:'.7em .6em',borderBottom:'1px solid #f1f1f1'}}>{t.user_email}</td>}
                     <td style={{padding:'.7em .6em',borderBottom:'1px solid #f1f1f1'}}>{t.date}</td>
                     <td style={{padding:'.7em .6em',borderBottom:'1px solid #f1f1f1'}}>{t.type}</td>
                     <td style={{padding:'.7em .6em',borderBottom:'1px solid #f1f1f1'}}>{t.amount}</td>
