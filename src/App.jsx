@@ -335,15 +335,22 @@ function Landing() {
     const mobileToggle = document.querySelector('.mobile-menu-toggle')
     const navLinks = document.querySelector('.nav-links')
     if (mobileToggle && navLinks) {
-      const toggleHandler = (e) => { e.stopPropagation(); navLinks.classList.toggle('active') }
+      const toggleHandler = (e) => {
+        e.stopPropagation()
+        const active = navLinks.classList.toggle('active')
+        mobileToggle.setAttribute('aria-expanded', String(active))
+      }
       mobileToggle.addEventListener('click', toggleHandler)
 
       const docClick = (e) => {
-        if (!navLinks.contains(e.target) && !mobileToggle.contains(e.target)) navLinks.classList.remove('active')
+        if (!navLinks.contains(e.target) && !mobileToggle.contains(e.target)) {
+          navLinks.classList.remove('active')
+          mobileToggle.setAttribute('aria-expanded', 'false')
+        }
       }
       document.addEventListener('click', docClick)
       const linkClicks = Array.from(navLinks.querySelectorAll('a')).map((link) => {
-        const handler = () => navLinks.classList.remove('active')
+  const handler = () => { navLinks.classList.remove('active'); mobileToggle.setAttribute('aria-expanded','false') }
         link.addEventListener('click', handler)
         return () => link.removeEventListener('click', handler)
       })
@@ -439,7 +446,7 @@ function Landing() {
         })
       }
     }
-    window.addEventListener('keydown', onEsc)
+  window.addEventListener('keydown', onEsc)
 
     // SIGN UP
     const onSignUp = (e) => {
@@ -491,7 +498,7 @@ function Landing() {
     if (signUpForm) signUpForm.addEventListener('submit', onSignUp)
 
     // SIGN IN
-    const onSignIn = (e) => {
+  const onSignIn = (e) => {
       e.preventDefault()
       const email = document.getElementById('signin-email').value.trim()
       const password = document.getElementById('signin-password').value
@@ -521,7 +528,11 @@ function Landing() {
           setTimeout(() => { window.location.href = '/dashboard' }, 300)
         })
         .catch((err) => {
-          if (failMsg) { failMsg.textContent = 'Sign in failed. ' + (err && err.message ? '' : 'Check your details.'); failMsg.style.display = 'block' }
+          if (failMsg) {
+            const msg = err && err.message ? err.message : 'Check your details.'
+            failMsg.textContent = 'Sign in failed. ' + msg
+            failMsg.style.display = 'block'
+          }
           if (btn) { btn.textContent = 'Sign in'; btn.disabled = false }
         })
     }
@@ -530,7 +541,7 @@ function Landing() {
     return () => {
       if (signUpForm) signUpForm.removeEventListener('submit', onSignUp)
       if (signInForm) signInForm.removeEventListener('submit', onSignIn)
-      window.removeEventListener('keydown', () => {})
+      window.removeEventListener('keydown', onEsc)
     }
   }, [])
 

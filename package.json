@@ -4,9 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-  "predev": "node scripts/sync-clean.cjs",
   "dev": "vite",
-  "prebuild": "node scripts/sync-clean.cjs",
   "build": "vite build",
   "lint": "eslint .",
   "preview": "vite preview"
