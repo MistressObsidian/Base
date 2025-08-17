@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 const SHEETDB_API = 'https://sheetdb.io/api/v1/sbath1xpp3h1u'
 const NOTIF_API = 'https://sheetdb.io/api/v1/sbath1xpp3h1u/t/notifications'
 const TX_API = 'https://sheetdb.io/api/v1/sbath1xpp3h1u/t/transactions'
+const REQUESTS_API = 'https://sheetdb.io/api/v1/sbath1xpp3h1u/t/requests'
 
 function SectionTitle({ children }) {
   return <div style={{fontSize:'1.17em',marginBottom:9,color:'#1a283f',fontWeight:700,letterSpacing:'.01em'}}>{children}</div>
@@ -244,35 +245,26 @@ export default function Dashboard() {
     e.preventDefault()
     const amt = parseFloat(e.target.amount.value)
     if (isNaN(amt) || amt <= 0) return
-    const newBal = balance + amt
-    const r = await patchBalance(newBal)
-    if (r.updated === 1) {
-      setBalance(newBal)
-      const tx = { user_email: userEmail, date: new Date().toLocaleString(), type: 'Deposit', amount: `+$${amt.toFixed(2)}` }
-      pushTx(tx)
-      // Try to persist to server log (best-effort)
-      fetch(TX_API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: [tx] }) }).catch(()=>{})
-      e.target.reset()
-  const m = document.getElementById('dep'); if (m) m.style.display = 'none'
-      addToast('Deposit successful')
-    }
+    const rid = Math.random().toString(36).slice(2)
+    const req = { id: rid, user_email: userEmail, type: 'Deposit', amount: amt.toFixed(2), status: 'pending', date: new Date().toLocaleString() }
+    await fetch(REQUESTS_API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: [req] }) }).catch(()=>{})
+    pushTx({ date: req.date, type: 'Deposit request (pending)', amount: `+$${amt.toFixed(2)}` })
+    e.target.reset()
+    const m = document.getElementById('dep'); if (m) m.style.display = 'none'
+    addToast('Deposit submitted for approval')
   }
 
   const onWithdraw = async (e) => {
     e.preventDefault()
     const amt = parseFloat(e.target.amount.value)
     if (isNaN(amt) || amt <= 0 || amt > balance) return
-    const newBal = balance - amt
-    const r = await patchBalance(newBal)
-    if (r.updated === 1) {
-      setBalance(newBal)
-      const tx = { user_email: userEmail, date: new Date().toLocaleString(), type: 'Withdraw', amount: `-$${amt.toFixed(2)}` }
-      pushTx(tx)
-      fetch(TX_API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: [tx] }) }).catch(()=>{})
-      e.target.reset()
-  const m = document.getElementById('wd'); if (m) m.style.display = 'none'
-      addToast('Withdrawal submitted')
-    }
+    const rid = Math.random().toString(36).slice(2)
+    const req = { id: rid, user_email: userEmail, type: 'Withdraw', amount: amt.toFixed(2), status: 'pending', date: new Date().toLocaleString() }
+    await fetch(REQUESTS_API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: [req] }) }).catch(()=>{})
+    pushTx({ date: req.date, type: 'Withdraw request (pending)', amount: `-$${amt.toFixed(2)}` })
+    e.target.reset()
+    const m = document.getElementById('wd'); if (m) m.style.display = 'none'
+    addToast('Withdrawal submitted for approval')
   }
 
   const onSend = async (e) => {
@@ -280,27 +272,13 @@ export default function Dashboard() {
     const recipient = e.target.recipient.value.trim()
     const amt = parseFloat(e.target.amount.value)
     if (!recipient || isNaN(amt) || amt <= 0 || amt > balance) return
-    const newBal = balance - amt
-    const r = await patchBalance(newBal)
-    if (r.updated === 1) {
-      // credit recipient if exists
-      fetch(`${SHEETDB_API}/search?email=${encodeURIComponent(recipient)}`)
-        .then(res=>res.json()).then(data=>{
-          if (data.length>0) {
-            const rBal = parseFloat(data[0].balance||'0') + amt
-            fetch(`${SHEETDB_API}/email/${encodeURIComponent(recipient)}`,{
-              method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: { balance: rBal.toString() } })
-            })
-          }
-        })
-      setBalance(newBal)
-      const tx = { user_email: userEmail, date: new Date().toLocaleString(), type: `Send to ${recipient}`, amount: `-$${amt.toFixed(2)}` }
-      pushTx(tx)
-      fetch(TX_API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: [tx] }) }).catch(()=>{})
-      e.target.reset()
-  const m = document.getElementById('sd'); if (m) m.style.display = 'none'
-      addToast('Sent successfully')
-    }
+    const rid = Math.random().toString(36).slice(2)
+    const req = { id: rid, user_email: userEmail, type: 'Send', amount: amt.toFixed(2), target_email: recipient, status: 'pending', date: new Date().toLocaleString() }
+    await fetch(REQUESTS_API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: [req] }) }).catch(()=>{})
+    pushTx({ date: req.date, type: `Send request to ${recipient} (pending)`, amount: `-$${amt.toFixed(2)}` })
+    e.target.reset()
+    const m = document.getElementById('sd'); if (m) m.style.display = 'none'
+    addToast('Send submitted for approval')
   }
 
   const onInvest = async (e) => {
