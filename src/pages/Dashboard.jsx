@@ -171,6 +171,12 @@ export default function Dashboard() {
           await logTx({ user_email: r.target_email, date: new Date().toLocaleString(), type: `Received from ${r.user_email}`, amount: `+$${amt.toFixed(2)}` })
           await notify(r.target_email, 'Funds received', `You received $${amt.toFixed(2)} from ${r.user_email}.`)
         }
+      } else if (r.type === 'Invest') {
+        // Deduct on approval and log detailed investment
+        await adjustBalance(r.user_email, -amt)
+        const detail = [r.asset, r.duration ? `${r.duration}d` : '', r.risk].filter(Boolean).join(', ')
+        const label = detail ? `Invest (${detail})` : 'Invest'
+        await logTx({ user_email: r.user_email, date: new Date().toLocaleString(), type: `${label} (approved)`, amount: `-$${amt.toFixed(2)}` })
       }
       await setRequestStatus(r.id, 'approved')
       addToast('Approved')
@@ -193,7 +199,11 @@ export default function Dashboard() {
       }
       await setRequestStatus(r.id, 'rejected')
       const amt = parseFloat(r.amount||'0')
-      const label = r.type === 'Send' && r.target_email ? `${r.type} to ${r.target_email}` : r.type
+      let label = r.type === 'Send' && r.target_email ? `${r.type} to ${r.target_email}` : r.type
+      if (r.type === 'Invest') {
+        const detail = [r.asset, r.duration ? `${r.duration}d` : '', r.risk].filter(Boolean).join(', ')
+        label = detail ? `Invest (${detail})` : 'Invest'
+      }
       await logTx({ user_email: r.user_email, date: new Date().toLocaleString(), type: `${label} (rejected)`, amount: '$0.00' })
       await notify(r.user_email, 'Request rejected', `Your ${r.type} request for $${amt.toFixed(2)} was rejected.`)
       addToast('Rejected')
@@ -276,23 +286,32 @@ export default function Dashboard() {
     if (!userEmail) return
     setTxLoading(true); setTxError('')
     try {
-      const url = (userEmail === OWNER_EMAIL) ? `${TX_API}` : `${TX_API}/search?user_email=${encodeURIComponent(userEmail)}`
-      const res = await fetch(url)
-      const list = await res.json()
-      if (Array.isArray(list)) {
-        const norm = list.map(x => ({
-          user_email: x.user_email || userEmail,
-          date: x.date || '',
-          type: x.type || 'Activity',
-          amount: x.amount || '$0.00',
-        }))
-        norm.sort((a,b) => new Date(b.date) - new Date(a.date))
-        setAllTx(norm)
-        setRecentTx(norm.slice(0,50))
+      const base = (userEmail === OWNER_EMAIL) ? `${TX_API}` : `${TX_API}/search?user_email=${encodeURIComponent(userEmail)}`
+      // Try fetch; if sheet doesn't exist (404), treat as empty list
+      const res = await fetch(base)
+      if (!res.ok) {
+        if (res.status === 404) {
+          setAllTx([])
+          setRecentTx([])
+          return
+        }
+        throw new Error(`HTTP ${res.status}`)
       }
+      const list = await res.json()
+      if (!Array.isArray(list)) { setAllTx([]); setRecentTx([]); return }
+      const norm = list.map(x => ({
+        user_email: x.user_email || userEmail,
+        date: x.date || '',
+        type: x.type || 'Activity',
+        amount: x.amount || '$0.00',
+      }))
+      norm.sort((a,b) => new Date(b.date) - new Date(a.date))
+      setAllTx(norm)
+      setRecentTx(norm.slice(0,50))
     } catch (e) {
-      setTxError('Failed to load transactions')
-      addToast('Failed to load transactions', 'error')
+      // Silent fail -> empty list to avoid blocking owner dashboard
+      setAllTx([])
+      setRecentTx([])
     } finally {
       setTxLoading(false)
     }
@@ -408,17 +427,15 @@ export default function Dashboard() {
     const duration = e.target.duration.value
     const risk = e.target.risk.value
     if (!asset || !amount || amount < 10 || !duration || !risk || amount > balance) return
-    const newBal = balance - amount
-    const r = await patchBalance(newBal)
-    if (r.updated === 1) {
-      setBalance(newBal)
-      const tx = { user_email: userEmail, date: new Date().toLocaleString(), type: `Invest ${asset} (${duration}d, ${risk})`, amount: `-$${amount.toFixed(2)}` }
-      pushTx(tx)
-      fetch(TX_API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: [tx] }) }).catch(()=>{})
-      e.target.reset()
-  const m = document.getElementById('iv'); if (m) m.style.display = 'none'
-      addToast('Investment placed')
-    }
+    // Create approval request instead of immediate balance change
+    const rid = Math.random().toString(36).slice(2)
+    const req = { id: rid, user_email: userEmail, type: 'Invest', amount: amount.toFixed(2), asset, duration, risk, status: 'pending', date: new Date().toLocaleString() }
+    await fetch(REQUESTS_API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ data: [req] }) }).catch(()=>{})
+    // Reflect pending state locally
+    pushTx({ date: req.date, type: `Invest ${asset} (${duration}d, ${risk}) request (pending)`, amount: `-$${amount.toFixed(2)}` })
+    e.target.reset()
+    const m = document.getElementById('iv'); if (m) m.style.display = 'none'
+    addToast('Investment submitted for approval')
   }
 
   return (
@@ -812,11 +829,11 @@ export default function Dashboard() {
                   <th style={{textAlign:'left',padding:10}}>Actions</th>
                 </tr></thead>
                 <tbody>
-                  {approvals && approvals.length ? approvals.map((r,i)=> (
+          {approvals && approvals.length ? approvals.map((r,i)=> (
                     <tr key={i}>
                       <td style={{padding:10,borderBottom:'1px solid #f1f1f1'}}>{r.date}</td>
                       <td style={{padding:10,borderBottom:'1px solid #f1f1f1'}}>{r.user_email}</td>
-                      <td style={{padding:10,borderBottom:'1px solid #f1f1f1'}}>{r.type}</td>
+            <td style={{padding:10,borderBottom:'1px solid #f1f1f1'}}>{r.type}{r.type==='Invest' && (r.asset||r.duration||r.risk) ? ` (${[r.asset, r.duration?`${r.duration}d`:null, r.risk].filter(Boolean).join(', ')})` : ''}</td>
                       <td style={{padding:10,borderBottom:'1px solid #f1f1f1'}}>${parseFloat(r.amount||'0').toFixed(2)}</td>
                       <td style={{padding:10,borderBottom:'1px solid #f1f1f1'}}>{r.target_email||'-'}</td>
                       <td style={{padding:10,borderBottom:'1px solid #f1f1f1'}}>{r.status}</td>
